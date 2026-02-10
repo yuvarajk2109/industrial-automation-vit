@@ -4,10 +4,12 @@ Hybrid Vision–Rule-Governed Intelligence Framework for Industrial Automation i
 Integrated Automation of sugarcane mills via
 - ViTs
 - Virtual Twins
-- Rule-based decision graphs,
+- Rule-based decision graphs
 - Transformer-based reasoning
 
 Designed to operate alongside 
 - Sensors
 - PLCs - Programmable Logic Controllers
 - SCADA (Supervisory Control and Data Acquisition) systems
+
+or as alternatives to them in mills where such automation isn't financially feasible.
