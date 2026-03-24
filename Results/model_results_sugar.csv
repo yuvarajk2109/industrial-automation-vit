@@ -1,0 +1,9 @@
+model_name,best_val_accuracy,best_val_loss,test_accuracy,epochs_trained
+vit_base_patch16_224,0.95,0.15824,78.0%,39
+resnet50,0.97917,0.1037,83.0%,27
+efficientnet_b0,0.95833,0.38447,74.5%,12
+swin_tiny_patch4_window7_224,0.96667,0.13492,86.0%,22
+convnext_tiny,0.96667,0.12236,84.5%,28
+vit_small_patch16_224,0.96667,0.10703,84.0%,18
+densenet121,0.9625,0.10246,86.0%,13
+mobilenetv3_large_100,0.95833,0.19571,77.5%,15

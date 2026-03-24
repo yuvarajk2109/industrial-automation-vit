@@ -1,0 +1,10 @@
+              precision    recall  f1-score   support
+
+intermediate     0.7037    0.7600    0.7308        50
+      labile     0.8980    0.8800    0.8889        50
+  metastable     0.7843    0.8000    0.7921        50
+ unsaturated     1.0000    0.9200    0.9583        50
+
+    accuracy                         0.8400       200
+   macro avg     0.8465    0.8400    0.8425       200
+weighted avg     0.8465    0.8400    0.8425       200
