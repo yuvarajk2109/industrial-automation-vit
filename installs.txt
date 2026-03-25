@@ -1,0 +1,12 @@
+1: Virtual Environment Creation and Activation
+python -m venv venv
+venv\Scripts\activate
+
+2: Python Modules for Image Classification and Evaluation
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+pip install segmentation_models_pytorch
+
+3: Essential Python Modules
+pip install pandas
+pip install matplotlib
+pip install seaborn
