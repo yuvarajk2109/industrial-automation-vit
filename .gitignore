@@ -208,4 +208,5 @@ __marimo__/
 
 # Main
 Datasets*
-Models/
+/Models/
+static/
