@@ -6,7 +6,13 @@
     <button class="filter-btn" [class.active]="!domainFilter" (click)="setFilter('')">All</button>
     <button class="filter-btn" [class.active]="domainFilter === 'steel'" (click)="setFilter('steel')">Steel</button>
     <button class="filter-btn" [class.active]="domainFilter === 'sugar'" (click)="setFilter('sugar')">Sugar</button>
-    <span class="filter-count text-sm text-muted">{{ total }} records</span>
+    <span class="filter-count text-sm text-muted">
+      @if (total > 0) {
+        Showing {{ getStartIndex() }}-{{ getEndIndex() }} out of {{ total }} records
+      } @else {
+        0 records
+      }
+    </span>
   </div>
 
   <!-- Table -->
@@ -40,31 +46,56 @@
     }
   </div>
 
-  <!-- Pagination -->
-  @if (totalPages > 1) {
-    <div class="pagination">
-      <button class="btn btn-sm btn-secondary" (click)="goToPage(page - 1)" [disabled]="page <= 1">← Prev</button>
-      <span class="text-sm text-muted">Page {{ page }} of {{ totalPages }}</span>
-      <button class="btn btn-sm btn-secondary" (click)="goToPage(page + 1)" [disabled]="page >= totalPages">Next →</button>
-    </div>
-  }
-
-  <!-- Detail Panel -->
-  @if (selectedLog) {
-    <div class="detail-panel card animate-slide-up">
-      <h2 class="section-title">Log Detail</h2>
-      <div class="detail-grid">
-        <div class="detail-item"><span class="text-xs text-muted">Image</span><span class="text-sm">{{ selectedLog.image_filename }}</span></div>
-        <div class="detail-item"><span class="text-xs text-muted">Domain</span><span class="text-sm">{{ selectedLog.domain }}</span></div>
-        <div class="detail-item"><span class="text-xs text-muted">Session</span><span class="text-xs text-mono">{{ selectedLog.session_id }}</span></div>
-        <div class="detail-item"><span class="text-xs text-muted">Device</span><span class="text-sm">{{ selectedLog.metadata?.device }}</span></div>
+  <!-- Pagination Bar -->
+  <div class="pagination-bar">
+    <div class="limit-selector">
+      <span class="text-sm text-muted">Items per page:</span>
+      <div class="limit-options">
+        @for (opt of limitOptions; track opt) {
+          <button class="limit-btn" [class.active]="limit === opt" (click)="setLimit(opt)">
+            {{ opt }}
+          </button>
+        }
       </div>
-      @if (selectedLog.gemini_initial_response) {
-        <div class="detail-gemini mt-md">
-          <span class="text-xs text-muted">Gemini Response</span>
-          <p class="gemini-text">{{ selectedLog.gemini_initial_response }}</p>
+    </div>
+    
+    @if (totalPages > 1) {
+      <div class="pagination-controls">
+        <button class="btn btn-sm btn-secondary" (click)="goToPage(page - 1)" [disabled]="page <= 1">← Prev</button>
+        <span class="text-sm text-muted">Page {{ page }} of {{ totalPages }}</span>
+        <button class="btn btn-sm btn-secondary" (click)="goToPage(page + 1)" [disabled]="page >= totalPages">Next →</button>
+      </div>
+    }
+  </div>
+
+  <!-- Detail Modal -->
+  @if (selectedLog) {
+    <div class="modal-overlay" (click)="selectLog(null)">
+      <div class="modal-content card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Log Detail</h2>
+          <button class="close-btn" (click)="selectLog(null)" aria-label="Close modal">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
-      }
+        
+        <div class="detail-grid mt-md">
+          <div class="detail-item"><span class="text-xs text-muted">Image</span><span class="text-sm font-semibold">{{ selectedLog.image_filename }}</span></div>
+          <div class="detail-item">
+            <span class="text-xs text-muted">Domain</span>
+            <span class="text-sm"><app-status-badge [label]="selectedLog.domain" [variant]="selectedLog.domain === 'steel' ? 'steel' : 'sugar'"/></span>
+          </div>
+          <div class="detail-item"><span class="text-xs text-muted">Session</span><span class="text-xs text-mono">{{ selectedLog.session_id }}</span></div>
+          <div class="detail-item"><span class="text-xs text-muted">Device</span><span class="text-sm">{{ selectedLog.metadata?.device || 'Unknown' }}</span></div>
+        </div>
+        
+        @if (selectedLog.gemini_initial_response) {
+          <div class="detail-gemini mt-lg">
+            <span class="text-xs text-muted mb-xs block" style="margin-bottom: 8px;">Gemini Response</span>
+            <div class="gemini-text" [innerHTML]="selectedLog.gemini_initial_response | markdown"></div>
+          </div>
+        }
+      </div>
     </div>
   }
 </div>
