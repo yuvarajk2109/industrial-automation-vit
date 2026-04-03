@@ -18,11 +18,11 @@ from models.loader import get_device
 
 def _generate_programmatic_summary(domain: str, prediction: dict, kg_result: dict) -> str:
     """Generate a markdown summary programmatically directly from the inference and KG results."""
-    md = f"### Virtual Simulation Result (Auto-Generated)\n\n"
+    md = "Virtual Simulation Result (Auto-Generated)\n\n"
     
     if domain == "steel":
-        md += "## DDA-ViT Inference (Steel)\n"
-        md += f"* **Defect Area Pct**: {kg_result.get('total_defect_area_pct', 0.0)}%\n"
+        md += "DDA-ViT Inference (Steel)\n"
+        md += f"**Defect Area Pct**: {kg_result.get('total_defect_area_pct', 0.0)}%\n"
         
         detected_classes = []
         for cls, info in prediction.get("defect_summary", {}).items():
@@ -30,32 +30,32 @@ def _generate_programmatic_summary(domain: str, prediction: dict, kg_result: dic
                 detected_classes.append(cls.replace("_", " ").title())
                 
         if detected_classes:
-            md += f"* **Detected Classes**: {', '.join(detected_classes)}\n"
+            md += f"**Detected Classes**: {', '.join(detected_classes)}\n"
         else:
-            md += "* **Detected Classes**: None\n"
+            md += "**Detected Classes**: None\n"
             
-        md += "\n## Logical KG Outcome\n"
-        md += f"* **Interpretation**: {kg_result.get('defect_interpretation', '').replace('_', ' ')}\n"
-        md += f"* **Quality**: {kg_result.get('quality_assessment', '').replace('_', ' ')}\n"
-        md += f"* **Decision**: **{kg_result.get('decision', '').replace('_', ' ')}**\n"
+        md += "\nLogical KG Outcome\n"
+        md += f"**Interpretation**: {kg_result.get('defect_interpretation', '').replace('_', ' ')}\n"
+        md += f"**Quality**: {kg_result.get('quality_assessment', '').replace('_', ' ')}\n"
+        md += f"**Decision**: {kg_result.get('decision', '').replace('_', ' ')}\n"
         
         if kg_result.get("requires_manual_inspection"):
-            md += "\n**WARNING**: Manual inspection is strictly required!\n"
+            md += "\nWARNING: Manual inspection is strictly required!\n"
 
     elif domain == "sugar":
-        md += "## DDA-ViT Inference (Sugar)\n"
-        md += f"* **Predicted Class**: {prediction.get('predicted_class', '').title()}\n"
-        md += f"* **Confidence**: {prediction.get('confidence', 0.0) * 100:.2f}%\n"
+        md += "DDA-ViT Inference (Sugar)\n"
+        md += f"**Predicted Class**: {prediction.get('predicted_class', '').title()}\n"
+        md += f"**Confidence**: {prediction.get('confidence', 0.0) * 100:.2f}%\n"
         
-        md += "\n## Logical KG Outcome\n"
-        md += f"* **Supersaturation Range**: {kg_result.get('supersaturation_range', 'Unknown')}\n"
-        md += f"* **Nucleation Risk**: {str(kg_result.get('nucleation_risk', '')).title()}\n"
-        md += f"* **Growth Stability**: {str(kg_result.get('growth_stability', '')).title()}\n"
+        md += "\nLogical KG Outcome\n"
+        md += f"**Supersaturation Range**: {kg_result.get('supersaturation_range', 'Unknown')}\n"
+        md += f"**Nucleation Risk**: {str(kg_result.get('nucleation_risk', '')).title()}\n"
+        md += f"**Growth Stability**: {str(kg_result.get('growth_stability', '')).title()}\n"
         
         actions = kg_result.get("recommended_actions", [])
         if actions:
             action_str = ', '.join(a.replace('_', ' ').title() for a in actions)
-            md += f"* **Recommended Actions**: **{action_str}**\n"
+            md += f"**Recommended Actions**: {action_str}\n"
             
     return md
 

@@ -223,4 +223,32 @@
     background: var(--clr-bg-primary);
     border-radius: var(--radius-md);
     border: var(--border-subtle);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+::ng-deep .gemini-text ul {
+    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    list-style-type: disc;
+}
+
+::ng-deep .gemini-text li {
+    display: list-item;
+    margin-bottom: 0.25rem;
+}
+
+::ng-deep .gemini-text h2, 
+::ng-deep .gemini-text h3, 
+::ng-deep .gemini-text h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+::ng-deep .gemini-text strong {
+    font-weight: 600;
+    color: var(--clr-text-primary);
 }

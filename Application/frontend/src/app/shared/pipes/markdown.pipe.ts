@@ -22,15 +22,21 @@ export class MarkdownPipe implements PipeTransform {
     html = html.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
 
     // Bullet points: * item or - item
-    html = html.replace(/^\s*[\*\-] (.*$)/gim, '<li style="margin-left: 1.5rem;">$1</li>');
+    html = html.replace(/^\s*[\*\-] (.*$)/gim, '<li>$1</li>');
+
+    // Wrap adjacent bullet points in an unordered list
+    html = html.replace(/(<li>.*?<\/li>\n*)+/gi, (match) => {
+      const items = match.trim();
+      return `<ul style="padding-left: 1.5rem; margin-top: 0.5rem; margin-bottom: 0.5rem; list-style-type: disc;">${items}</ul>`;
+    });
 
     // Paragraphs / Newlines
     // First, temporarily remove newlines that are next to block elements we just created
     html = html.replace(/<\/h[234]>\n+/g, '</h$1>');
-    html = html.replace(/<\/li>\n+/g, '</li>');
+    html = html.replace(/<\/ul>\n+/g, '</ul>');
     
     html = html.replace(/\n\n/g, '<br><br>');
-    html = html.replace(/\n(?!(<li>|<h))/g, '<br>');
+    html = html.replace(/\n(?!(<ul|<li|<h))/g, '<br>');
 
     return html;
   }
