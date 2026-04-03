@@ -41,16 +41,10 @@
 
   <!-- Stats Cards -->
   <section class="stats-section">
-    <h2 class="section-title">System Overview</h2>
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-icon">
-          <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-            <path fill-rule="evenodd"
-              d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z"
-              clip-rule="evenodd" />
-          </svg>
+          <i class="fa-solid fa-microscope fa-lg"></i>
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ totalLogs }}</span>
@@ -59,99 +53,62 @@
       </div>
 
       <div class="stat-card">
+        <div class="stat-icon" style="color: var(--clr-brand-steel); background: rgba(96, 125, 139, 0.1);">
+          <i class="fa-solid fa-industry fa-lg"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalSteel }}</span>
+          <span class="stat-label">Steel Analyses</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="color: var(--clr-brand-sugar); background: rgba(255, 152, 0, 0.1);">
+          <i class="fa-solid fa-cubes fa-lg"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalSugar }}</span>
+          <span class="stat-label">Sugar Analyses</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
         <div class="stat-icon simulation-icon">
-          <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-              clip-rule="evenodd" />
-          </svg>
+          <i class="fa-solid fa-laptop-code fa-lg"></i>
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ totalSimulations }}</span>
           <span class="stat-label">Simulations Run</span>
         </div>
       </div>
-
-      <div class="stat-card">
-        <div class="stat-icon device-icon">
-          <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd"
-              d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm3 14a1 1 0 100-2 1 1 0 000 2z"
-              clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="stat-info">
-          <span class="stat-value text-mono">{{ deviceInfo || '–' }}</span>
-          <span class="stat-label">Compute Device</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon" [class.status-online]="backendStatus === 'online'"
-          [class.status-offline]="backendStatus === 'offline'">
-          <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd"
-              d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z"
-              clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div class="stat-info">
-          <app-status-badge
-            [label]="backendStatus === 'online' ? 'Online' : backendStatus === 'offline' ? 'Offline' : 'Checking...'"
-            [variant]="backendStatus === 'online' ? 'success' : backendStatus === 'offline' ? 'error' : 'warning'"
-            [showDot]="true" />
-          <span class="stat-label">System Status</span>
-        </div>
-      </div>
     </div>
   </section>
 
-  <!-- Quick Actions -->
-  <section class="actions-section">
-    <h2 class="section-title">Quick Actions</h2>
-    <div class="actions-grid">
-      <a routerLink="/analyse" class="action-card">
-        <div class="action-icon">
-          <svg width="32" height="32" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
-          </svg>
-        </div>
-        <h3 class="action-title">Analyse Single Image</h3>
-        <p class="action-desc">Upload a steel or sugar image for DDA-ViT inference, Knowledge Graph evaluation, and
-          AI-powered recommendations.</p>
-        <span class="action-arrow">→</span>
-      </a>
-
-      <a routerLink="/simulation" class="action-card">
-        <div class="action-icon">
-          <svg width="32" height="32" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-              clip-rule="evenodd" />
-          </svg>
-        </div>
-        <h3 class="action-title">Virtual Simulation</h3>
-        <p class="action-desc">Process entire image directories with real-time animated pipeline visualisation and
-          comprehensive data logging.</p>
-        <span class="action-arrow">→</span>
-      </a>
-    </div>
-  </section>
-
-  <!-- Recent Activity -->
-  @if (recentLogs.length > 0) {
-  <section class="recent-section">
-    <h2 class="section-title">Recent Activity</h2>
-    <div class="recent-list">
-      @for (log of recentLogs; track log._id) {
-      <div class="recent-item">
-        <app-status-badge [label]="log.domain" [variant]="log.domain === 'steel' ? 'steel' : 'sugar'" />
-        <span class="recent-filename">{{ log.image_filename }}</span>
-        <span class="recent-time text-muted text-sm">{{ log.timestamp?.$date | date:'short' }}</span>
+  <!-- Charts -->
+  <section class="charts-section">
+    <div class="chart-card">
+      <h3 class="chart-title">Domain Distribution</h3>
+      <div class="canvas-container">
+        <canvas baseChart [data]="domainChartData" [options]="domainChartOptions" [type]="domainChartType"></canvas>
       </div>
-      }
+    </div>
+    <div class="chart-card">
+      <h3 class="chart-title">Steel Output Decisions</h3>
+      <div class="canvas-container">
+        <canvas baseChart [data]="steelChartData" [options]="steelChartOptions" [type]="steelChartType"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3 class="chart-title">Sugar Final Classes</h3>
+      <div class="canvas-container">
+        <canvas baseChart [data]="sugarChartData" [options]="sugarChartOptions" [type]="sugarChartType"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3 class="chart-title">System Performance Tracker</h3>
+      <div class="canvas-container">
+        <canvas baseChart [data]="perfChartData" [options]="perfChartOptions" [type]="perfChartType"></canvas>
+      </div>
     </div>
   </section>
-  }
 </div>

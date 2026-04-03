@@ -79,3 +79,37 @@ def get_simulations():
     simulations = [_serialize_doc(doc) for doc in cursor]
 
     return jsonify({"simulations": simulations}), 200
+
+@logs_bp.route("/logs/stats", methods=["GET"])
+def get_stats():
+    """Retrieve aggregated stats for charts."""
+    # 1. Total Domains Distribution (although frontend already has total counts, useful to wrap)
+    domain_agg = list(logs_collection.aggregate([
+        {"$group": {"_id": "$domain", "count": {"$sum": 1}}}
+    ]))
+    
+    # 2. Steel Defect Distribution
+    # The predicted_class or defect arrays might be inside model_prediction.defect_summary
+    # Let's aggregate by standard decision or quality_assessment from Knowledge graph instead for a uniform bar chart.
+    steel_agg = list(logs_collection.aggregate([
+        {"$match": {"domain": "steel"}},
+        {"$group": {"_id": "$knowledge_graph_output.decision", "count": {"$sum": 1}}}
+    ]))
+    
+    # 3. Sugar Class Distribution
+    sugar_agg = list(logs_collection.aggregate([
+        {"$match": {"domain": "sugar"}},
+        {"$group": {"_id": "$model_prediction.predicted_class", "count": {"$sum": 1}}}
+    ]))
+    
+    # 4. Performance Times (last 20 logs)
+    cursor = logs_collection.find({}, {"processing_time_ms": 1, "timestamp": 1, "domain": 1}).sort("timestamp", -1).limit(20)
+    perf_logs = [_serialize_doc(doc) for doc in cursor]
+    perf_logs.reverse() # chronological order
+    
+    return jsonify({
+        "domains": domain_agg,
+        "steel_decisions": steel_agg,
+        "sugar_classes": sugar_agg,
+        "performance": perf_logs
+    }), 200

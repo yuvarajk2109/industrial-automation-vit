@@ -69,6 +69,11 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/simulations`);
   }
 
+  /** Retrieve aggregated chart stats */
+  getStats(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/logs/stats`);
+  }
+
   /** Get the URL for an output image */
   getOutputImageUrl(filename: string): string {
     return `${this.baseUrl}/images/${filename}`;
