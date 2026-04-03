@@ -1,0 +1,130 @@
+.pipeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  width: 100%;
+}
+
+.pipeline.vertical {
+  flex-direction: column;
+}
+
+.pipeline-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex: 1;
+  position: relative;
+}
+
+.pipeline.vertical .pipeline-step {
+  flex-direction: row;
+  padding: var(--space-md) 0;
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: rgba(76, 175, 80, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.pipeline.vertical .step-connector {
+  position: absolute;
+  left: 17px;
+  top: -16px;
+  width: 2px;
+  height: 32px;
+  flex: none;
+}
+
+.connector-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--clr-primary-600), var(--clr-primary-400));
+  transition: width 800ms ease-out;
+  border-radius: 1px;
+}
+
+.pipeline.vertical .connector-fill {
+  width: 100% !important;
+  height: var(--fill-height, 0%);
+  transition: height 800ms ease-out;
+}
+
+.step-node {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-base);
+  background: var(--clr-bg-tertiary);
+  border: 2px solid rgba(76, 175, 80, 0.2);
+}
+
+.pipeline-step.completed .step-node {
+  background: var(--clr-primary-700);
+  border-color: var(--clr-primary-500);
+}
+
+.pipeline-step.active .step-node {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: var(--clr-primary-400);
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+.step-icon.check {
+  width: 18px;
+  height: 18px;
+  color: var(--clr-primary-300);
+  animation: check-pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.step-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(76, 175, 80, 0.2);
+  border-top-color: var(--clr-primary-400);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.step-number {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+}
+
+.step-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.step-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--clr-text-secondary);
+  white-space: nowrap;
+}
+
+.pipeline-step.active .step-label {
+  color: var(--clr-primary-400);
+}
+
+.pipeline-step.pending .step-label {
+  color: var(--clr-text-muted);
+}
+
+.step-preview {
+  font-size: 0.7rem;
+  color: var(--clr-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
