@@ -16,6 +16,50 @@ from database.schemas import create_log_document, create_chat_document
 from models.loader import get_device
 
 
+def _generate_programmatic_summary(domain: str, prediction: dict, kg_result: dict) -> str:
+    """Generate a markdown summary programmatically directly from the inference and KG results."""
+    md = f"### Virtual Simulation Result (Auto-Generated)\n\n"
+    
+    if domain == "steel":
+        md += "## DDA-ViT Inference (Steel)\n"
+        md += f"* **Defect Area Pct**: {kg_result.get('total_defect_area_pct', 0.0)}%\n"
+        
+        detected_classes = []
+        for cls, info in prediction.get("defect_summary", {}).items():
+            if info["detected"]:
+                detected_classes.append(cls.replace("_", " ").title())
+                
+        if detected_classes:
+            md += f"* **Detected Classes**: {', '.join(detected_classes)}\n"
+        else:
+            md += "* **Detected Classes**: None\n"
+            
+        md += "\n## Logical KG Outcome\n"
+        md += f"* **Interpretation**: {kg_result.get('defect_interpretation', '').replace('_', ' ')}\n"
+        md += f"* **Quality**: {kg_result.get('quality_assessment', '').replace('_', ' ')}\n"
+        md += f"* **Decision**: **{kg_result.get('decision', '').replace('_', ' ')}**\n"
+        
+        if kg_result.get("requires_manual_inspection"):
+            md += "\n**WARNING**: Manual inspection is strictly required!\n"
+
+    elif domain == "sugar":
+        md += "## DDA-ViT Inference (Sugar)\n"
+        md += f"* **Predicted Class**: {prediction.get('predicted_class', '').title()}\n"
+        md += f"* **Confidence**: {prediction.get('confidence', 0.0) * 100:.2f}%\n"
+        
+        md += "\n## Logical KG Outcome\n"
+        md += f"* **Supersaturation Range**: {kg_result.get('supersaturation_range', 'Unknown')}\n"
+        md += f"* **Nucleation Risk**: {str(kg_result.get('nucleation_risk', '')).title()}\n"
+        md += f"* **Growth Stability**: {str(kg_result.get('growth_stability', '')).title()}\n"
+        
+        actions = kg_result.get("recommended_actions", [])
+        if actions:
+            action_str = ', '.join(a.replace('_', ' ').title() for a in actions)
+            md += f"* **Recommended Actions**: **{action_str}**\n"
+            
+    return md
+
+
 def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemini: bool = False) -> dict:
     """
     Run the full analysis pipeline for a single image.
@@ -60,10 +104,10 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
         kg_result = evaluate_sugar_kg(prediction)
     step_times["kg_ms"] = round((time.time() - t0) * 1000, 2)
 
-    # ── Step 3: Gemini Chatbot ──
+    # ── Step 3: Gemini Chatbot (or Programmatic Summary) ──
     t0 = time.time()
     if skip_gemini:
-        gemini_response = "*Gemini generation is disabled during high-throughput virtual simulation.*"
+        gemini_response = _generate_programmatic_summary(domain, prediction, kg_result)
     else:
         gemini_response = get_initial_response(prediction, kg_result)
     step_times["gemini_ms"] = round((time.time() - t0) * 1000, 2)
