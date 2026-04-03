@@ -1,0 +1,70 @@
+<div class="logs-page">
+  <h1 class="section-title">Analysis Logs</h1>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <button class="filter-btn" [class.active]="!domainFilter" (click)="setFilter('')">All</button>
+    <button class="filter-btn" [class.active]="domainFilter === 'steel'" (click)="setFilter('steel')">Steel</button>
+    <button class="filter-btn" [class.active]="domainFilter === 'sugar'" (click)="setFilter('sugar')">Sugar</button>
+    <span class="filter-count text-sm text-muted">{{ total }} records</span>
+  </div>
+
+  <!-- Table -->
+  <div class="logs-table">
+    <div class="table-header">
+      <span class="col-time">Timestamp</span>
+      <span class="col-image">Image</span>
+      <span class="col-domain">Domain</span>
+      <span class="col-result">Result</span>
+      <span class="col-time-ms">Time</span>
+    </div>
+    @for (log of logs; track log._id?.$oid) {
+      <div class="table-row" [class.selected]="selectedLog === log" (click)="selectLog(log)">
+        <span class="col-time text-sm text-muted">{{ log.timestamp?.$date | date:'medium' }}</span>
+        <span class="col-image text-sm truncate">{{ log.image_filename }}</span>
+        <span class="col-domain"><app-status-badge [label]="log.domain" [variant]="log.domain === 'steel' ? 'steel' : 'sugar'"/></span>
+        <span class="col-result text-sm">
+          @if (log.domain === 'steel') {
+            {{ log.knowledge_graph_output?.decision || '–' }}
+          } @else {
+            {{ log.model_prediction?.predicted_class || '–' }}
+          }
+        </span>
+        <span class="col-time-ms text-xs text-mono text-muted">{{ log.processing_time_ms }}ms</span>
+      </div>
+    }
+    @if (logs.length === 0) {
+      <div class="empty-state">
+        <span class="text-muted">No logs found. Run an analysis to get started.</span>
+      </div>
+    }
+  </div>
+
+  <!-- Pagination -->
+  @if (totalPages > 1) {
+    <div class="pagination">
+      <button class="btn btn-sm btn-secondary" (click)="goToPage(page - 1)" [disabled]="page <= 1">← Prev</button>
+      <span class="text-sm text-muted">Page {{ page }} of {{ totalPages }}</span>
+      <button class="btn btn-sm btn-secondary" (click)="goToPage(page + 1)" [disabled]="page >= totalPages">Next →</button>
+    </div>
+  }
+
+  <!-- Detail Panel -->
+  @if (selectedLog) {
+    <div class="detail-panel card animate-slide-up">
+      <h2 class="section-title">Log Detail</h2>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="text-xs text-muted">Image</span><span class="text-sm">{{ selectedLog.image_filename }}</span></div>
+        <div class="detail-item"><span class="text-xs text-muted">Domain</span><span class="text-sm">{{ selectedLog.domain }}</span></div>
+        <div class="detail-item"><span class="text-xs text-muted">Session</span><span class="text-xs text-mono">{{ selectedLog.session_id }}</span></div>
+        <div class="detail-item"><span class="text-xs text-muted">Device</span><span class="text-sm">{{ selectedLog.metadata?.device }}</span></div>
+      </div>
+      @if (selectedLog.gemini_initial_response) {
+        <div class="detail-gemini mt-md">
+          <span class="text-xs text-muted">Gemini Response</span>
+          <p class="gemini-text">{{ selectedLog.gemini_initial_response }}</p>
+        </div>
+      }
+    </div>
+  }
+</div>

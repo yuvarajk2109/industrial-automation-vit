@@ -1,0 +1,22 @@
+.logs-page { max-width: 1100px; margin: 0 auto; }
+.filters-bar { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-lg); }
+.filter-btn { padding: 6px 16px; border-radius: var(--radius-full); background: var(--clr-bg-secondary); color: var(--clr-text-muted); border: var(--border-subtle); font-size: 0.8rem; font-weight: 500; transition: all var(--transition-fast); }
+.filter-btn.active { color: var(--clr-primary-400); border-color: var(--clr-primary-500); background: rgba(76,175,80,0.08); }
+.filter-btn:hover:not(.active) { color: var(--clr-text-secondary); }
+.filter-count { margin-left: auto; }
+
+.logs-table { background: var(--clr-bg-secondary); border: var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: var(--space-lg); }
+.table-header, .table-row { display: grid; grid-template-columns: 180px 1fr 80px 150px 70px; padding: var(--space-md) var(--space-lg); align-items: center; gap: var(--space-md); }
+.table-header { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--clr-text-muted); border-bottom: var(--border-subtle); }
+.table-row { border-bottom: var(--border-subtle); transition: background var(--transition-fast); cursor: pointer; }
+.table-row:hover { background: var(--clr-bg-hover); }
+.table-row.selected { background: rgba(76,175,80,0.08); border-left: 3px solid var(--clr-primary-500); }
+.table-row:last-child { border-bottom: none; }
+.empty-state { padding: var(--space-2xl); text-align: center; }
+
+.pagination { display: flex; justify-content: center; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); }
+
+.detail-panel { margin-bottom: var(--space-lg); }
+.detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+.detail-item { display: flex; flex-direction: column; gap: 2px; }
+.gemini-text { font-size: 0.85rem; color: var(--clr-text-secondary); line-height: 1.6; margin-top: var(--space-sm); white-space: pre-wrap; max-height: 300px; overflow-y: auto; padding: var(--space-md); background: var(--clr-bg-primary); border-radius: var(--radius-md); border: var(--border-subtle); }
