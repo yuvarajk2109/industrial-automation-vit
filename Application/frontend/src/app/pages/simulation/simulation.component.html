@@ -1,0 +1,147 @@
+<div class="simulation-page">
+  <h1 class="section-title">Virtual Simulation</h1>
+
+  <!-- Config Panel -->
+  <div class="config-panel card">
+    <div class="config-grid">
+      <div class="config-field">
+        <label class="field-label">Steel Images Directory</label>
+        <div class="input-with-button">
+          <input class="input-field" [(ngModel)]="steelDir" placeholder="e.g. E:\Datasets\steel-defect-detection\test_images" [disabled]="state.isRunning"/>
+          <button class="btn btn-secondary" (click)="browseFolder('steel')" [disabled]="state.isRunning">
+            Browse
+          </button>
+        </div>
+      </div>
+      <div class="config-field">
+        <label class="field-label">Sugar Images Directory</label>
+        <div class="input-with-button">
+          <input class="input-field" [(ngModel)]="sugarDir" placeholder="e.g. E:\Datasets\sugar-quality-inspection\test_images" [disabled]="state.isRunning"/>
+          <button class="btn btn-secondary" (click)="browseFolder('sugar')" [disabled]="state.isRunning">
+            Browse
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="config-actions">
+      <div class="limit-group">
+        <label class="field-label">Images per domain:</label>
+        <div class="limit-options">
+          @for (opt of limitOptions; track opt) {
+            <button class="limit-btn" [class.active]="limit === opt" (click)="limit = opt" [disabled]="state.isRunning">
+              {{ getLimitLabel(opt) }}
+            </button>
+          }
+        </div>
+      </div>
+      <div class="action-btns">
+        @if (!state.isRunning) {
+          <button class="btn btn-primary btn-lg" (click)="startSimulation()" [disabled]="!steelDir || !sugarDir">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+            </svg>
+            Start Simulation
+          </button>
+        } @else {
+          <button class="btn btn-danger btn-lg" (click)="stopSimulation()">Stop</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Pipeline -->
+  @if (state.isRunning || state.processed > 0) {
+    <div class="live-section">
+      <div class="live-grid">
+        <!-- Current Image -->
+        <div class="current-panel card">
+          <div class="current-header">
+            <span class="text-sm text-muted">Processing</span>
+            <app-status-badge [label]="state.currentDomain" [variant]="state.currentDomain === 'steel' ? 'steel' : 'sugar'"/>
+          </div>
+          <div class="current-filename">{{ state.currentImage || '–' }}</div>
+          <div class="current-index text-xs text-muted">Image {{ state.currentIndex }} of {{ state.total }}</div>
+        </div>
+
+        <!-- Pipeline -->
+        <div class="pipeline-panel card">
+          <app-pipeline-visualiser
+            [currentStep]="pipelineStep"
+            [steps]="pipelineSteps"
+            orientation="vertical"
+          />
+        </div>
+
+        <!-- Latest Result -->
+        <div class="result-panel card">
+          <span class="text-sm text-muted">Latest Result</span>
+          @if (currentPrediction) {
+            <div class="result-preview mt-sm">
+              @if (state.currentDomain === 'steel') {
+                <div class="detail-row"><span class="text-muted text-xs">Defect Area</span><span class="text-sm">{{ currentPrediction.total_defect_area_pct }}%</span></div>
+              } @else {
+                <div class="detail-row"><span class="text-muted text-xs">Class</span><span class="text-sm font-semibold">{{ currentPrediction.predicted_class }}</span></div>
+                <div class="detail-row"><span class="text-muted text-xs">Confidence</span><span class="text-sm">{{ (currentPrediction.confidence * 100).toFixed(1) }}%</span></div>
+              }
+            </div>
+          }
+          @if (currentKgResult) {
+            <div class="result-kg mt-sm">
+              <span class="text-xs text-muted">KG Decision:</span>
+              <span class="text-sm font-medium">{{ currentKgResult.decision || currentKgResult.crystal_state || '–' }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-section card">
+        <div class="progress-header">
+          <span class="font-semibold">{{ state.processed }} / {{ state.total }} images</span>
+          <span class="text-sm text-muted">ETA: {{ formatEta(state.etaMs) }}</span>
+        </div>
+        <div class="progress-bar" style="height: 8px;">
+          <div class="progress-bar-fill" [style.width.%]="state.progress * 100"></div>
+        </div>
+
+        <!-- Summary Counters -->
+        <div class="counters-grid mt-md">
+          <div class="counter-group">
+            <span class="counter-title badge badge-steel">Steel</span>
+            <div class="counter-items">
+              <span class="counter-item"><span class="text-success"><i class="fa-solid fa-check"></i></span> Accept: {{ state.summary.steel.accept }}</span>
+              <span class="counter-item"><span class="text-warning"><i class="fa-solid fa-arrow-down"></i></span> Downgrade: {{ state.summary.steel.downgrade }}</span>
+              <span class="counter-item"><span class="text-error"><i class="fa-solid fa-xmark"></i></span> Reject: {{ state.summary.steel.reject }}</span>
+            </div>
+          </div>
+          <div class="counter-group">
+            <span class="counter-title badge badge-sugar">Sugar</span>
+            <div class="counter-items">
+              <span class="counter-item">Unsaturated: {{ state.summary.sugar.unsaturated }}</span>
+              <span class="counter-item">Metastable: {{ state.summary.sugar.metastable }}</span>
+              <span class="counter-item">Intermediate: {{ state.summary.sugar.intermediate }}</span>
+              <span class="counter-item">Labile: {{ state.summary.sugar.labile }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Grid -->
+      @if (state.completedImages.length > 0) {
+        <h2 class="section-title">Completed</h2>
+        <div class="completed-grid stagger-children">
+          @for (img of state.completedImages; track img.index) {
+            <div class="completed-card card-glass">
+              <div class="cc-header">
+                <app-status-badge [label]="img.domain" [variant]="img.domain === 'steel' ? 'steel' : 'sugar'"/>
+                <span class="text-xs text-muted">{{ img.total_ms }}ms</span>
+              </div>
+              <span class="cc-filename truncate">{{ img.filename }}</span>
+              <app-status-badge [label]="getDecisionBadge(img).label" [variant]="getDecisionBadge(img).variant"/>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
