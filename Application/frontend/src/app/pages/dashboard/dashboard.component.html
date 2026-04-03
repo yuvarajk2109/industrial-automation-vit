@@ -1,0 +1,157 @@
+<div class="dashboard">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        <span class="title-accent">Cane</span>Nexus
+      </h1>
+      <p class="hero-subtitle">
+        Hybrid Vision–Rule-Governed Intelligence Framework for Industrial Automation in Sugarcane Mills
+      </p>
+      <div class="hero-actions">
+        <a routerLink="/analyse" class="btn btn-primary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
+          </svg>
+          Analyse Image
+        </a>
+        <a routerLink="/simulation" class="btn btn-secondary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+              clip-rule="evenodd" />
+          </svg>
+          Run Simulation
+        </a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="visual-ring ring-1"></div>
+      <div class="visual-ring ring-2"></div>
+      <div class="visual-ring ring-3"></div>
+      <div class="visual-center">
+        <svg width="48" height="48" viewBox="0 0 32 32" fill="none">
+          <path d="M16 4L24 12L16 20L8 12Z" fill="#4CAF50" opacity="0.9" />
+          <path d="M16 12L24 20L16 28L8 20Z" fill="#4CAF50" opacity="0.5" />
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Cards -->
+  <section class="stats-section">
+    <h2 class="section-title">System Overview</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+            <path fill-rule="evenodd"
+              d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5z"
+              clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalLogs }}</span>
+          <span class="stat-label">Total Analyses</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon simulation-icon">
+          <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+              clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ totalSimulations }}</span>
+          <span class="stat-label">Simulations Run</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon device-icon">
+          <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm3 14a1 1 0 100-2 1 1 0 000 2z"
+              clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value text-mono">{{ deviceInfo || '–' }}</span>
+          <span class="stat-label">Compute Device</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" [class.status-online]="backendStatus === 'online'"
+          [class.status-offline]="backendStatus === 'offline'">
+          <svg width="24" height="24" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M5.05 3.636a1 1 0 010 1.414 7 7 0 000 9.9 1 1 0 11-1.414 1.414 9 9 0 010-12.728 1 1 0 011.414 0zm9.9 0a1 1 0 011.414 0 9 9 0 010 12.728 1 1 0 11-1.414-1.414 7 7 0 000-9.9 1 1 0 010-1.414zM7.879 6.464a1 1 0 010 1.414 3 3 0 000 4.243 1 1 0 11-1.415 1.414 5 5 0 010-7.07 1 1 0 011.415 0zm4.242 0a1 1 0 011.415 0 5 5 0 010 7.072 1 1 0 01-1.415-1.415 3 3 0 000-4.242 1 1 0 010-1.415zM10 9a1 1 0 011 1v.01a1 1 0 11-2 0V10a1 1 0 011-1z"
+              clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="stat-info">
+          <app-status-badge
+            [label]="backendStatus === 'online' ? 'Online' : backendStatus === 'offline' ? 'Offline' : 'Checking...'"
+            [variant]="backendStatus === 'online' ? 'success' : backendStatus === 'offline' ? 'error' : 'warning'"
+            [showDot]="true" />
+          <span class="stat-label">System Status</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="actions-section">
+    <h2 class="section-title">Quick Actions</h2>
+    <div class="actions-grid">
+      <a routerLink="/analyse" class="action-card">
+        <div class="action-icon">
+          <svg width="32" height="32" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
+          </svg>
+        </div>
+        <h3 class="action-title">Analyse Single Image</h3>
+        <p class="action-desc">Upload a steel or sugar image for DDA-ViT inference, Knowledge Graph evaluation, and
+          AI-powered recommendations.</p>
+        <span class="action-arrow">→</span>
+      </a>
+
+      <a routerLink="/simulation" class="action-card">
+        <div class="action-icon">
+          <svg width="32" height="32" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+              clip-rule="evenodd" />
+          </svg>
+        </div>
+        <h3 class="action-title">Virtual Simulation</h3>
+        <p class="action-desc">Process entire image directories with real-time animated pipeline visualisation and
+          comprehensive data logging.</p>
+        <span class="action-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Recent Activity -->
+  @if (recentLogs.length > 0) {
+  <section class="recent-section">
+    <h2 class="section-title">Recent Activity</h2>
+    <div class="recent-list">
+      @for (log of recentLogs; track log._id) {
+      <div class="recent-item">
+        <app-status-badge [label]="log.domain" [variant]="log.domain === 'steel' ? 'steel' : 'sugar'" />
+        <span class="recent-filename">{{ log.image_filename }}</span>
+        <span class="recent-time text-muted text-sm">{{ log.timestamp?.$date | date:'short' }}</span>
+      </div>
+      }
+    </div>
+  </section>
+  }
+</div>
