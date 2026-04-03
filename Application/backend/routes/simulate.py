@@ -37,13 +37,13 @@ def simulate():
     limit = data.get("limit", DEFAULT_SIMULATION_LIMIT)
 
     # ── Validation ──
-    if not steel_dir or not sugar_dir:
-        return {"error": "Both steel_dir and sugar_dir are required"}, 400
+    if not steel_dir and not sugar_dir:
+        return {"error": "At least one directory (steel_dir or sugar_dir) is required"}, 400
 
-    if not os.path.isdir(steel_dir):
+    if steel_dir and not os.path.isdir(steel_dir):
         return {"error": f"Steel directory not found: {steel_dir}"}, 404
 
-    if not os.path.isdir(sugar_dir):
+    if sugar_dir and not os.path.isdir(sugar_dir):
         return {"error": f"Sugar directory not found: {sugar_dir}"}, 404
 
     # ── Stream SSE events ──

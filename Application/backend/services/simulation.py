@@ -29,6 +29,10 @@ def _scan_images(directory: str, limit: int = None) -> list:
         Sorted list of absolute image file paths.
     """
     images = []
+    
+    if not directory:
+        return images
+        
     dir_path = Path(directory)
 
     if not dir_path.exists():

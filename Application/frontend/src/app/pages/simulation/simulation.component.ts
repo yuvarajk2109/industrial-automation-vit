@@ -67,7 +67,7 @@ export class SimulationComponent {
   }
 
   startSimulation(): void {
-    if (!this.steelDir || !this.sugarDir) return;
+    if (!this.steelDir && !this.sugarDir) return;
 
     this.state = this.getInitialState();
     this.state.isRunning = true;
