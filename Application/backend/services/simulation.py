@@ -137,8 +137,8 @@ def run_simulation_stream(
                 "domain": domain
             })
 
-            # Run the full pipeline
-            result = run_pipeline(image_path, domain, session_id)
+            # Run the full pipeline optionally overriding gemini execution
+            result = run_pipeline(image_path, domain, session_id, skip_gemini=True)
 
             total_inference_time += result.get("total_processing_ms", 0)
 

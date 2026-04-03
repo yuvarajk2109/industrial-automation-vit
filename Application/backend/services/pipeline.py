@@ -16,7 +16,7 @@ from database.schemas import create_log_document, create_chat_document
 from models.loader import get_device
 
 
-def run_pipeline(image_path: str, domain: str, session_id: str = None) -> dict:
+def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemini: bool = False) -> dict:
     """
     Run the full analysis pipeline for a single image.
 
@@ -31,6 +31,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None) -> dict:
         image_path: Absolute path to the image file
         domain: "steel" or "sugar"
         session_id: Optional session ID (for simulation grouping)
+        skip_gemini: Whether to skip querying the Gemini model
 
     Returns:
         Complete pipeline result dict.
@@ -61,7 +62,10 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None) -> dict:
 
     # ── Step 3: Gemini Chatbot ──
     t0 = time.time()
-    gemini_response = get_initial_response(prediction, kg_result)
+    if skip_gemini:
+        gemini_response = "*Gemini generation is disabled during high-throughput virtual simulation.*"
+    else:
+        gemini_response = get_initial_response(prediction, kg_result)
     step_times["gemini_ms"] = round((time.time() - t0) * 1000, 2)
 
     # ── Step 4: Log to MongoDB ──
@@ -88,15 +92,16 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None) -> dict:
         log_id = "log_failed"
 
     # Create chat document
-    try:
-        chat_doc = create_chat_document(
-            log_id=log_id,
-            session_id=session_id,
-            initial_message=gemini_response
-        )
-        chats_collection.insert_one(chat_doc)
-    except Exception as e:
-        print(f"[CaneNexus] MongoDB chat insert failed: {e}")
+    if not skip_gemini and log_id != "log_failed":
+        try:
+            chat_doc = create_chat_document(
+                log_id=log_id,
+                session_id=session_id,
+                initial_message=gemini_response
+            )
+            chats_collection.insert_one(chat_doc)
+        except Exception as e:
+            print(f"[CaneNexus] MongoDB chat insert failed: {e}")
 
     step_times["db_ms"] = round((time.time() - t0) * 1000, 2)
 
