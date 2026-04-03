@@ -1,0 +1,23 @@
+.about-page { max-width: 900px; margin: 0 auto; }
+
+.about-hero { text-align: center; padding: var(--space-3xl) 0 var(--space-2xl); }
+.about-title { font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: var(--space-md); }
+.title-accent { background: linear-gradient(135deg, var(--clr-primary-400), var(--clr-primary-200)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.about-tagline { font-size: 1rem; color: var(--clr-text-muted); max-width: 550px; margin: 0 auto; line-height: 1.6; }
+
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin-bottom: var(--space-2xl); }
+.about-card { text-align: center; padding: var(--space-xl); }
+.card-icon { font-size: 2rem; margin-bottom: var(--space-md); color: var(--clr-primary-400); }
+.about-card h3 { font-size: 1.05rem; font-weight: 600; color: var(--clr-text-primary); margin-bottom: var(--space-sm); }
+.about-card p { font-size: 0.82rem; color: var(--clr-text-muted); line-height: 1.5; }
+
+.tech-stack { margin-bottom: var(--space-2xl); }
+.tech-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+.tech-item { display: flex; justify-content: space-between; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-sm); background: var(--clr-bg-primary); }
+.tech-label { font-size: 0.8rem; color: var(--clr-text-muted); }
+.tech-value { font-size: 0.8rem; color: var(--clr-text-secondary); font-weight: 500; }
+
+@media (max-width: 700px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .tech-grid { grid-template-columns: 1fr; }
+}
