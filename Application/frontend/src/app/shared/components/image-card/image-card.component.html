@@ -1,0 +1,22 @@
+<div class="image-card">
+  <div class="image-container">
+    <img
+      [src]="showOverlay && overlayFilename ? getOverlayUrl() : getSourceUrl()"
+      [alt]="imagePath"
+      (error)="onImageError($event)"
+    />
+    @if (overlayFilename) {
+      <button class="toggle-overlay" (click)="showOverlay = !showOverlay">
+        {{ showOverlay ? 'Original' : 'Overlay' }}
+      </button>
+    }
+    @if (domainLabel) {
+      <span class="domain-tag" [class.steel]="domainLabel === 'steel'" [class.sugar]="domainLabel === 'sugar'">
+        {{ domainLabel }}
+      </span>
+    }
+  </div>
+  @if (caption) {
+    <div class="image-caption">{{ caption }}</div>
+  }
+</div>
