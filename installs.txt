@@ -10,3 +10,19 @@ pip install segmentation_models_pytorch
 pip install pandas
 pip install matplotlib
 pip install seaborn
+
+4: CaneNexus Backend Core Dependencies
+pip install flask 
+pip install flask-cors 
+pip install pymongo 
+pip install pytest
+
+5: Image Processing & Machine Learning Utils
+pip install timm 
+pip install networkx 
+pip install opencv-python 
+pip install numpy 
+pip install Pillow
+
+6: API & Integrations
+pip install google-genai
