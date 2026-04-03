@@ -3,11 +3,12 @@ import { ApiService } from '../../core/services/api.service';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 import { DatePipe } from '@angular/common';
 import { MarkdownPipe } from '../../shared/pipes/markdown.pipe';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-logs',
   standalone: true,
-  imports: [StatusBadgeComponent, DatePipe, MarkdownPipe],
+  imports: [StatusBadgeComponent, DatePipe, MarkdownPipe, FormsModule],
   templateUrl: './logs.component.html',
   styleUrl: './logs.component.css'
 })
@@ -20,6 +21,7 @@ export class LogsComponent implements OnInit {
   totalPages = 1;
   domainFilter = '';
   selectedLog: any = null;
+  jumpPage: number = 1;
 
   constructor(private api: ApiService) {}
 
@@ -37,6 +39,7 @@ export class LogsComponent implements OnInit {
         this.logs = data.logs || [];
         this.total = data.total || 0;
         this.totalPages = data.total_pages || 1;
+        this.jumpPage = this.page;
       },
       error: () => {}
     });
@@ -52,6 +55,14 @@ export class LogsComponent implements OnInit {
     if (p < 1 || p > this.totalPages) return;
     this.page = p;
     this.loadLogs();
+  }
+
+  goToJumpPage(): void {
+    if (this.jumpPage && this.jumpPage >= 1 && this.jumpPage <= this.totalPages) {
+      this.goToPage(this.jumpPage);
+    } else {
+      this.jumpPage = this.page;
+    }
   }
 
   selectLog(log: any): void {
