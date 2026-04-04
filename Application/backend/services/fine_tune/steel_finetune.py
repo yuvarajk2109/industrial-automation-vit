@@ -262,11 +262,20 @@ def finetune_steel(model, corrections: list, config: dict, device,
 
     final_metrics = metrics_history[-1] if metrics_history else {}
 
+    # ── Filter State Dict to Steel Components Only ──
+    full_state = model.state_dict()
+    steel_state = {
+        k: v for k, v in full_state.items() 
+        if k.startswith("steel.") 
+        or k.startswith("proj_s.") 
+        or k.startswith("seg_head.")
+    }
+
     return {
         "train_loss": final_metrics.get("train_loss", 0),
         "val_loss": final_metrics.get("val_loss", 0),
         "val_accuracy": final_metrics.get("val_accuracy", 0),
         "epochs_run": len(metrics_history),
         "metrics_history": metrics_history,
-        "state_dict": model.state_dict()
+        "state_dict": steel_state
     }
