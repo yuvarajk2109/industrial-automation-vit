@@ -14,7 +14,7 @@ import { HistoryComponent } from './components/history/history.component';
 @Component({
   selector: 'app-finetune',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatusBadgeComponent, LoadingSpinnerComponent, PaginationComponent, OverviewComponent, CorrectionsComponent, VersionsComponent, HistoryComponent],
+  imports: [CommonModule, FormsModule, OverviewComponent, CorrectionsComponent, VersionsComponent, HistoryComponent],
   providers: [DatePipe],
   templateUrl: './finetune.component.html',
   styleUrl: './finetune.component.css'
