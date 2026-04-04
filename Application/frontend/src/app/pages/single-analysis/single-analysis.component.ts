@@ -188,7 +188,7 @@ export class SingleAnalysisComponent {
     if (this.showCorrectionPanel) {
       // Pre-populate
       if (this.result?.domain === 'sugar') {
-        this.correctedSugarClass = this.sugarPrediction?.predicted_class || '';
+        this.correctedSugarClass = '';
       } else if (this.result?.domain === 'steel') {
         this.initSteelCorrections();
       }
@@ -216,6 +216,9 @@ export class SingleAnalysisComponent {
       // Validate that the correction is actually different
       if (this.correctedSugarClass === this.sugarPrediction?.predicted_class) {
         return; // No change - don't submit
+      }
+      if (!this.correctedSugarClass) {
+        return; // Empty submission not allowed
       }
       correctedLabel = { class: this.correctedSugarClass };
     } else {

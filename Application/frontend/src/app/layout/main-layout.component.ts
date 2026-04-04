@@ -40,6 +40,12 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       icon: `<i class="fa-solid fa-list-check"></i>`
     },
     {
+      path: '/finetune',
+      label: 'Model Training',
+      exact: false,
+      icon: `<i class="fa-solid fa-brain"></i>`
+    },
+    {
       path: '/about',
       label: 'About',
       exact: false,

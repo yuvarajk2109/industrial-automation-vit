@@ -21,10 +21,10 @@
 
 .field-label {
   display: block;
+  margin-bottom: 6px;
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--clr-text-muted);
-  margin-bottom: var(--space-xs);
 }
 
 .drop-zone {

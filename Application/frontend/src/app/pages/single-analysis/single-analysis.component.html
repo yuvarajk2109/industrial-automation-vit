@@ -188,16 +188,24 @@
             <!-- Sugar Correction: simple dropdown -->
             @if (result.domain === 'sugar') {
             <div class="correction-field">
-              <label class="field-label">Correct Classification</label>
+              <div class="mb-md" style="margin-bottom: 12px; font-weight: 600;">
+                Predicted Class: <span class="text-primary">{{ sugarPrediction?.predicted_class }}</span>
+              </div>
+              <label class="field-label">Correct Class</label>
               <select class="correction-select" [(ngModel)]="correctedSugarClass">
-                <option value="unsaturated">Unsaturated</option>
-                <option value="metastable">Metastable</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="labile">Labile</option>
+                @if (sugarPrediction?.predicted_class !== 'unsaturated') {
+                  <option value="unsaturated">Unsaturated</option>
+                }
+                @if (sugarPrediction?.predicted_class !== 'metastable') {
+                  <option value="metastable">Metastable</option>
+                }
+                @if (sugarPrediction?.predicted_class !== 'intermediate') {
+                  <option value="intermediate">Intermediate</option>
+                }
+                @if (sugarPrediction?.predicted_class !== 'labile') {
+                  <option value="labile">Labile</option>
+                }
               </select>
-              @if (correctedSugarClass === sugarPrediction?.predicted_class) {
-              <span class="correction-hint">Same as current prediction - change to submit</span>
-              }
             </div>
             }
 
