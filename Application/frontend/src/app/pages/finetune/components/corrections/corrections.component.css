@@ -1,0 +1,24 @@
+/* ── Corrections Table ── */
+.corrections-filters { display: flex; gap: var(--space-sm); margin-bottom: var(--space-md); }
+.filter-select { padding: var(--space-sm) var(--space-md); background: var(--clr-bg-secondary); border: 1px solid rgba(76, 175, 80, 0.15); border-radius: var(--radius-sm); color: var(--clr-text-primary); font-size: 0.8rem; font-family: var(--font-primary); }
+.corrections-table { border: var(--border-subtle); border-radius: var(--radius-md); overflow: hidden; }
+.table-header { display: grid; grid-template-columns: 2fr 0.8fr 1fr 1fr 0.8fr 1.2fr; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: var(--clr-bg-tertiary); font-size: 0.7rem; font-weight: 600; color: var(--clr-text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.table-row { display: grid; grid-template-columns: 2fr 0.8fr 1fr 1fr 0.8fr 1.2fr; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); border-top: 1px solid rgba(76, 175, 80, 0.06); font-size: 0.78rem; color: var(--clr-text-secondary); align-items: center; }
+.table-row:hover { background: rgba(76, 175, 80, 0.03); }
+.cell-filename { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono); font-size: 0.72rem; }
+.cell-date { font-size: 0.7rem; color: var(--clr-text-muted); }
+.domain-pill { display: inline-block; padding: 1px 6px; border-radius: var(--radius-full); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
+.domain-pill.sugar { background: rgba(76, 175, 80, 0.15); color: var(--clr-primary-400); }
+.domain-pill.steel { background: rgba(96, 125, 139, 0.15); color: var(--clr-secondary-300); }
+.status-pill { display: inline-block; padding: 1px 6px; border-radius: var(--radius-full); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
+.status-pill.pending { background: rgba(255, 152, 0, 0.15); color: var(--clr-accent-400); }
+.status-pill.used { background: rgba(102, 187, 106, 0.15); color: var(--clr-success); }
+.pagination { display: flex; align-items: center; justify-content: center; gap: var(--space-md); padding: var(--space-md) 0; }
+.page-info { font-size: 0.75rem; color: var(--clr-text-muted); }
+/* Shared classes */
+.empty-text { font-size: 0.82rem; color: var(--clr-text-muted); text-align: center; padding: var(--space-xl) 0; }
+
+@media (max-width: 900px) {
+  .table-header, .table-row { grid-template-columns: 2fr 1fr 1fr 1fr; }
+  .table-header span:nth-child(5), .table-header span:nth-child(6), .table-row span:nth-child(5), .table-row span:nth-child(6) { display: none; }
+}

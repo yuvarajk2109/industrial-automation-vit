@@ -1,0 +1,33 @@
+<div class="history-section">
+  <div class="mt-lg">
+    <app-data-table [columns]="historyColumns" [data]="paginatedHistory"
+      emptyMessage="No fine-tune jobs yet. Submit corrections and start training!" [isRowClickable]="false"
+      fontSize="0.75rem">
+      <ng-template #rowTemplate let-job>
+        <span class="cell-time text-sm text-muted">{{ formatDate(job.created_at?.$date || job.created_at) }}</span>
+        <span class="font-mono text-sm">{{ job.job_id }}</span>
+        <span class="cell-domain">
+          <app-status-badge [label]="job.domain" [variant]="job.domain === 'steel' ? 'steel' : 'sugar'" />
+        </span>
+        <span class="font-medium">{{ job.corrections_count }}</span>
+        <span class="text-sm">
+          {{ job.metrics?.val_accuracy ? (job.metrics.val_accuracy * 100).toFixed(1) + '%' : '-' }}
+        </span>
+        <span class="cell-status">
+          @if (job.status === 'completed') {
+          <app-status-badge label="Completed" variant="success" />
+          } @else if (job.status === 'failed') {
+          <app-status-badge label="Failed" variant="error" />
+          } @else {
+          <app-status-badge label="Running" variant="warning" />
+          }
+        </span>
+      </ng-template>
+    </app-data-table>
+    <!-- Pagination -->
+    <app-pagination [page]="page" [totalPages]="totalPages" [limit]="limit"
+      [limitOptions]="[5, 10, 15, 20]" (pageChange)="onPageChange($event)"
+      (limitChange)="onLimitChange($event)">
+    </app-pagination>
+  </div>
+</div>

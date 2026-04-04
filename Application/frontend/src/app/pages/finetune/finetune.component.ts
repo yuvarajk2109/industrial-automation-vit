@@ -6,11 +6,15 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
 import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { DataTableComponent, TableColumn } from '../../shared/components/data-table/data-table.component';
+import { OverviewComponent } from './components/overview/overview.component';
+import { CorrectionsComponent } from './components/corrections/corrections.component';
+import { VersionsComponent } from './components/versions/versions.component';
+import { HistoryComponent } from './components/history/history.component';
 
 @Component({
   selector: 'app-finetune',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatusBadgeComponent, LoadingSpinnerComponent, PaginationComponent, DataTableComponent],
+  imports: [CommonModule, FormsModule, StatusBadgeComponent, LoadingSpinnerComponent, PaginationComponent, DataTableComponent, OverviewComponent, CorrectionsComponent, VersionsComponent, HistoryComponent],
   providers: [DatePipe],
   templateUrl: './finetune.component.html',
   styleUrl: './finetune.component.css'
@@ -60,7 +64,7 @@ export class FinetuneComponent implements OnInit, OnDestroy {
   successMessage: string | null = null;
   isStartingJob = false;
   isRollingBack = false;
-  activeTab: 'overview' | 'corrections' | 'versions' = 'overview';
+  activeTab: 'overview' | 'corrections' | 'versions' | 'history' = 'overview';
 
   correctionColumns: TableColumn[] = [
     { label: 'Submitted', width: '180px' },
@@ -80,7 +84,16 @@ export class FinetuneComponent implements OnInit, OnDestroy {
     { label: 'Status / Actions', width: '150px' }
   ];
 
-  constructor(private api: ApiService, private datePipe: DatePipe) {}
+  historyColumns: TableColumn[] = [
+    { label: 'Date', width: '180px' },
+    { label: 'Job ID', width: '1fR' },
+    { label: 'Domain', width: '80px' },
+    { label: 'Corrections', width: '100px' },
+    { label: 'Accuracy', width: '100px' },
+    { label: 'Status', width: '120px' }
+  ];
+
+  constructor(private api: ApiService, private datePipe: DatePipe) { }
 
   ngOnInit(): void {
     this.loadFeedbackStats();
@@ -227,7 +240,7 @@ export class FinetuneComponent implements OnInit, OnDestroy {
     });
   }
 
-  switchTab(tab: 'overview' | 'corrections' | 'versions'): void {
+  switchTab(tab: 'overview' | 'corrections' | 'versions' | 'history'): void {
     this.activeTab = tab;
     if (tab === 'corrections' && this.corrections.length === 0) {
       this.loadCorrections();
@@ -276,7 +289,11 @@ export class FinetuneComponent implements OnInit, OnDestroy {
   formatDate(dateStr: string): string {
     if (!dateStr) return '-';
     try {
-      return new Date(dateStr).toLocaleString();
+      let dStr = dateStr;
+      if (!dStr.endsWith('Z')) {
+        dStr = dStr.replace(' ', 'T') + 'Z';
+      }
+      return new Date(dStr).toLocaleString();
     } catch {
       return dateStr;
     }

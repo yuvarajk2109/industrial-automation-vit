@@ -1,0 +1,13 @@
+/* ── History ── */
+.history-list { display: flex; flex-direction: column; gap: var(--space-xs); }
+.history-item { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-sm); background: var(--clr-bg-primary); transition: background var(--transition-fast); }
+.history-item:hover { background: var(--clr-bg-tertiary); }
+.history-status { font-size: 0.85rem; }
+.history-item.completed .history-status { color: var(--clr-success); }
+.history-item.failed .history-status { color: var(--clr-error); }
+.history-details { display: flex; flex-direction: column; flex: 1; }
+.history-domain { font-size: 0.75rem; font-weight: 600; color: var(--clr-text-primary); }
+.history-date { font-size: 0.68rem; color: var(--clr-text-muted); }
+.history-meta { display: flex; flex-direction: column; align-items: flex-end; font-size: 0.7rem; color: var(--clr-text-muted); }
+/* Shared classes */
+.empty-text { font-size: 0.82rem; color: var(--clr-text-muted); text-align: center; padding: var(--space-xl) 0; }
