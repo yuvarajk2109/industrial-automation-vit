@@ -154,4 +154,108 @@ export class SingleAnalysisComponent {
   get kgDetails(): string {
     return (this.result?.knowledge_graph as any)?.details || '';
   }
+
+  // ── Correction / Feedback ──
+  showCorrectionPanel = false;
+  correctionSubmitted = false;
+  correctedSugarClass = '';
+  steelCorrections: { original_class: string; corrected_class: string; action: string }[] = [];
+  missedDefects: string[] = [];
+  correctionReason = '';
+  pendingCorrectionCount = 0;
+  isSubmittingCorrection = false;
+
+  /** Initialise steel corrections from the current defect summary */
+  initSteelCorrections(): void {
+    if (!this.steelPrediction) return;
+    this.steelCorrections = [];
+    for (const [key, val] of Object.entries(this.steelPrediction.defect_summary)) {
+      if ((val as any).detected) {
+        const cls = key.replace('class_', '');
+        this.steelCorrections.push({
+          original_class: cls,
+          corrected_class: cls,  // default to same (no change)
+          action: 'keep'
+        });
+      }
+    }
+    this.missedDefects = [];
+  }
+
+  /** Toggle the correction panel open/closed */
+  toggleCorrectionPanel(): void {
+    this.showCorrectionPanel = !this.showCorrectionPanel;
+    if (this.showCorrectionPanel) {
+      // Pre-populate
+      if (this.result?.domain === 'sugar') {
+        this.correctedSugarClass = this.sugarPrediction?.predicted_class || '';
+      } else if (this.result?.domain === 'steel') {
+        this.initSteelCorrections();
+      }
+    }
+  }
+
+  /** Add a missed defect class */
+  addMissedDefect(cls: string): void {
+    if (cls && !this.missedDefects.includes(cls)) {
+      this.missedDefects.push(cls);
+    }
+  }
+
+  /** Remove a missed defect class */
+  removeMissedDefect(cls: string): void {
+    this.missedDefects = this.missedDefects.filter(d => d !== cls);
+  }
+
+  submitCorrection(): void {
+    if (!this.result) return;
+
+    let correctedLabel: any;
+
+    if (this.result.domain === 'sugar') {
+      // Validate that the correction is actually different
+      if (this.correctedSugarClass === this.sugarPrediction?.predicted_class) {
+        return; // No change - don't submit
+      }
+      correctedLabel = { class: this.correctedSugarClass };
+    } else {
+      // Build steel correction payload
+      const corrections = this.steelCorrections
+        .filter(c => c.corrected_class !== c.original_class || c.action === 'remove')
+        .map(c => ({
+          original_class: c.original_class,
+          corrected_class: c.action === 'remove' ? 'none' : c.corrected_class,
+          action: c.action
+        }));
+
+      // If no corrections and no missed defects, nothing to submit
+      if (corrections.length === 0 && this.missedDefects.length === 0) return;
+
+      correctedLabel = {
+        type: 'region_override',
+        corrections,
+        missed_defects: this.missedDefects
+      };
+    }
+
+    this.isSubmittingCorrection = true;
+
+    this.api.submitFeedback({
+      log_id: this.result.log_id,
+      domain: this.result.domain,
+      corrected_label: correctedLabel,
+      reason: this.correctionReason
+    }).subscribe({
+      next: (res) => {
+        this.correctionSubmitted = true;
+        this.pendingCorrectionCount = res.pending_count;
+        this.showCorrectionPanel = false;
+        this.isSubmittingCorrection = false;
+      },
+      error: (err) => {
+        this.error = err.error?.error || 'Failed to submit correction.';
+        this.isSubmittingCorrection = false;
+      }
+    });
+  }
 }

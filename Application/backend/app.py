@@ -18,6 +18,8 @@ from routes.chat import chat_bp
 from routes.logs import logs_bp
 from routes.images import images_bp
 from routes.browse import browse_bp
+from routes.feedback import feedback_bp
+from routes.finetune import finetune_bp
 
 app.register_blueprint(predict_bp, url_prefix="/api")
 app.register_blueprint(simulate_bp, url_prefix="/api")
@@ -25,6 +27,8 @@ app.register_blueprint(chat_bp, url_prefix="/api")
 app.register_blueprint(logs_bp, url_prefix="/api")
 app.register_blueprint(images_bp, url_prefix="/api")
 app.register_blueprint(browse_bp, url_prefix="/api")
+app.register_blueprint(feedback_bp, url_prefix="/api")
+app.register_blueprint(finetune_bp, url_prefix="/api")
 
 
 # ── Health Check ──

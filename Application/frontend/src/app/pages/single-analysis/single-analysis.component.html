@@ -165,6 +165,116 @@
           <span class="text-xs text-muted">Gemini: {{ result.step_times.gemini_ms }}ms</span>
           <span class="text-xs text-muted">Total: {{ result.total_processing_ms }}ms</span>
         </div>
+
+        <!-- ── Correction Panel ── -->
+        @if (!correctionSubmitted) {
+        <div class="correction-section mt-md">
+          <button class="correction-toggle-btn" (click)="toggleCorrectionPanel()" [disabled]="isSubmittingCorrection">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+            </svg>
+            {{ showCorrectionPanel ? 'Cancel Correction' : 'Correct This Prediction' }}
+          </button>
+
+          @if (showCorrectionPanel) {
+          <div class="correction-panel">
+            <div class="correction-panel-header">
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" class="correction-icon">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+              <span>Select the correct classification if the model's prediction is wrong</span>
+            </div>
+
+            <!-- Sugar Correction: simple dropdown -->
+            @if (result.domain === 'sugar') {
+            <div class="correction-field">
+              <label class="field-label">Correct Classification</label>
+              <select class="correction-select" [(ngModel)]="correctedSugarClass">
+                <option value="unsaturated">Unsaturated</option>
+                <option value="metastable">Metastable</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="labile">Labile</option>
+              </select>
+              @if (correctedSugarClass === sugarPrediction?.predicted_class) {
+              <span class="correction-hint">Same as current prediction - change to submit</span>
+              }
+            </div>
+            }
+
+            <!-- Steel Correction: per-class overrides -->
+            @if (result.domain === 'steel') {
+            <div class="correction-field">
+              <label class="field-label">Detected Defect Corrections</label>
+              @for (corr of steelCorrections; track corr.original_class) {
+              <div class="steel-correction-row">
+                <span class="steel-class-label">Class {{ corr.original_class }}</span>
+                <select class="correction-select correction-select-sm" [(ngModel)]="corr.action"
+                  (ngModelChange)="corr.action === 'remove' ? corr.corrected_class = 'none' : corr.corrected_class = corr.original_class">
+                  <option value="keep">Keep as Class {{ corr.original_class }}</option>
+                  <option value="reclassify">Reclassify</option>
+                  <option value="remove">Remove (False Positive)</option>
+                </select>
+                @if (corr.action === 'reclassify') {
+                <select class="correction-select correction-select-sm" [(ngModel)]="corr.corrected_class">
+                  @for (cls of ['1','2','3','4']; track cls) {
+                    @if (cls !== corr.original_class) {
+                    <option [value]="cls">Class {{ cls }}</option>
+                    }
+                  }
+                </select>
+                }
+              </div>
+              }
+
+              <!-- Missed defects -->
+              <label class="field-label mt-md">Missed Defects (Model Failed to Detect)</label>
+              <div class="missed-defects-row">
+                @for (cls of ['1','2','3','4']; track cls) {
+                <button class="missed-defect-chip"
+                  [class.active]="missedDefects.includes(cls)"
+                  (click)="missedDefects.includes(cls) ? removeMissedDefect(cls) : addMissedDefect(cls)">
+                  Class {{ cls }}
+                  @if (missedDefects.includes(cls)) {
+                  <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                  }
+                </button>
+                }
+              </div>
+            </div>
+            }
+
+            <!-- Reason (both domains) -->
+            <div class="correction-field">
+              <label class="field-label">Reason (Optional)</label>
+              <textarea class="correction-textarea" [(ngModel)]="correctionReason"
+                placeholder="Why is this prediction wrong?" rows="2"></textarea>
+            </div>
+
+            <button class="btn btn-primary btn-sm correction-submit-btn" (click)="submitCorrection()"
+              [disabled]="isSubmittingCorrection || (result.domain === 'sugar' && correctedSugarClass === sugarPrediction?.predicted_class)">
+              @if (isSubmittingCorrection) {
+              <div class="btn-spinner"></div>
+              Submitting...
+              } @else {
+              Submit Correction
+              }
+            </button>
+          </div>
+          }
+        </div>
+        }
+
+        @if (correctionSubmitted) {
+        <div class="correction-success mt-md">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          <span>Correction submitted. <strong>{{ pendingCorrectionCount }}</strong> corrections pending for next fine-tune.</span>
+        </div>
+        }
+
       </div>
 
       @if (steelPrediction) {
