@@ -7,6 +7,7 @@ import { PipelineVisualiserComponent } from '../../shared/components/pipeline-vi
 import { ImageCardComponent } from '../../shared/components/image-card/image-card.component';
 import { KgGraphComponent } from '../../shared/components/kg-graph/kg-graph.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
+import { DropdownComponent } from '../../shared/components/dropdown/dropdown';
 import { KeyValuePipe } from '@angular/common';
 import { MarkdownPipe } from '../../shared/pipes/markdown.pipe';
 
@@ -19,6 +20,7 @@ import { MarkdownPipe } from '../../shared/pipes/markdown.pipe';
     ImageCardComponent,
     KgGraphComponent,
     StatusBadgeComponent,
+    DropdownComponent,
     KeyValuePipe,
     MarkdownPipe
   ],
@@ -165,6 +167,55 @@ export class SingleAnalysisComponent {
   pendingCorrectionCount = 0;
   isSubmittingCorrection = false;
 
+  // Dropdown options
+  sugarOptions = [
+    { label: 'Unsaturated', value: 'unsaturated' },
+    { label: 'Metastable', value: 'metastable' },
+    { label: 'Intermediate', value: 'intermediate' },
+    { label: 'Labile', value: 'labile' }
+  ];
+
+  steelActionOptions(originalClass: string) {
+    return [
+      { label: `Keep as Class ${originalClass}`, value: 'keep' },
+      { label: 'Reclassify', value: 'reclassify' },
+      { label: 'Remove (False Positive)', value: 'remove' }
+    ];
+  }
+
+  steelClassOptions(originalClass: string) {
+    return ['1', '2', '3', '4']
+      .filter(c => c !== originalClass)
+      .map(c => ({ label: `Class ${c}`, value: c }));
+  }
+
+  selectedSugarOption: any = null;
+
+  updateSugarCorrection(option: any): void {
+    if (option) {
+      this.correctedSugarClass = option.value;
+    } else {
+      this.correctedSugarClass = '';
+    }
+  }
+
+  updateSteelAction(corr: any, option: any): void {
+    if (option) {
+      corr.action = option.value;
+      if (corr.action === 'remove') {
+        corr.corrected_class = 'none';
+      } else {
+        corr.corrected_class = corr.original_class;
+      }
+    }
+  }
+
+  updateSteelClass(corr: any, option: any): void {
+    if (option) {
+      corr.corrected_class = option.value;
+    }
+  }
+
   /** Initialise steel corrections from the current defect summary */
   initSteelCorrections(): void {
     if (!this.steelPrediction) return;
@@ -189,6 +240,7 @@ export class SingleAnalysisComponent {
       // Pre-populate
       if (this.result?.domain === 'sugar') {
         this.correctedSugarClass = '';
+        this.selectedSugarOption = null;
       } else if (this.result?.domain === 'steel') {
         this.initSteelCorrections();
       }

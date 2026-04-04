@@ -1,15 +1,18 @@
 <div class="corrections-section">
   <div class="corrections-filters">
-    <select class="filter-select" [ngModel]="correctionFilter" (ngModelChange)="correctionFilterChange.emit($event); onFilterChangeLocal()">
-      <option value="all">All Domains</option>
-      <option value="sugar">Sugar</option>
-      <option value="steel">Steel</option>
-    </select>
-    <select class="filter-select" [ngModel]="correctionStatusFilter" (ngModelChange)="correctionStatusFilterChange.emit($event); onFilterChangeLocal()">
-      <option value="all">All Statuses</option>
-      <option value="pending">Pending</option>
-      <option value="used">Used</option>
-    </select>
+    <app-dropdown 
+      variant="filter"
+      [data]="domainOptions" 
+      [selected]="{value: correctionFilter, label: correctionFilter === 'sugar' ? 'Sugar' : (correctionFilter === 'steel' ? 'Steel' : 'All Domains')}"
+      (selectionChange)="onDomainFilterChange($event)">
+    </app-dropdown>
+
+    <app-dropdown 
+      variant="filter"
+      [data]="statusOptions" 
+      [selected]="{value: correctionStatusFilter, label: correctionStatusFilter === 'pending' ? 'Pending' : (correctionStatusFilter === 'used' ? 'Used' : 'All Statuses')}"
+      (selectionChange)="onStatusFilterChange($event)">
+    </app-dropdown>
   </div>
 
   @if (correctionsLoading) {

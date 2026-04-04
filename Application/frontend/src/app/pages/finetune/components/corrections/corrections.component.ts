@@ -5,11 +5,12 @@ import { StatusBadgeComponent } from '../../../../shared/components/status-badge
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/data-table/data-table.component';
+import { DropdownComponent } from '../../../../shared/components/dropdown/dropdown';
 
 @Component({
   selector: 'app-corrections',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatusBadgeComponent, LoadingSpinnerComponent, PaginationComponent, DataTableComponent],
+  imports: [CommonModule, FormsModule, StatusBadgeComponent, LoadingSpinnerComponent, PaginationComponent, DataTableComponent, DropdownComponent],
   templateUrl: './corrections.component.html',
   styleUrl: './corrections.component.css'
 })
@@ -56,6 +57,32 @@ export class CorrectionsComponent {
       return String(dateStr);
     } catch {
       return String(dateStr);
+    }
+  }
+
+  domainOptions = [
+    { label: 'All Domains', value: 'all' },
+    { label: 'Sugar', value: 'sugar' },
+    { label: 'Steel', value: 'steel' }
+  ];
+
+  statusOptions = [
+    { label: 'All Statuses', value: 'all' },
+    { label: 'Pending', value: 'pending' },
+    { label: 'Used', value: 'used' }
+  ];
+
+  onDomainFilterChange(option: any) {
+    if (option) {
+      this.correctionFilterChange.emit(option.value);
+      this.onFilterChangeLocal();
+    }
+  }
+
+  onStatusFilterChange(option: any) {
+    if (option) {
+      this.correctionStatusFilterChange.emit(option.value);
+      this.onFilterChangeLocal();
     }
   }
 }

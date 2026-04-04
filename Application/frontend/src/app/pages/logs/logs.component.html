@@ -53,7 +53,7 @@
   </app-pagination>
 
   <!-- Detail Modal -->
-  @if (selectedLog) {
+  @if (selectedLog && !correctionMode) {
     <div class="modal-overlay" (click)="selectLog(null)">
       <div class="modal-content card" (click)="$event.stopPropagation()">
         <div class="modal-header">
@@ -85,98 +85,109 @@
           @if (correctionSubmitted) {
           <div class="correction-success-banner">
             <i class="fa-solid fa-circle-check"></i>
-            <span>Correction submitted. <strong>{{ pendingCorrectionCount }}</strong> corrections pending for next fine-tune.</span>
+            <span>Correction submitted. <strong>{{ getPendingCount(selectedLog.domain) }}</strong> corrections pending for next fine-tune.</span>
           </div>
           } @else {
-          <button class="correction-toggle-btn" (click)="toggleCorrection()" [disabled]="isSubmittingCorrection">
-            <i class="fa-solid" [class.fa-flag]="!correctionMode" [class.fa-xmark]="correctionMode"></i>
-            {{ correctionMode ? 'Cancel Correction' : 'Flag for Correction' }}
+          <button class="btn btn-primary w-full" (click)="toggleCorrection()" [disabled]="isSubmittingCorrection">
+            <i class="fa-solid fa-flag"></i>
+            Flag for Correction
           </button>
-
-          @if (correctionMode) {
-          <div class="correction-panel mt-md">
-            <!-- Sugar -->
-            @if (selectedLog.domain === 'sugar') {
-            <div class="correction-field">
-              <div class="mb-md" style="margin-bottom: 12px; font-weight: 600;">
-                Predicted Class: <span class="text-primary">{{ selectedLog.model_prediction?.predicted_class }}</span>
-              </div>
-              <label class="field-label">Correct Class</label>
-              <select class="correction-select" [(ngModel)]="correctedSugarClass">
-                @if (selectedLog.model_prediction?.predicted_class !== 'unsaturated') {
-                  <option value="unsaturated">Unsaturated</option>
-                }
-                @if (selectedLog.model_prediction?.predicted_class !== 'metastable') {
-                  <option value="metastable">Metastable</option>
-                }
-                @if (selectedLog.model_prediction?.predicted_class !== 'intermediate') {
-                  <option value="intermediate">Intermediate</option>
-                }
-                @if (selectedLog.model_prediction?.predicted_class !== 'labile') {
-                  <option value="labile">Labile</option>
-                }
-              </select>
-            </div>
-            }
-
-            <!-- Steel -->
-            @if (selectedLog.domain === 'steel') {
-            <div class="correction-field">
-              <label class="field-label">Detected Defect Corrections</label>
-              @for (corr of steelCorrections; track corr.original_class) {
-              <div class="steel-correction-row">
-                <span class="steel-class-label">Class {{ corr.original_class }}</span>
-                <select class="correction-select correction-select-sm" [(ngModel)]="corr.action"
-                  (ngModelChange)="corr.action === 'remove' ? corr.corrected_class = 'none' : corr.corrected_class = corr.original_class">
-                  <option value="keep">Keep</option>
-                  <option value="reclassify">Reclassify</option>
-                  <option value="remove">Remove (False Positive)</option>
-                </select>
-                @if (corr.action === 'reclassify') {
-                <select class="correction-select correction-select-sm" [(ngModel)]="corr.corrected_class">
-                  @for (cls of ['1','2','3','4']; track cls) {
-                    @if (cls !== corr.original_class) {
-                    <option [value]="cls">Class {{ cls }}</option>
-                    }
-                  }
-                </select>
-                }
-              </div>
-              }
-
-              <label class="field-label mt-md">Missed Defects</label>
-              <div class="missed-defects-row">
-                @for (cls of ['1','2','3','4']; track cls) {
-                <button class="missed-defect-chip"
-                  [class.active]="missedDefects.includes(cls)"
-                  (click)="missedDefects.includes(cls) ? removeMissedDefect(cls) : addMissedDefect(cls)">
-                  Class {{ cls }}
-                </button>
-                }
-              </div>
-            </div>
-            }
-
-            <!-- Reason -->
-            <div class="correction-field">
-              <label class="field-label">Reason (Optional)</label>
-              <textarea class="correction-textarea" [(ngModel)]="correctionReason"
-                placeholder="Why is this prediction wrong?" rows="2"></textarea>
-            </div>
-
-            <button class="btn btn-primary w-full" (click)="submitLogCorrection()" [disabled]="isSubmittingCorrection">
-              @if (isSubmittingCorrection) {
-              <div class="btn-spinner"></div> Submitting...
-              } @else {
-              Submit Correction
-              }
-            </button>
-          </div>
-          }
           }
         </div>
       </div>
     </div>
   }
-</div>
 
+  <!-- Correction Modal -->
+  @if (selectedLog && correctionMode) {
+    <div class="modal-overlay" (click)="toggleCorrection()">
+      <div class="modal-content card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Correct Prediction</h2>
+          <button class="close-btn" (click)="toggleCorrection()" aria-label="Close modal">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="detail-grid mt-md mb-lg" style="margin-bottom: 24px;">
+          <div class="detail-item"><span class="text-xs text-muted">Image</span><span class="text-sm font-semibold">{{ selectedLog.image_filename }}</span></div>
+          <div class="detail-item">
+            <span class="text-xs text-muted">Domain</span>
+            <span class="text-sm"><app-status-badge [label]="selectedLog.domain" [variant]="selectedLog.domain === 'steel' ? 'steel' : 'sugar'"/></span>
+          </div>
+        </div>
+
+        <div class="correction-panel">
+          <!-- Sugar -->
+          @if (selectedLog.domain === 'sugar') {
+          <div class="correction-field">
+            <div class="mb-md" style="margin-bottom: 12px; font-weight: 600;">
+              Predicted Class: <span class="text-primary">{{ selectedLog.model_prediction?.predicted_class }}</span>
+            </div>
+            <label class="field-label">Correct Class</label>
+            <app-dropdown 
+              [data]="sugarOptions" 
+              label="Choose Corrected Class"
+              [selected]="selectedSugarOption"
+              (selectionChange)="updateSugarCorrection($event)">
+            </app-dropdown>
+          </div>
+          }
+
+          <!-- Steel -->
+          @if (selectedLog.domain === 'steel') {
+          <div class="correction-field">
+            <label class="field-label">Detected Defect Corrections</label>
+            @for (corr of steelCorrections; track corr.original_class) {
+            <div class="steel-correction-row">
+              <span class="steel-class-label">Class {{ corr.original_class }}</span>
+              <app-dropdown 
+                size="small"
+                [data]="steelActionOptions(corr.original_class)"
+                [selected]="{value: corr.action, label: corr.action === 'keep' ? 'Keep' : (corr.action === 'reclassify' ? 'Reclassify' : 'Remove (False Positive)')}"
+                (selectionChange)="updateSteelAction(corr, $event)">
+              </app-dropdown>
+              @if (corr.action === 'reclassify') {
+              <app-dropdown 
+                size="small"
+                label="Choose Correct class"
+                [data]="steelClassOptions(corr.original_class)"
+                [selected]="corr.corrected_class !== corr.original_class ? {value: corr.corrected_class, label: 'Class ' + corr.corrected_class} : null"
+                (selectionChange)="updateSteelClass(corr, $event)">
+              </app-dropdown>
+              }
+            </div>
+            }
+
+            <label class="field-label mt-md">Missed Defects</label>
+            <div class="missed-defects-row">
+              @for (cls of ['1','2','3','4']; track cls) {
+              <button class="missed-defect-chip"
+                [class.active]="missedDefects.includes(cls)"
+                (click)="missedDefects.includes(cls) ? removeMissedDefect(cls) : addMissedDefect(cls)">
+                Class {{ cls }}
+              </button>
+              }
+            </div>
+          </div>
+          }
+
+          <!-- Reason -->
+          <div class="correction-field">
+            <label class="field-label">Reason (Optional)</label>
+            <textarea class="correction-textarea" [(ngModel)]="correctionReason"
+              placeholder="Why is this prediction wrong?" rows="2"></textarea>
+          </div>
+
+          <button class="btn btn-primary w-full mt-md" (click)="submitLogCorrection()" [disabled]="isSubmittingCorrection">
+            @if (isSubmittingCorrection) {
+            <div class="btn-spinner"></div> Submitting...
+            } @else {
+            Submit Correction
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

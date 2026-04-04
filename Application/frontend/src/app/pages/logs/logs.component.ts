@@ -45,11 +45,22 @@ export class LogsComponent implements OnInit {
   correctionSubmitted = false;
   pendingCorrectionCount = 0;
   correctedLogIds = new Set<string>();
+  feedbackStats: any = null;
 
   constructor(private api: ApiService) {}
 
   ngOnInit(): void {
     this.loadLogs();
+    this.loadFeedbackStats();
+  }
+
+  loadFeedbackStats(): void {
+    this.api.getFeedbackStats().subscribe({
+      next: (res) => {
+        this.feedbackStats = res;
+      },
+      error: () => {}
+    });
   }
 
   loadLogs(): void {
@@ -233,8 +244,10 @@ export class LogsComponent implements OnInit {
   updateSugarCorrection(option: any): void {
     if (option) {
       this.correctedSugarClass = option.value;
+      this.selectedSugarOption = option;
     } else {
       this.correctedSugarClass = '';
+      this.selectedSugarOption = null;
     }
   }
 
@@ -253,6 +266,10 @@ export class LogsComponent implements OnInit {
     if (option) {
       corr.corrected_class = option.value;
     }
+  }
+
+  getPendingCount(domain: string): number {
+    return this.feedbackStats?.per_domain?.[domain]?.pending || 0;
   }
 }
 

@@ -5,12 +5,13 @@ import { SimulationService } from '../../core/services/simulation.service';
 import { SimulationState, SimulationSummary, CompletedImage, SimulationEvent } from '../../core/models/simulation.model';
 import { PipelineVisualiserComponent } from '../../shared/components/pipeline-visualiser/pipeline-visualiser.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
+import { DropdownComponent } from '../../shared/components/dropdown/dropdown';
 import { ApiService } from '../../core/services/api.service';
 
 @Component({
   selector: 'app-simulation',
   standalone: true,
-  imports: [FormsModule, RouterLink, PipelineVisualiserComponent, StatusBadgeComponent],
+  imports: [FormsModule, RouterLink, PipelineVisualiserComponent, StatusBadgeComponent, DropdownComponent],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.css'
 })
@@ -206,8 +207,10 @@ export class SimulationComponent {
     this.correctionReason = '';
     this.missedDefects = [];
 
+    // Dropdown prep
     if (img.domain === 'sugar') {
       this.correctedSugarClass = '';
+      this.selectedSugarOption = null;
     } else {
       // Build steel corrections from prediction
       this.steelCorrections = [];
@@ -281,4 +284,53 @@ export class SimulationComponent {
   }
 
   Math = Math;
+
+  // Dropdown options
+  sugarOptions = [
+    { label: 'Unsaturated', value: 'unsaturated' },
+    { label: 'Metastable', value: 'metastable' },
+    { label: 'Intermediate', value: 'intermediate' },
+    { label: 'Labile', value: 'labile' }
+  ];
+
+  steelActionOptions(originalClass: string) {
+    return [
+      { label: `Keep as Class ${originalClass}`, value: 'keep' },
+      { label: 'Reclassify', value: 'reclassify' },
+      { label: 'Remove (False Positive)', value: 'remove' }
+    ];
+  }
+
+  steelClassOptions(originalClass: string) {
+    return ['1', '2', '3', '4']
+      .filter(c => c !== originalClass)
+      .map(c => ({ label: `Class ${c}`, value: c }));
+  }
+
+  selectedSugarOption: any = null;
+
+  updateSugarCorrection(option: any): void {
+    if (option) {
+      this.correctedSugarClass = option.value;
+    } else {
+      this.correctedSugarClass = '';
+    }
+  }
+
+  updateSteelAction(corr: any, option: any): void {
+    if (option) {
+      corr.action = option.value;
+      if (corr.action === 'remove') {
+        corr.corrected_class = 'none';
+      } else {
+        corr.corrected_class = corr.original_class;
+      }
+    }
+  }
+
+  updateSteelClass(corr: any, option: any): void {
+    if (option) {
+      corr.corrected_class = option.value;
+    }
+  }
 }

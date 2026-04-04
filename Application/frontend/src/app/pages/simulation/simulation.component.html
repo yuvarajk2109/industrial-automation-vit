@@ -142,7 +142,6 @@
             <div class="completed-card card-glass" [class.flagged]="correctionSubmittedIds.has(img.index)">
               <div class="cc-header">
                 <app-status-badge [label]="img.domain" [variant]="img.domain === 'steel' ? 'steel' : 'sugar'"/>
-                <span class="text-xs text-muted">{{ img.total_ms }}ms</span>
                 <!-- Flag button -->
                 <button class="flag-btn" [class.submitted]="correctionSubmittedIds.has(img.index)"
                   (click)="flagImage(img)" [disabled]="correctionSubmittedIds.has(img.index)"
@@ -155,7 +154,10 @@
                 </button>
               </div>
               <span class="cc-filename truncate">{{ img.filename }}</span>
-              <app-status-badge [label]="getDecisionBadge(img).label" [variant]="getDecisionBadge(img).variant"/>
+              <div class="cc-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                <app-status-badge [label]="getDecisionBadge(img).label" [variant]="getDecisionBadge(img).variant"/>
+                <span class="text-xs text-muted">{{ img.total_ms }}ms</span>
+              </div>
             </div>
           }
         </div>
@@ -184,20 +186,12 @@
               Predicted Class: <span class="text-primary">{{ flaggedImage.prediction?.predicted_class }}</span>
             </div>
             <label class="field-label">Correct Class</label>
-            <select class="correction-select" [(ngModel)]="correctedSugarClass">
-              @if (flaggedImage.prediction?.predicted_class !== 'unsaturated') {
-                <option value="unsaturated">Unsaturated</option>
-              }
-              @if (flaggedImage.prediction?.predicted_class !== 'metastable') {
-                <option value="metastable">Metastable</option>
-              }
-              @if (flaggedImage.prediction?.predicted_class !== 'intermediate') {
-                <option value="intermediate">Intermediate</option>
-              }
-              @if (flaggedImage.prediction?.predicted_class !== 'labile') {
-                <option value="labile">Labile</option>
-              }
-            </select>
+            <app-dropdown 
+              [data]="sugarOptions" 
+              label="Choose Corrected Class"
+              [selected]="selectedSugarOption"
+              (selectionChange)="updateSugarCorrection($event)">
+            </app-dropdown>
           </div>
           }
 
@@ -208,20 +202,20 @@
             @for (corr of steelCorrections; track corr.original_class) {
             <div class="steel-correction-row">
               <span class="steel-class-label">Class {{ corr.original_class }}</span>
-              <select class="correction-select correction-select-sm" [(ngModel)]="corr.action"
-                (ngModelChange)="corr.action === 'remove' ? corr.corrected_class = 'none' : corr.corrected_class = corr.original_class">
-                <option value="keep">Keep</option>
-                <option value="reclassify">Reclassify</option>
-                <option value="remove">Remove (False Positive)</option>
-              </select>
+              <app-dropdown 
+                size="small"
+                [data]="steelActionOptions(corr.original_class)"
+                [selected]="{value: corr.action, label: corr.action === 'keep' ? 'Keep' : (corr.action === 'reclassify' ? 'Reclassify' : 'Remove (False Positive)')}"
+                (selectionChange)="updateSteelAction(corr, $event)">
+              </app-dropdown>
               @if (corr.action === 'reclassify') {
-              <select class="correction-select correction-select-sm" [(ngModel)]="corr.corrected_class">
-                @for (cls of ['1','2','3','4']; track cls) {
-                  @if (cls !== corr.original_class) {
-                  <option [value]="cls">Class {{ cls }}</option>
-                  }
-                }
-              </select>
+              <app-dropdown 
+                size="small"
+                label="Choose Correct class"
+                [data]="steelClassOptions(corr.original_class)"
+                [selected]="corr.corrected_class !== corr.original_class ? {value: corr.corrected_class, label: 'Class ' + corr.corrected_class} : null"
+                (selectionChange)="updateSteelClass(corr, $event)">
+              </app-dropdown>
               }
             </div>
             }
