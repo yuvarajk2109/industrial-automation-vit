@@ -140,6 +140,16 @@ def save_finetuned_model(
         except Exception as e:
             print(f"[CaneNexus] Base version registration failed: {e}")
         parent_version = 1
+    else:
+        # parent_version > 0: The previous active version was just archived.
+        # We MUST update its checkpoint_filename in the database.
+        try:
+            model_versions_collection.update_one(
+                {"domain": domain, "version": parent_version},
+                {"$set": {"checkpoint_filename": archive_filename}}
+            )
+        except Exception as e:
+            print(f"[CaneNexus] Failed to update parent version filename: {e}")
 
     # 2. Save new model
     torch.save(state_dict, str(model_path))
@@ -217,7 +227,11 @@ def rollback_model(domain: str, target_version: int) -> dict:
     current_version = get_active_version(domain)
     if current_version > 0:
         # The current active is being archived — its version stays in the registry
-        pass
+        # We MUST update its checkpoint_filename in the database to the archive file.
+        model_versions_collection.update_one(
+            {"domain": domain, "version": current_version},
+            {"$set": {"checkpoint_filename": archive_filename}}
+        )
 
     # 2. Copy target → active
     shutil.copy2(str(target_path), str(model_path))

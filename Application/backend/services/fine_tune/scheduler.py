@@ -26,6 +26,34 @@ _job_lock = threading.Lock()
 
 def get_current_job() -> dict | None:
     """Return the current/most-recent job status."""
+    global _current_job
+    if _current_job is None:
+        # Load the most recent job from the DB if memory was wiped (e.g., server restart)
+        recent = list(finetune_jobs_collection.find().sort("created_at", -1).limit(1))
+        if recent:
+            doc = recent[0]
+            status = doc.get("status")
+            # If a running job was interrupted by a crash, mark it correctly in memory
+            if status == "running":
+                status = "failed"
+                doc["error_message"] = "Job interrupted by server restart."
+
+            _current_job = {
+                "job_id": doc.get("job_id"),
+                "domain": doc.get("domain", ""),
+                "status": status,
+                "corrections_count": doc.get("corrections_count", 0),
+                "config": doc.get("config", {}),
+                "metrics": doc.get("metrics"),
+                "model_version_created": doc.get("model_version_created"),
+                "error_message": doc.get("error_message")
+            }
+            
+            if doc.get("started_at") and hasattr(doc["started_at"], "isoformat"):
+                _current_job["started_at"] = doc["started_at"].isoformat()
+            if doc.get("completed_at") and hasattr(doc["completed_at"], "isoformat"):
+                _current_job["completed_at"] = doc["completed_at"].isoformat()
+
     return _current_job
 
 
