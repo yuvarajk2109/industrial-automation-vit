@@ -1,0 +1,63 @@
+<div class="dropdown-wrapper" [class.filter-variant]="variant === 'filter'" [class.size-small]="size === 'small'">
+    <!-- Trigger -->
+    <div class="trigger-row">
+        <button type="button" class="dropdown-trigger" [class.input-field]="variant === 'input'"
+            [class.filter-btn]="variant === 'filter'" [class.active-filter]="variant === 'filter' && hasSelection"
+            [class.error]="hasError" [disabled]="disabled" (click)="toggle()">
+            @if (icon) {
+            <i [class]="icon" class="trigger-icon"></i>
+            }
+            @if (!hasSelection) {
+            <span class="placeholder-text">{{ label }}</span>
+            } @else {
+            <span class="selected-text">{{ displayLabel }}</span>
+            }
+            <i class="fa-solid fa-chevron-down chevron-icon" [class.open]="isOpen"></i>
+        </button>
+        @if (clearable && hasSelection && !multiselect) {
+        <button type="button" class="clear-btn" (click)="clear($event)" title="Clear">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        }
+    </div>
+
+    <!-- Dropdown Panel (portaled to body) -->
+    <div #panel class="dropdown-panel" [class.open-upwards]="openUpwards" [style.position]="'fixed'"
+        [style.top.px]="panelTop" [style.bottom.px]="panelBottom" [style.left.px]="panelLeft"
+        [style.min-width.px]="panelWidth" [style.display]="isOpen ? 'block' : 'none'">
+        @if (search) {
+        <input type="text" class="dropdown-search" placeholder="Search..." [(ngModel)]="searchTerm" />
+        }
+        @if (allOrNone && multiselect) {
+        <div class="dropdown-actions">
+            <button type="button" class="action-btn" (click)="selectAll($event)">All</button>
+            <button type="button" class="action-btn" (click)="clearAll($event)">None</button>
+        </div>
+        }
+        <div class="dropdown-options">
+            @for (item of filteredData; track item[valueKey]) {
+            @if (multiselect) {
+            <label class="dropdown-option" [class.locked]="isLocked(item)">
+                <input type="checkbox" class="option-checkbox" [checked]="isSelected(item)" [disabled]="isLocked(item)"
+                    (change)="toggleItem(item, $event)" />
+                <span class="option-label">{{ item[displayKey] }}</span>
+                @if (secondaryDisplayKey && item[secondaryDisplayKey]) {
+                <span class="option-secondary">({{ item[secondaryDisplayKey] }})</span>
+                }
+            </label>
+            } @else {
+            <button type="button" class="dropdown-option" [class.selected]="isSelected(item)"
+                (click)="selectItem(item)">
+                <span class="option-label">{{ item[displayKey] }}</span>
+                @if (secondaryDisplayKey && item[secondaryDisplayKey]) {
+                <span class="option-secondary">{{ item[secondaryDisplayKey] }}</span>
+                }
+            </button>
+            }
+            }
+            @if (filteredData.length === 0) {
+            <div class="dropdown-empty">No results found</div>
+            }
+        </div>
+    </div>
+</div>
