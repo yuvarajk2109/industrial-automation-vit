@@ -6,11 +6,12 @@ import { MarkdownPipe } from '../../shared/pipes/markdown.pipe';
 import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { DataTableComponent, TableColumn } from '../../shared/components/data-table/data-table.component';
+import { DropdownComponent } from '../../shared/components/dropdown/dropdown';
 
 @Component({
   selector: 'app-logs',
   standalone: true,
-  imports: [StatusBadgeComponent, DatePipe, MarkdownPipe, FormsModule, PaginationComponent, DataTableComponent],
+  imports: [StatusBadgeComponent, DatePipe, MarkdownPipe, FormsModule, PaginationComponent, DataTableComponent, DropdownComponent],
   templateUrl: './logs.component.html',
   styleUrl: './logs.component.css'
 })
@@ -90,7 +91,7 @@ export class LogsComponent implements OnInit {
   selectLog(log: any): void {
     this.selectedLog = this.selectedLog === log ? null : log;
     this.correctionMode = false;
-    this.correctionSubmitted = false;
+    this.correctionSubmitted = this.selectedLog ? this.isLogCorrected(this.selectedLog) : false;
   }
 
   setLimit(newLimit: number): void {
@@ -115,7 +116,7 @@ export class LogsComponent implements OnInit {
   }
 
   isLogCorrected(log: any): boolean {
-    return this.correctedLogIds.has(this.getLogId(log));
+    return this.correctedLogIds.has(this.getLogId(log)) || !!log.has_pending_correction;
   }
 
   // ── Correction Methods ──
@@ -127,6 +128,7 @@ export class LogsComponent implements OnInit {
       this.missedDefects = [];
       if (this.selectedLog.domain === 'sugar') {
         this.correctedSugarClass = '';
+        this.selectedSugarOption = null;
       } else {
         this.initSteelCorrections();
       }
@@ -203,6 +205,54 @@ export class LogsComponent implements OnInit {
         this.isSubmittingCorrection = false;
       }
     });
+  }
+  // Dropdown options
+  sugarOptions = [
+    { label: 'Unsaturated', value: 'unsaturated' },
+    { label: 'Metastable', value: 'metastable' },
+    { label: 'Intermediate', value: 'intermediate' },
+    { label: 'Labile', value: 'labile' }
+  ];
+
+  steelActionOptions(originalClass: string) {
+    return [
+      { label: `Keep as Class ${originalClass}`, value: 'keep' },
+      { label: 'Reclassify', value: 'reclassify' },
+      { label: 'Remove (False Positive)', value: 'remove' }
+    ];
+  }
+
+  steelClassOptions(originalClass: string) {
+    return ['1', '2', '3', '4']
+      .filter(c => c !== originalClass)
+      .map(c => ({ label: `Class ${c}`, value: c }));
+  }
+
+  selectedSugarOption: any = null;
+
+  updateSugarCorrection(option: any): void {
+    if (option) {
+      this.correctedSugarClass = option.value;
+    } else {
+      this.correctedSugarClass = '';
+    }
+  }
+
+  updateSteelAction(corr: any, option: any): void {
+    if (option) {
+      corr.action = option.value;
+      if (corr.action === 'remove') {
+        corr.corrected_class = 'none';
+      } else {
+        corr.corrected_class = corr.original_class;
+      }
+    }
+  }
+
+  updateSteelClass(corr: any, option: any): void {
+    if (option) {
+      corr.corrected_class = option.value;
+    }
   }
 }
 
