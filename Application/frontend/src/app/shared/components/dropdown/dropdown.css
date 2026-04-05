@@ -17,7 +17,7 @@
     gap: 0.375rem;
 }
 
-/* ─── Input Variant Trigger ───────────────────────────────────────── */
+/* -─ Input Variant Trigger --------------------─ */
 .dropdown-trigger.input-field {
     display: flex;
     align-items: center;
@@ -53,7 +53,7 @@
     opacity: 0.7;
 }
 
-/* ─── Filter Variant Trigger ──────────────────────────────────────── */
+/* -─ Filter Variant Trigger -------------------- */
 .dropdown-trigger.filter-btn {
     display: flex;
     align-items: center;
@@ -84,7 +84,7 @@
     font-weight: 600;
 }
 
-/* ─── Trigger Icons & Text ────────────────────────────────────────── */
+/* -─ Trigger Icons & Text --------------------- */
 .trigger-icon {
     font-size: 0.8rem;
     flex-shrink: 0;
@@ -118,7 +118,7 @@
     color: inherit;
 }
 
-/* ─── Clear Button ────────────────────────────────────────────────── */
+/* -─ Clear Button ------------------------- */
 .clear-btn {
     background: none;
     border: none;
@@ -134,7 +134,7 @@
     color: var(--error);
 }
 
-/* ─── Dropdown Panel (fixed, portaled to body) ────────────────────── */
+/* -─ Dropdown Panel (fixed, portaled to body) ----------- */
 .dropdown-panel {
     background-color: #ffffff;
     border: none;
@@ -180,7 +180,7 @@
     }
 }
 
-/* ─── Search ──────────────────────────────────────────────────────── */
+/* -─ Search ---------------------------- */
 .dropdown-search {
     width: 100%;
     padding: 0.5rem 0.75rem;
@@ -201,7 +201,7 @@
     color: var(--text-muted);
 }
 
-/* ─── All/None Actions ────────────────────────────────────────────── */
+/* -─ All/None Actions ----------------------- */
 .dropdown-actions {
     display: flex;
     justify-content: flex-end;
@@ -228,7 +228,7 @@
     color: var(--primary-text);
 }
 
-/* ─── Options ─────────────────────────────────────────────────────── */
+/* -─ Options ---------------------------─ */
 .dropdown-option {
     display: flex;
     align-items: center;
@@ -282,7 +282,7 @@ button.dropdown-option.selected {
     flex-shrink: 0;
 }
 
-/* ─── Empty ───────────────────────────────────────────────────────── */
+/* -─ Empty ----------------------------─ */
 .dropdown-empty {
     padding: 1rem;
     text-align: center;
@@ -290,7 +290,7 @@ button.dropdown-option.selected {
     font-size: 0.8125rem;
 }
 
-/* ─── Size: Small ─────────────────────────────────────────────────── */
+/* -─ Size: Small -------------------------─ */
 .dropdown-wrapper.size-small .dropdown-trigger.input-field {
     height: 32px;
     padding: 0 0.5rem;

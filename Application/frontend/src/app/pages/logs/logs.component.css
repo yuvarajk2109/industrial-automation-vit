@@ -153,14 +153,14 @@
     color: var(--clr-text-primary);
 }
 
-/* ── Flag Column ── */
+/* - Flag Column - */
 .col-flag {
     display: flex;
     justify-content: center;
     font-size: 0.75rem;
 }
 
-/* ── Log Correction Section ── */
+/* - Log Correction Section - */
 .log-correction-section {
     border-top: var(--border-subtle);
     padding-top: var(--space-lg);

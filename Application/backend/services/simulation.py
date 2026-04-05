@@ -65,7 +65,7 @@ def run_simulation_stream(
     """
     session_id = str(uuid.uuid4())
 
-    # ── Scan directories ──
+    # - Scan directories -
     limit = limit_per_domain if limit_per_domain > 0 else None
     steel_images = _scan_images(steel_dir, limit)
     sugar_images = _scan_images(sugar_dir, limit)
@@ -74,7 +74,7 @@ def run_simulation_stream(
     total_sugar = len(sugar_images)
     total = total_steel + total_sugar
 
-    # ── Create simulation document ──
+    # - Create simulation document -
     sim_doc = create_simulation_document(
         session_id=session_id,
         steel_directory=steel_dir,
@@ -88,7 +88,7 @@ def run_simulation_stream(
     except Exception as e:
         print(f"[CaneNexus] Simulation doc insert failed: {e}")
 
-    # ── Yield simulation start event ──
+    # - Yield simulation start event -
     yield _sse_event({
         "step": "simulation_start",
         "session_id": session_id,
@@ -98,14 +98,14 @@ def run_simulation_stream(
         "limit_per_domain": limit_per_domain
     })
 
-    # ── Build processing queue ──
+    # - Build processing queue -
     queue = []
     for path in steel_images:
         queue.append((path, "steel"))
     for path in sugar_images:
         queue.append((path, "sugar"))
 
-    # ── Counters for summary ──
+    # - Counters for summary -
     summary = {
         "steel": {"accept": 0, "downgrade": 0, "reject": 0, "manual_inspection": 0},
         "sugar": {"unsaturated": 0, "metastable": 0, "intermediate": 0, "labile": 0}
@@ -113,7 +113,7 @@ def run_simulation_stream(
     processed = 0
     total_inference_time = 0
 
-    # ── Process each image ──
+    # - Process each image -
     for i, (image_path, domain) in enumerate(queue):
         filename = os.path.basename(image_path)
         index = i + 1
@@ -215,7 +215,7 @@ def run_simulation_stream(
             })
             processed += 1
 
-    # ── Update simulation document ──
+    # - Update simulation document -
     try:
         simulations_collection.update_one(
             {"session_id": session_id},
@@ -229,7 +229,7 @@ def run_simulation_stream(
     except Exception as e:
         print(f"[CaneNexus] Simulation update failed: {e}")
 
-    # ── Final event ──
+    # - Final event -
     yield _sse_event({
         "step": "simulation_complete",
         "session_id": session_id,

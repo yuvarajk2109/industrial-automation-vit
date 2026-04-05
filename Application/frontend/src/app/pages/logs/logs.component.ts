@@ -35,7 +35,7 @@ export class LogsComponent implements OnInit {
     { label: 'Time', width: '70px' }
   ];
 
-  // ── Correction State ──
+  // - Correction State -
   correctionMode = false;
   correctedSugarClass = '';
   steelCorrections: { original_class: string; corrected_class: string; action: string }[] = [];
@@ -130,7 +130,7 @@ export class LogsComponent implements OnInit {
     return this.correctedLogIds.has(this.getLogId(log)) || !!log.has_pending_correction;
   }
 
-  // ── Correction Methods ──
+  // - Correction Methods -
 
   toggleCorrection(): void {
     this.correctionMode = !this.correctionMode;

@@ -207,7 +207,7 @@
   color: var(--clr-text-secondary);
 }
 
-/* ── Completed Header + Review CTA ── */
+/* - Completed Header + Review CTA - */
 .completed-header {
   display: flex;
   justify-content: space-between;
@@ -223,7 +223,7 @@
   animation: fade-in 300ms ease-out;
 }
 
-/* ── Flag Button ── */
+/* - Flag Button - */
 .flag-btn {
   background: none;
   border: none;
@@ -256,7 +256,7 @@
   box-shadow: 0 0 0 1px rgba(102, 187, 106, 0.15);
 }
 
-/* ── Correction Modal ── */
+/* - Correction Modal - */
 .correction-modal-overlay {
   position: fixed;
   top: 0;
@@ -318,7 +318,7 @@
   color: var(--clr-text-primary);
 }
 
-/* ── Correction Form Elements ── */
+/* - Correction Form Elements - */
 .correction-field {
   margin-bottom: var(--space-md);
 }

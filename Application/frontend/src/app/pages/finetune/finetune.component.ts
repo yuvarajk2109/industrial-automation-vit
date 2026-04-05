@@ -20,24 +20,24 @@ import { HistoryComponent } from './components/history/history.component';
   styleUrl: './finetune.component.css'
 })
 export class FinetuneComponent implements OnInit, OnDestroy {
-  // ── Feedback Stats ──
+  // - Feedback Stats -
   feedbackStats: any = null;
   feedbackLoading = true;
 
-  // ── Active Job ──
+  // - Active Job -
   activeJob: any = null;
   jobPollingInterval: any;
 
-  // ── Job History ──
+  // - Job History -
   jobHistory: any[] = [];
   historyLoading = true;
 
-  // ── Model Versions ──
+  // - Model Versions -
   modelVersions: any[] = [];
   activeVersions: any = { sugar: 0, steel: 0 };
   versionsLoading = true;
 
-  // ── Correction List ──
+  // - Correction List -
   corrections: any[] = [];
   correctionsLoading = false;
   correctionFilter: 'all' | 'sugar' | 'steel' = 'all';
@@ -47,7 +47,7 @@ export class FinetuneComponent implements OnInit, OnDestroy {
   correctionTotalPages = 1;
   correctionLimit = 15;
 
-  // ── Fine-Tune Config ──
+  // - Fine-Tune Config -
   selectedDomain: 'sugar' | 'steel' = 'sugar';
   showAdvancedConfig = false;
   finetuneConfig = {
@@ -59,7 +59,7 @@ export class FinetuneComponent implements OnInit, OnDestroy {
     early_stopping_patience: 3
   };
 
-  // ── UI State ──
+  // - UI State -
   error: string | null = null;
   successMessage: string | null = null;
   isStartingJob = false;
@@ -115,7 +115,7 @@ export class FinetuneComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ── Data Loading ──
+  // - Data Loading -
 
   loadFeedbackStats(): void {
     this.feedbackLoading = true;
@@ -190,7 +190,7 @@ export class FinetuneComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ── Actions ──
+  // - Actions -
 
   startFineTune(): void {
     this.error = null;
@@ -265,7 +265,7 @@ export class FinetuneComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ── Helpers ──
+  // - Helpers -
 
   get canStartFineTune(): boolean {
     if (this.isStartingJob) return false;

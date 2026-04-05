@@ -11,7 +11,7 @@ from google.genai import types
 
 from config import GEMINI_API_KEY, GEMINI_MODEL
 
-# ── Configure Gemini Client ──
+# - Configure Gemini Client -
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 SYSTEM_PROMPT = """You are CaneNexus, an industrial automation assistant for sugarcane mills.

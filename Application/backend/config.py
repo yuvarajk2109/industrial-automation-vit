@@ -6,7 +6,7 @@ All paths, DB URIs, model paths, API keys, and constants.
 import os
 from pathlib import Path
 
-# ── Paths ──
+# - Paths -
 BASE_DIR = Path(__file__).resolve().parent
 ROOT_DIR = BASE_DIR.parent.parent  # Project root
 
@@ -19,15 +19,15 @@ SUGAR_TEST_IMAGES = ROOT_DIR / "Datasets" / "sugar-quality-inspection" / "test_i
 OUTPUT_DIR = BASE_DIR / "static" / "outputs"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── MongoDB ──
+# - MongoDB -
 MONGO_URI = "mongodb://localhost:27017/"
 MONGO_DB = "canenexus"
 
-# ── Gemini ──
+# - Gemini -
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL = "gemini-2.5-flash"
 
-# ── Model Config ──
+# - Model Config -
 STEEL_CLASSES = ["1", "2", "3", "4"]
 SUGAR_CLASSES = ["unsaturated", "metastable", "intermediate", "labile"]
 
@@ -37,13 +37,13 @@ NUM_SUGAR_CLASSES = 4
 STEEL_IMAGE_SIZE = 256
 SUGAR_IMAGE_SIZE = 224
 
-# ── Simulation Defaults ──
+# - Simulation Defaults -
 DEFAULT_SIMULATION_LIMIT = 50  # per domain
 
-# ── Allowed Image Extensions ──
+# - Allowed Image Extensions -
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
 
-# ── Fine-Tuning Config ──
+# - Fine-Tuning Config -
 STEEL_MODEL_DIR = ROOT_DIR / "Models" / "Final" / "Steel"
 SUGAR_MODEL_DIR = ROOT_DIR / "Models" / "Final" / "Sugar"
 

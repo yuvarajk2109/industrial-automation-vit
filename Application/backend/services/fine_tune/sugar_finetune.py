@@ -65,7 +65,7 @@ def finetune_sugar(model, corrections: list, config: dict, device,
     Raises:
         ValueError if insufficient corrections.
     """
-    # ── Config with defaults ──
+    # - Config with defaults -
     lr = config.get("lr", FINETUNE_DEFAULTS["lr"])
     epochs = config.get("epochs", FINETUNE_DEFAULTS["epochs"])
     min_corrections = config.get("min_corrections", FINETUNE_DEFAULTS["min_corrections"])
@@ -78,34 +78,34 @@ def finetune_sugar(model, corrections: list, config: dict, device,
             f"Need at least {min_corrections} corrections, got {len(corrections)}."
         )
 
-    # ── Split into train/val ──
+    # - Split into train/val -
     train_corr, val_corr = split_corrections(corrections, val_split)
 
     print(f"[CaneNexus] Sugar fine-tune: {len(train_corr)} train, {len(val_corr)} val")
 
-    # ── Freeze everything ──
+    # - Freeze everything -
     for param in model.parameters():
         param.requires_grad = False
 
-    # ── Unfreeze sugar_head ──
+    # - Unfreeze sugar_head -
     for param in model.sugar_head.parameters():
         param.requires_grad = True
 
-    # ── Optionally unfreeze proj_q ──
+    # - Optionally unfreeze proj_q -
     if unfreeze_proj:
         for param in model.proj_q.parameters():
             param.requires_grad = True
 
-    # ── Build dataset ──
+    # - Build dataset -
     class_to_idx = {cls: i for i, cls in enumerate(SUGAR_CLASSES)}
     dataset = CorrectionDataset(train_corr, class_to_idx, SUGAR_IMAGE_SIZE)
     loader = DataLoader(dataset, batch_size=min(len(train_corr), 8), shuffle=True)
 
-    # ── Optimizer ──
+    # - Optimizer -
     trainable_params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.Adam(trainable_params, lr=lr)
 
-    # ── Training loop ──
+    # - Training loop -
     model.train()
     best_val_loss = float("inf")
     patience_counter = 0
@@ -131,7 +131,7 @@ def finetune_sugar(model, corrections: list, config: dict, device,
 
         avg_train_loss = epoch_loss / max(n_batches, 1)
 
-        # ── Validation ──
+        # - Validation -
         model.eval()
         val_metrics = validate_sugar(model, val_corr, device)
         model.train()
@@ -154,7 +154,7 @@ def finetune_sugar(model, corrections: list, config: dict, device,
         if progress_callback:
             progress_callback(epoch + 1, epochs, epoch_metrics)
 
-        # ── Early stopping ──
+        # - Early stopping -
         if val_metrics["val_loss"] < best_val_loss:
             best_val_loss = val_metrics["val_loss"]
             best_state = {k: v.clone() for k, v in model.state_dict().items()}
@@ -165,20 +165,20 @@ def finetune_sugar(model, corrections: list, config: dict, device,
                 print(f"[CaneNexus] Early stopping at epoch {epoch + 1}")
                 break
 
-    # ── Restore best state ──
+    # - Restore best state -
     if best_state:
         model.load_state_dict(best_state)
 
     model.eval()
 
-    # ── Re-freeze everything ──
+    # - Re-freeze everything -
     for param in model.parameters():
         param.requires_grad = False
 
     # Final metrics = last epoch's metrics (or best)
     final_metrics = metrics_history[-1] if metrics_history else {}
 
-    # ── Filter State Dict to Sugar Components Only ──
+    # - Filter State Dict to Sugar Components Only -
     full_state = model.state_dict()
     sugar_state = {
         k: v for k, v in full_state.items() 

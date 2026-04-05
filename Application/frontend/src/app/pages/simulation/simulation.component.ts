@@ -188,7 +188,7 @@ export class SimulationComponent {
     }
   }
 
-  // ── Correction / Feedback ──
+  // - Correction / Feedback -
   flaggedImage: CompletedImage | null = null;
   correctedSugarClass = '';
   steelCorrections: { original_class: string; corrected_class: string; action: string }[] = [];

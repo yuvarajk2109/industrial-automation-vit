@@ -1,6 +1,6 @@
 <div class="overview-grid">
   <div class="left-col" style="display: flex; flex-direction: column; gap: var(--space-lg);">
-    <!-- ── Pending Corrections Card ── -->
+    <!-- - Pending Corrections Card - -->
     <div class="card stats-card">
       <h2 class="card-title">Pending Corrections</h2>
       @if (feedbackLoading) {
@@ -25,7 +25,7 @@
       }
     </div>
 
-    <!-- ── Active / Last Job Card ── -->
+    <!-- - Active / Last Job Card - -->
     @if (activeJob) {
     <div class="card job-card" [class.job-running]="activeJob.status === 'running'"
       [class.job-completed]="activeJob.status === 'completed'" [class.job-failed]="activeJob.status === 'failed'">
@@ -88,7 +88,7 @@
 
   <!-- Right column -->
   <div class="right-col">
-    <!-- ── Start Fine-Tune Card ── -->
+    <!-- - Start Fine-Tune Card - -->
     <div class="card action-card">
       <h2 class="card-title">Start Fine-Tune Job</h2>
 

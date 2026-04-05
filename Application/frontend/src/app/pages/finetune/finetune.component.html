@@ -1,7 +1,7 @@
 <div class="finetune-page">
   <h1 class="section-title">Model Training</h1>
 
-  <!-- ── Tab Navigation ── -->
+  <!-- - Tab Navigation - -->
   <div class="tab-bar">
     <button class="tab-btn" [class.active]="activeTab === 'overview'" (click)="switchTab('overview')">
       <i class="fa-solid fa-gauge"></i> Overview
@@ -20,7 +20,7 @@
     </button>
   </div>
 
-  <!-- ── Alerts ── -->
+  <!-- - Alerts - -->
   @if (error) {
   <div class="alert alert-error">
     <i class="fa-solid fa-circle-exclamation"></i>

@@ -84,7 +84,7 @@ export class ApiService {
     return `${this.baseUrl}/source-image?path=${encodeURIComponent(path)}`;
   }
 
-  // ── Feedback / Corrections ──
+  // - Feedback / Corrections -
 
   /** Submit a correction for a misclassified image */
   submitFeedback(feedback: {
@@ -126,7 +126,7 @@ export class ApiService {
     return this.http.get(`${this.baseUrl}/feedback`, { params: queryParams });
   }
 
-  // ── Fine-Tune Management ──
+  // - Fine-Tune Management -
 
   /** Start a fine-tune job */
   startFineTune(domain: string, config?: any): Observable<any> {

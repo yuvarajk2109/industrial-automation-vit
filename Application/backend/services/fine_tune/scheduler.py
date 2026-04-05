@@ -19,7 +19,7 @@ from services.fine_tune.steel_finetune import finetune_steel
 from services.fine_tune.model_manager import save_finetuned_model, hot_swap_from_disk
 
 
-# ── Module-level state ──
+# - Module-level state -
 _current_job = None
 _job_lock = threading.Lock()
 

@@ -6,11 +6,11 @@ Provides a shared database handle and collection references.
 from pymongo import MongoClient
 from config import MONGO_URI, MONGO_DB
 
-# ── Connection ──
+# - Connection -
 client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
 db = client[MONGO_DB]
 
-# ── Collections ──
+# - Collections -
 logs_collection = db["logs"]                # Individual image analysis logs
 simulations_collection = db["simulations"]  # Simulation session metadata
 chats_collection = db["chats"]              # Chat conversation histories

@@ -157,7 +157,7 @@ export class SingleAnalysisComponent {
     return (this.result?.knowledge_graph as any)?.details || '';
   }
 
-  // ── Correction / Feedback ──
+  // - Correction / Feedback -
   showCorrectionPanel = false;
   correctionSubmitted = false;
   correctedSugarClass = '';

@@ -13,10 +13,10 @@ from config import (
 )
 from models.dda_vit import DDAViT
 
-# ── Device ──
+# - Device -
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# ── Module-level singleton ──
+# - Module-level singleton -
 _model = None
 
 
@@ -51,7 +51,7 @@ def _load_model():
     steel_is_dda = any("steel.encoder." in k for k in steel_state.keys())
     sugar_is_dda = any("sugar.model." in k for k in sugar_state.keys())
 
-    # ── Steel Model (SegFormer UNet with mit_b4 encoder) ──
+    # - Steel Model (SegFormer UNet with mit_b4 encoder) -
     steel_model = smp.Unet(
         encoder_name="mit_b4",
         encoder_weights=None,
@@ -61,7 +61,7 @@ def _load_model():
     steel_mapped = {k.replace("steel.", ""): v for k, v in steel_state.items() if k.startswith("steel.")} if steel_is_dda else steel_state
     steel_model.load_state_dict(steel_mapped, strict=False)
 
-    # ── Sugar Model (Swin Tiny via timm) ──
+    # - Sugar Model (Swin Tiny via timm) -
     sugar_model = timm.create_model(
         "swin_tiny_patch4_window7_224",
         pretrained=False,
@@ -70,14 +70,14 @@ def _load_model():
     sugar_mapped = {k.replace("sugar.model.", ""): v for k, v in sugar_state.items() if k.startswith("sugar.model.")} if sugar_is_dda else sugar_state
     sugar_model.load_state_dict(sugar_mapped, strict=False)
 
-    # ── Freeze both base models ──
+    # - Freeze both base models -
     _freeze_model(steel_model)
     _freeze_model(sugar_model)
 
-    # ── Wrap in DDA-ViT ──
+    # - Wrap in DDA-ViT -
     model = DDAViT(steel_model, sugar_model)
     
-    # ── Inject Domain-Specific Heads & Projections ──
+    # - Inject Domain-Specific Heads & Projections -
     final_state = model.state_dict()
     
     if steel_is_dda:

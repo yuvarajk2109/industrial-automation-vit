@@ -47,7 +47,7 @@ def predict():
         image_path = data.get("image_path", "").strip()
         domain = data.get("domain", "").strip().lower()
 
-    # ── Validation ──
+    # - Validation -
     if not image_path:
         return jsonify({"error": "image_path is required"}), 400
 
@@ -57,7 +57,7 @@ def predict():
     if not os.path.isfile(image_path):
         return jsonify({"error": f"Image file not found: {image_path}"}), 404
 
-    # ── Run Pipeline ──
+    # - Run Pipeline -
     try:
         result = run_pipeline(image_path, domain)
         return jsonify(result), 200

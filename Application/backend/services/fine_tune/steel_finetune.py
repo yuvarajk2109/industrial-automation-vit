@@ -85,7 +85,7 @@ def finetune_steel(model, corrections: list, config: dict, device,
     Returns:
         Dict with training metrics and updated state dict.
     """
-    # ── Config with defaults ──
+    # - Config with defaults -
     lr = config.get("lr", FINETUNE_DEFAULTS["lr"])
     epochs = config.get("epochs", FINETUNE_DEFAULTS["epochs"])
     min_corrections = config.get("min_corrections", FINETUNE_DEFAULTS["min_corrections"])
@@ -97,23 +97,23 @@ def finetune_steel(model, corrections: list, config: dict, device,
             f"Need at least {min_corrections} corrections, got {len(corrections)}."
         )
 
-    # ── Split into train/val ──
+    # - Split into train/val -
     train_corr, val_corr = split_corrections(corrections, val_split)
     print(f"[CaneNexus] Steel fine-tune: {len(train_corr)} train, {len(val_corr)} val")
 
-    # ── Freeze everything ──
+    # - Freeze everything -
     for param in model.parameters():
         param.requires_grad = False
 
-    # ── Unfreeze seg_head only ──
+    # - Unfreeze seg_head only -
     for param in model.seg_head.parameters():
         param.requires_grad = True
 
-    # ── Optimizer ──
+    # - Optimizer -
     trainable_params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.Adam(trainable_params, lr=lr)
 
-    # ── Pre-compute training data ──
+    # - Pre-compute training data -
     # For each correction, generate (image_patches, corrected_mask_patches)
     training_data = []
     model.eval()
@@ -184,7 +184,7 @@ def finetune_steel(model, corrections: list, config: dict, device,
 
     print(f"[CaneNexus] Generated {len(training_data)} training patches")
 
-    # ── Training loop ──
+    # - Training loop -
     model.train()
     best_val_loss = float("inf")
     patience_counter = 0
@@ -239,7 +239,7 @@ def finetune_steel(model, corrections: list, config: dict, device,
         if progress_callback:
             progress_callback(epoch + 1, epochs, epoch_metrics)
 
-        # ── Early stopping on training loss ──
+        # - Early stopping on training loss -
         if avg_train_loss < best_val_loss:
             best_val_loss = avg_train_loss
             best_state = {k: v.clone() for k, v in model.state_dict().items()}
@@ -250,19 +250,19 @@ def finetune_steel(model, corrections: list, config: dict, device,
                 print(f"[CaneNexus] Early stopping at epoch {epoch + 1}")
                 break
 
-    # ── Restore best state ──
+    # - Restore best state -
     if best_state:
         model.load_state_dict(best_state)
 
     model.eval()
 
-    # ── Re-freeze everything ──
+    # - Re-freeze everything -
     for param in model.parameters():
         param.requires_grad = False
 
     final_metrics = metrics_history[-1] if metrics_history else {}
 
-    # ── Filter State Dict to Steel Components Only ──
+    # - Filter State Dict to Steel Components Only -
     full_state = model.state_dict()
     steel_state = {
         k: v for k, v in full_state.items() 

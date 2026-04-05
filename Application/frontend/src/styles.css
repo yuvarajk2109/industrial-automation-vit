@@ -3,7 +3,7 @@
    Agricultural Green Theme with Industrial Accents
    ═══════════════════════════════════════════════════════════ */
 
-/* ── CSS Custom Properties ── */
+/* - CSS Custom Properties - */
 :root {
   /* Primary: Agricultural Green (from #358856 and #5AAB61) */
   --clr-primary-50:  #eaf4ed;
@@ -94,7 +94,7 @@
 }
 
 
-/* ── Reset & Base ── */
+/* - Reset & Base - */
 *,
 *::before,
 *::after {
@@ -153,7 +153,7 @@ input, textarea, select {
 }
 
 
-/* ── Scrollbar ── */
+/* - Scrollbar - */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -177,7 +177,7 @@ input, textarea, select {
    COMPONENT CLASSES
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Cards ── */
+/* - Cards - */
 .card {
   background: var(--clr-bg-secondary);
   border: var(--border-subtle);
@@ -214,7 +214,7 @@ input, textarea, select {
 }
 
 
-/* ── Buttons ── */
+/* - Buttons - */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -289,7 +289,7 @@ input, textarea, select {
 }
 
 
-/* ── Badges ── */
+/* - Badges - */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -339,7 +339,7 @@ input, textarea, select {
 }
 
 
-/* ── Input Fields ── */
+/* - Input Fields - */
 .input-field {
   width: 100%;
   padding: 10px 14px;
@@ -361,7 +361,7 @@ input, textarea, select {
 }
 
 
-/* ── Section Titles ── */
+/* - Section Titles - */
 .section-title {
   display: flex;
   align-items: center;
@@ -375,7 +375,7 @@ input, textarea, select {
 
 
 
-/* ── Progress Bars ── */
+/* - Progress Bars - */
 .progress-bar {
   width: 100%;
   height: 6px;
@@ -392,7 +392,7 @@ input, textarea, select {
 }
 
 
-/* ── Dividers ── */
+/* - Dividers - */
 .divider {
   height: 1px;
   background: rgba(76, 175, 80, 0.1);
@@ -407,7 +407,7 @@ input, textarea, select {
 }
 
 
-/* ── Tooltips ── */
+/* - Tooltips - */
 .tooltip-trigger {
   position: relative;
 }
@@ -499,7 +499,7 @@ input, textarea, select {
 }
 
 
-/* ── Staggered Children ── */
+/* - Staggered Children - */
 .stagger-children > * {
   animation: slide-up 300ms ease-out forwards;
   opacity: 0;

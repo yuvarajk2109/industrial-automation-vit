@@ -42,7 +42,7 @@ def submit_feedback():
     corrected_label = data.get("corrected_label")
     reason = data.get("reason", "").strip()
 
-    # ── Validation ──
+    # - Validation -
     if not log_id:
         return jsonify({"error": "log_id is required"}), 400
     if domain not in ("sugar", "steel"):
@@ -66,7 +66,7 @@ def submit_feedback():
                 "error": "Steel corrected_label must have type 'region_override'"
             }), 400
 
-    # ── Fetch original log to get image info ──
+    # - Fetch original log to get image info -
     try:
         log_doc = logs_collection.find_one({"_id": ObjectId(log_id)})
     except Exception:
@@ -75,7 +75,7 @@ def submit_feedback():
     if not log_doc:
         return jsonify({"error": f"Log entry not found: {log_id}"}), 404
 
-    # ── Create and insert feedback ──
+    # - Create and insert feedback -
     feedback_doc = create_feedback_document(
         log_id=log_id,
         image_path=log_doc.get("image_path", ""),

@@ -3,7 +3,7 @@
   margin: 0 auto;
 }
 
-/* ── Upload ── */
+/* - Upload - */
 .upload-section {
   margin-bottom: var(--space-lg);
 }
@@ -132,7 +132,7 @@
   width: 100%;
 }
 
-/* ── Error ── */
+/* - Error - */
 .error-banner {
   display: flex;
   align-items: center;
@@ -146,12 +146,12 @@
   margin-bottom: var(--space-lg);
 }
 
-/* ── Pipeline ── */
+/* - Pipeline - */
 .pipeline-section {
   margin-bottom: var(--space-lg);
 }
 
-/* ── Results ── */
+/* - Results - */
 .results-section {
   animation: slide-up 400ms ease-out;
 }
@@ -259,7 +259,7 @@
   margin-bottom: var(--space-md);
 }
 
-/* ── Chatbot ── */
+/* - Chatbot - */
 .chatbot-card {
   display: flex;
   flex-direction: column;
@@ -386,7 +386,7 @@
 
 
 
-/* ── Fullscreen Chat ── */
+/* - Fullscreen Chat - */
 .analysis-page.chat-expanded .upload-section,
 .analysis-page.chat-expanded .pipeline-section,
 .analysis-page.chat-expanded .results-grid > *:not(.chatbot-card) {
@@ -420,7 +420,7 @@
   max-height: none;
 }
 
-/* ── Correction Panel ── */
+/* - Correction Panel - */
 .correction-section {
   border-top: var(--border-subtle);
   padding-top: var(--space-md);

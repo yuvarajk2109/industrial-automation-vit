@@ -166,7 +166,7 @@
           <span class="text-xs text-muted">Total: {{ result.total_processing_ms }}ms</span>
         </div>
 
-        <!-- ── Correction Panel ── -->
+        <!-- - Correction Panel - -->
         @if (!correctionSubmitted) {
         <div class="correction-section mt-md">
           <button class="correction-toggle-btn" (click)="toggleCorrectionPanel()" [disabled]="isSubmittingCorrection">
