@@ -30,11 +30,12 @@
     gap: 0.5rem;
     padding: 0 0.875rem;
     height: 44px;
-    border: none;
+    border: 1px solid var(--border, #d1d5db);
     border-radius: var(--radius-sm);
     color: var(--text, #1f2937);
     background-color: #ffffff;
-    transition: box-shadow var(--transition);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all var(--transition);
 }
 
 .dropdown-trigger.input-field:focus {

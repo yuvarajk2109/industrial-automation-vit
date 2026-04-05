@@ -54,7 +54,7 @@ export class SingleAnalysisComponent {
   constructor(
     private api: ApiService,
     public chatService: ChatService
-  ) {}
+  ) { }
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -194,8 +194,10 @@ export class SingleAnalysisComponent {
   updateSugarCorrection(option: any): void {
     if (option) {
       this.correctedSugarClass = option.value;
+      this.selectedSugarOption = option;
     } else {
       this.correctedSugarClass = '';
+      this.selectedSugarOption = null;
     }
   }
 

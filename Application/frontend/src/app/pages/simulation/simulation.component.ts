@@ -271,9 +271,9 @@ export class SimulationComponent {
       corrected_label: correctedLabel,
       reason: this.correctionReason
     }).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.correctionSubmittedIds.add(img.index);
-        this.totalCorrectionsSubmitted++;
+        this.totalCorrectionsSubmitted = res.pending_count || (this.totalCorrectionsSubmitted + 1);
         this.flaggedImage = null;
         this.isSubmittingCorrection = false;
       },
@@ -312,8 +312,10 @@ export class SimulationComponent {
   updateSugarCorrection(option: any): void {
     if (option) {
       this.correctedSugarClass = option.value;
+      this.selectedSugarOption = option;
     } else {
       this.correctedSugarClass = '';
+      this.selectedSugarOption = null;
     }
   }
 

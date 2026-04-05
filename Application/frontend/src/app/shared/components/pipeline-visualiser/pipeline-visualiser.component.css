@@ -1,20 +1,25 @@
 .pipeline {
   display: flex;
-  align-items: flex-start;
-  gap: 0;
+  align-items: center;
+  gap: var(--space-md);
   width: 100%;
 }
 
 .pipeline.vertical {
   flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
 }
 
 .pipeline-step {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  flex: 1;
   position: relative;
+}
+
+.pipeline:not(.vertical) .pipeline-step {
+  display: contents;
 }
 
 .pipeline.vertical .pipeline-step {
@@ -28,6 +33,10 @@
   background: rgba(76, 175, 80, 0.15);
   position: relative;
   overflow: hidden;
+}
+
+.pipeline:not(.vertical) .step-connector {
+  min-width: 24px;
 }
 
 .pipeline.vertical .step-connector {
