@@ -53,7 +53,6 @@ def simulate():
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",
-            "Access-Control-Allow-Origin": "http://localhost:4200"
+            "X-Accel-Buffering": "no"
         }
     )

@@ -5,7 +5,7 @@ import { SimulationEvent, SimulationConfig } from '../models/simulation.model';
 @Injectable({ providedIn: 'root' })
 export class SimulationService {
   private readonly baseUrl = 'http://localhost:5000/api';
-  private eventSource: EventSource | null = null;
+  private abortController: AbortController | null = null;
 
   constructor(private ngZone: NgZone) {}
 
@@ -15,14 +15,14 @@ export class SimulationService {
    */
   startSimulation(config: SimulationConfig): Observable<SimulationEvent> {
     return new Observable(observer => {
-      // POST to start simulation, which returns SSE stream
+      this.abortController = new AbortController();
       const url = `${this.baseUrl}/simulate`;
 
-      // Use fetch to POST and receive SSE stream
       fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(config)
+        body: JSON.stringify(config),
+        signal: this.abortController.signal
       })
         .then(response => {
           if (!response.ok) {
@@ -36,6 +36,8 @@ export class SimulationService {
             throw new Error('No response body reader available');
           }
 
+          let buffer = '';
+
           const readStream = (): void => {
             reader.read().then(({ done, value }) => {
               if (done) {
@@ -43,11 +45,12 @@ export class SimulationService {
                 return;
               }
 
-              const text = decoder.decode(value, { stream: true });
-              const lines = text.split('\n');
+              buffer += decoder.decode(value, { stream: true });
+              const lines = buffer.split('\n');
+              buffer = lines.pop() || '';
 
               for (const line of lines) {
-                if (line.startsWith('data: ')) {
+                if (line.trim() && line.startsWith('data: ')) {
                   try {
                     const data = JSON.parse(line.substring(6));
                     this.ngZone.run(() => observer.next(data));
@@ -81,11 +84,10 @@ export class SimulationService {
     });
   }
 
-  /** Stop any running simulation */
   stopSimulation(): void {
-    if (this.eventSource) {
-      this.eventSource.close();
-      this.eventSource = null;
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
     }
   }
 }

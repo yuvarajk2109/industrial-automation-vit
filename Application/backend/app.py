@@ -9,7 +9,7 @@ from flask_cors import CORS
 from config import OUTPUT_DIR
 
 app = Flask(__name__, static_folder="static")
-CORS(app, origins=["http://localhost:4200"])
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # - Register Blueprints -
 from routes.predict import predict_bp
