@@ -1,15 +1,11 @@
 <div class="corrections-section">
   <div class="corrections-filters">
-    <app-dropdown 
-      variant="filter"
-      [data]="domainOptions" 
+    <app-dropdown variant="filter" [data]="domainOptions"
       [selected]="{value: correctionFilter, label: correctionFilter === 'sugar' ? 'Sugar' : (correctionFilter === 'steel' ? 'Steel' : 'All Domains')}"
       (selectionChange)="onDomainFilterChange($event)">
     </app-dropdown>
 
-    <app-dropdown 
-      variant="filter"
-      [data]="statusOptions" 
+    <app-dropdown variant="filter" [data]="statusOptions"
       [selected]="{value: correctionStatusFilter, label: correctionStatusFilter === 'pending' ? 'Pending' : (correctionStatusFilter === 'used' ? 'Used' : 'All Statuses')}"
       (selectionChange)="onStatusFilterChange($event)">
     </app-dropdown>
@@ -21,8 +17,8 @@
   <p class="empty-text">No corrections found. Analyse images and submit corrections when the model is wrong.</p>
   } @else {
   <div class="mt-lg">
-    <app-data-table [columns]="correctionColumns" [data]="corrections"
-      emptyMessage="No pending corrections available." [isRowClickable]="false" fontSize="0.75rem">
+    <app-data-table [columns]="correctionColumns" [data]="corrections" emptyMessage="No pending corrections available."
+      [isRowClickable]="false" fontSize="0.75rem">
       <ng-template #rowTemplate let-corr>
         <span class="cell-time text-sm text-muted">{{ formatDate(corr.submitted_at?.$date || corr.submitted_at)
           }}</span>
@@ -32,14 +28,14 @@
         </span>
         <span class="cell-prediction">
           @if (corr.domain === 'sugar') {
-          {{ corr.original_prediction?.predicted_class || '-' }}
+          {{ corr.original_prediction?.predicted_class | formatResult }}
           } @else {
-          {{ corr.original_prediction?.dominant_defect || '-' }}
+          {{ corr.original_prediction?.dominant_defect | formatResult }}
           }
         </span>
         <span class="cell-corrected">
           @if (corr.domain === 'sugar') {
-          {{ corr.corrected_label?.class || '-' }}
+          {{ corr.corrected_label?.class | formatResult }}
           } @else {
           Region Override
           }
@@ -53,8 +49,7 @@
 
   <!-- Pagination -->
   <app-pagination [page]="correctionPage" [totalPages]="correctionTotalPages" [limit]="correctionLimit"
-    [limitOptions]="[10, 15, 20, 50]" (pageChange)="pageChange.emit($event)"
-    (limitChange)="limitChange.emit($event)">
+    [limitOptions]="[10, 15, 20, 50]" (pageChange)="pageChange.emit($event)" (limitChange)="limitChange.emit($event)">
   </app-pagination>
   }
 </div>

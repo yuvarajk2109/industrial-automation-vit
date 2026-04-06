@@ -6,11 +6,12 @@ import { LoadingSpinnerComponent } from '../../../../shared/components/loading-s
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { DataTableComponent, TableColumn } from '../../../../shared/components/data-table/data-table.component';
 import { DropdownComponent } from '../../../../shared/components/dropdown/dropdown';
+import { FormatResultPipe } from '../../../../shared/pipes/format-result.pipe';
 
 @Component({
   selector: 'app-corrections',
   standalone: true,
-  imports: [CommonModule, FormsModule, StatusBadgeComponent, LoadingSpinnerComponent, PaginationComponent, DataTableComponent, DropdownComponent],
+  imports: [CommonModule, FormsModule, StatusBadgeComponent, LoadingSpinnerComponent, PaginationComponent, DataTableComponent, DropdownComponent, FormatResultPipe],
   templateUrl: './corrections.component.html',
   styleUrl: './corrections.component.css'
 })
