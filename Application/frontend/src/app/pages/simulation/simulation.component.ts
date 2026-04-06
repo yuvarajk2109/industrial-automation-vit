@@ -7,11 +7,12 @@ import { PipelineVisualiserComponent } from '../../shared/components/pipeline-vi
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown';
 import { ApiService } from '../../core/services/api.service';
+import { FormatResultPipe } from '../../shared/pipes/format-result.pipe';
 
 @Component({
   selector: 'app-simulation',
   standalone: true,
-  imports: [FormsModule, RouterLink, PipelineVisualiserComponent, StatusBadgeComponent, DropdownComponent],
+  imports: [FormsModule, RouterLink, PipelineVisualiserComponent, StatusBadgeComponent, DropdownComponent, FormatResultPipe],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.css'
 })

@@ -80,7 +80,7 @@
               @if (state.currentDomain === 'steel') {
                 <div class="detail-row"><span class="text-muted text-xs">Defect Area</span><span class="text-sm">{{ currentPrediction.total_defect_area_pct }}%</span></div>
               } @else {
-                <div class="detail-row"><span class="text-muted text-xs">Class</span><span class="text-sm font-semibold">{{ currentPrediction.predicted_class }}</span></div>
+                <div class="detail-row"><span class="text-muted text-xs">Class</span><span class="text-sm font-semibold">{{ currentPrediction.predicted_class | formatResult }}</span></div>
                 <div class="detail-row"><span class="text-muted text-xs">Confidence</span><span class="text-sm">{{ (currentPrediction.confidence * 100).toFixed(1) }}%</span></div>
               }
             </div>
@@ -183,7 +183,7 @@
           @if (flaggedImage.domain === 'sugar') {
           <div class="correction-field">
             <div class="mb-md" style="margin-bottom: 12px; font-weight: 600;">
-              Predicted Class: <span class="text-primary">{{ flaggedImage.prediction?.predicted_class }}</span>
+              Predicted Class: <span class="text-primary">{{ flaggedImage.prediction?.predicted_class | formatResult }}</span>
             </div>
             <label class="field-label">Correct Class</label>
             <app-dropdown 

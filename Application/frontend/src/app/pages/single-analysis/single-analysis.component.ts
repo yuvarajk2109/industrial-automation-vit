@@ -10,6 +10,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown';
 import { KeyValuePipe } from '@angular/common';
 import { MarkdownPipe } from '../../shared/pipes/markdown.pipe';
+import { FormatResultPipe } from '../../shared/pipes/format-result.pipe';
 
 @Component({
   selector: 'app-single-analysis',
@@ -22,7 +23,8 @@ import { MarkdownPipe } from '../../shared/pipes/markdown.pipe';
     StatusBadgeComponent,
     DropdownComponent,
     KeyValuePipe,
-    MarkdownPipe
+    MarkdownPipe,
+    FormatResultPipe
   ],
   templateUrl: './single-analysis.component.html',
   styleUrl: './single-analysis.component.css'
