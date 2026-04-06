@@ -43,7 +43,7 @@
 
 .badge-steel {
   background: rgba(96, 125, 139, 0.15);
-  color: var(--clr-secondary-300);
+  color: var(--clr-secondary-800);
   border: 1px solid rgba(96, 125, 139, 0.3);
 }
 
