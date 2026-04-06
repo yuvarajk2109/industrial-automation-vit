@@ -1,0 +1,168 @@
+<div class="overview-grid">
+  <div class="left-col" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+    <!-- - Pending Corrections Card - -->
+    <div class="card stats-card">
+      <h2 class="card-title">Pending Corrections</h2>
+      @if (feedbackLoading) {
+      <app-loading-spinner message="Loading stats..."></app-loading-spinner>
+      } @else {
+      <div class="stats-row">
+        <div class="stat-block">
+          <span class="stat-value sugar-text">{{ getPendingCount('sugar') }}</span>
+          <span class="stat-label">Sugar</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-block">
+          <span class="stat-value steel-text">{{ getPendingCount('steel') }}</span>
+          <span class="stat-label">Steel</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-block">
+          <span class="stat-value">{{ feedbackStats?.pending || 0 }}</span>
+          <span class="stat-label">Total Pending</span>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- - Active / Last Job Card - -->
+    @if (activeJob) {
+    <div class="card job-card" [class.job-running]="activeJob.status === 'running'"
+      [class.job-completed]="activeJob.status === 'completed'" [class.job-failed]="activeJob.status === 'failed'">
+      <h2 class="card-title">
+        @if (activeJob.status === 'running') {
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        } @else if (activeJob.status === 'failed') {
+        <i class="fa-solid fa-circle-xmark"></i>
+        }
+        {{ activeJob.status === 'running' ? 'Training in Progress' :
+        activeJob.status === 'completed' ? 'Last Job Completed' : 'Last Job Failed' }}
+      </h2>
+
+      <div class="job-meta">
+        <span class="job-domain-badge" [class.sugar]="activeJob.domain === 'sugar'"
+          [class.steel]="activeJob.domain === 'steel'">
+          {{ activeJob.domain | uppercase }}
+        </span>
+        <span class="job-id">{{ activeJob.job_id }}</span>
+      </div>
+
+      @if (activeJob.status === 'running') {
+      <div class="job-progress">
+        <div class="progress-bar">
+          <div class="progress-bar-fill" [style.width.%]="getJobProgressPercent()"></div>
+        </div>
+        <span class="progress-text">
+          Epoch {{ activeJob.progress?.epoch || 0 }} / {{ activeJob.progress?.total_epochs || 0 }}
+          ({{ getJobProgressPercent() }}%)
+        </span>
+      </div>
+      }
+
+      @if (activeJob.metrics && (activeJob.metrics.train_loss || activeJob.metrics.val_accuracy)) {
+      <div class="job-metrics">
+        <div class="metric">
+          <span class="metric-label">Train Loss</span>
+          <span class="metric-value">{{ activeJob.metrics.train_loss?.toFixed(6) || '-' }}</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Val Accuracy</span>
+          <span class="metric-value">{{ activeJob.metrics.val_accuracy ? (activeJob.metrics.val_accuracy *
+            100).toFixed(1) + '%' : '-' }}</span>
+        </div>
+        @if (activeJob.model_version_created) {
+        <div class="metric">
+          <span class="metric-label">Model Version</span>
+          <span class="metric-value">v{{ activeJob.model_version_created }}</span>
+        </div>
+        }
+      </div>
+      }
+
+      @if (activeJob.error_message) {
+      <div class="job-error">{{ activeJob.error_message }}</div>
+      }
+    </div>
+    }
+  </div>
+
+  <!-- Right column -->
+  <div class="right-col">
+    <!-- - Start Fine-Tune Card - -->
+    <div class="card action-card">
+      <h2 class="card-title">Start Fine-Tune Job</h2>
+
+      <div class="domain-selector">
+        <div class="domain-toggle">
+          <button class="domain-btn" [class.active]="selectedDomain === 'sugar'"
+            (click)="selectedDomainChange.emit('sugar')" [disabled]="activeJob?.status === 'running'">
+            <i class="fa-solid fa-cubes"></i> Sugar
+            <span class="domain-count">({{ getPendingCount('sugar') }} pending)</span>
+          </button>
+          <button class="domain-btn" [class.active]="selectedDomain === 'steel'"
+            (click)="selectedDomainChange.emit('steel')" [disabled]="activeJob?.status === 'running'">
+            <i class="fa-solid fa-bars"></i> Steel
+            <span class="domain-count">({{ getPendingCount('steel') }} pending)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Advanced Config Toggle -->
+      <button class="config-toggle" (click)="showAdvancedConfigChange.emit(!showAdvancedConfig)">
+        <i class="fa-solid" [class.fa-chevron-down]="!showAdvancedConfig"
+          [class.fa-chevron-up]="showAdvancedConfig"></i>
+        Advanced Configuration
+      </button>
+
+      @if (showAdvancedConfig) {
+      <div class="config-grid">
+        <div class="config-field">
+          <label>Learning Rate</label>
+          <input type="number" [(ngModel)]="finetuneConfig.lr" step="0.00001" min="0.000001" max="0.001">
+        </div>
+        <div class="config-field">
+          <label>Epochs</label>
+          <input type="number" [(ngModel)]="finetuneConfig.epochs" min="3" max="50">
+        </div>
+        <div class="config-field">
+          <label>Min Corrections</label>
+          <input type="number" [(ngModel)]="finetuneConfig.min_corrections" min="3" max="100">
+        </div>
+        <div class="config-field">
+          <label>Validation Split</label>
+          <input type="number" [(ngModel)]="finetuneConfig.validation_split" step="0.05" min="0.1" max="0.5">
+        </div>
+        <div class="config-field">
+          <label>Early Stop Patience</label>
+          <input type="number" [(ngModel)]="finetuneConfig.early_stopping_patience" min="2" max="10">
+        </div>
+        @if (selectedDomain === 'sugar') {
+        <div class="config-field config-checkbox">
+          <label>
+            <input type="checkbox" [(ngModel)]="finetuneConfig.unfreeze_projection">
+            Unfreeze Projection Layer
+          </label>
+        </div>
+        }
+      </div>
+      }
+
+      <button class="btn btn-primary btn-lg w-full mt-md" (click)="startFineTune.emit()" [disabled]="!canStartFineTune">
+        @if (isStartingJob) {
+        <div class="btn-spinner"></div> Starting...
+        } @else if (activeJob?.status === 'running') {
+        <i class="fa-solid fa-spinner fa-spin"></i> Job Running...
+        } @else {
+        <i class="fa-solid fa-bolt"></i> Start Fine-Tune
+        }
+      </button>
+
+      @if (!canStartFineTune && !isStartingJob && activeJob?.status !== 'running') {
+      <p class="config-hint">
+        Need at least {{ finetuneConfig.min_corrections }} pending corrections for {{ selectedDomain }}.
+        Currently: {{ getPendingCount(selectedDomain) }}.
+      </p>
+      }
+    </div>
+  </div>
+</div>

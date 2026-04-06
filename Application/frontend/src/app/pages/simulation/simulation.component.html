@@ -59,7 +59,7 @@
             <span class="text-sm text-muted">Processing</span>
             <app-status-badge [label]="state.currentDomain" [variant]="state.currentDomain === 'steel' ? 'steel' : 'sugar'"/>
           </div>
-          <div class="current-filename">{{ state.currentImage || '–' }}</div>
+          <div class="current-filename">{{ state.currentImage || '-' }}</div>
           <div class="current-index text-xs text-muted">Image {{ state.currentIndex }} of {{ state.total }}</div>
         </div>
 
@@ -80,7 +80,7 @@
               @if (state.currentDomain === 'steel') {
                 <div class="detail-row"><span class="text-muted text-xs">Defect Area</span><span class="text-sm">{{ currentPrediction.total_defect_area_pct }}%</span></div>
               } @else {
-                <div class="detail-row"><span class="text-muted text-xs">Class</span><span class="text-sm font-semibold">{{ currentPrediction.predicted_class }}</span></div>
+                <div class="detail-row"><span class="text-muted text-xs">Class</span><span class="text-sm font-semibold">{{ currentPrediction.predicted_class | formatResult }}</span></div>
                 <div class="detail-row"><span class="text-muted text-xs">Confidence</span><span class="text-sm">{{ (currentPrediction.confidence * 100).toFixed(1) }}%</span></div>
               }
             </div>
@@ -88,7 +88,7 @@
           @if (currentKgResult) {
             <div class="result-kg mt-sm">
               <span class="text-xs text-muted">KG Decision:</span>
-              <span class="text-sm font-medium">{{ currentKgResult.decision || currentKgResult.crystal_state || '–' }}</span>
+              <span class="text-sm font-medium">{{ currentKgResult.decision || currentKgResult.crystal_state || '-' }}</span>
             </div>
           }
         </div>
@@ -128,20 +128,128 @@
 
       <!-- Completed Grid -->
       @if (state.completedImages.length > 0) {
-        <h2 class="section-title">Completed</h2>
+        <div class="completed-header">
+          <h2 class="section-title">Completed</h2>
+          @if (totalCorrectionsSubmitted > 0) {
+          <a routerLink="/finetune" class="btn btn-primary btn-sm review-finetune-btn">
+            <i class="fa-solid fa-brain"></i>
+            Review & Fine-Tune ({{ totalCorrectionsSubmitted }} corrections)
+          </a>
+          }
+        </div>
         <div class="completed-grid stagger-children">
           @for (img of state.completedImages; track img.index) {
-            <div class="completed-card card-glass">
+            <div class="completed-card card-glass" [class.flagged]="correctionSubmittedIds.has(img.index)">
               <div class="cc-header">
                 <app-status-badge [label]="img.domain" [variant]="img.domain === 'steel' ? 'steel' : 'sugar'"/>
-                <span class="text-xs text-muted">{{ img.total_ms }}ms</span>
+                <!-- Flag button -->
+                <button class="flag-btn" [class.submitted]="correctionSubmittedIds.has(img.index)"
+                  (click)="flagImage(img)" [disabled]="correctionSubmittedIds.has(img.index)"
+                  [title]="correctionSubmittedIds.has(img.index) ? 'Correction submitted' : 'Flag for correction'">
+                  @if (correctionSubmittedIds.has(img.index)) {
+                  <i class="fa-solid fa-circle-check"></i>
+                  } @else {
+                  <i class="fa-solid fa-flag"></i>
+                  }
+                </button>
               </div>
               <span class="cc-filename truncate">{{ img.filename }}</span>
-              <app-status-badge [label]="getDecisionBadge(img).label" [variant]="getDecisionBadge(img).variant"/>
+              <div class="cc-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                <app-status-badge [label]="getDecisionBadge(img).label" [variant]="getDecisionBadge(img).variant"/>
+                <span class="text-xs text-muted">{{ img.total_ms }}ms</span>
+              </div>
             </div>
           }
         </div>
       }
+
+      <!-- Correction Modal -->
+      @if (flaggedImage) {
+      <div class="correction-modal-overlay" (click)="flaggedImage = null">
+        <div class="correction-modal card" (click)="$event.stopPropagation()">
+          <div class="correction-modal-header">
+            <h3>Correct Prediction</h3>
+            <button class="close-btn" (click)="flaggedImage = null">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="correction-modal-meta">
+            <app-status-badge [label]="flaggedImage.domain" [variant]="flaggedImage.domain === 'steel' ? 'steel' : 'sugar'"/>
+            <span class="text-sm">{{ flaggedImage.filename }}</span>
+          </div>
+
+          <!-- Sugar Correction -->
+          @if (flaggedImage.domain === 'sugar') {
+          <div class="correction-field">
+            <div class="mb-md" style="margin-bottom: 12px; font-weight: 600;">
+              Predicted Class: <span class="text-primary">{{ flaggedImage.prediction?.predicted_class | formatResult }}</span>
+            </div>
+            <label class="field-label">Correct Class</label>
+            <app-dropdown 
+              [data]="sugarOptions" 
+              label="Choose Corrected Class"
+              [selected]="selectedSugarOption"
+              (selectionChange)="updateSugarCorrection($event)">
+            </app-dropdown>
+          </div>
+          }
+
+          <!-- Steel Correction -->
+          @if (flaggedImage.domain === 'steel') {
+          <div class="correction-field">
+            <label class="field-label">Detected Defect Corrections</label>
+            @for (corr of steelCorrections; track corr.original_class) {
+            <div class="steel-correction-row">
+              <span class="steel-class-label">Class {{ corr.original_class }}</span>
+              <app-dropdown 
+                size="small"
+                [data]="steelActionOptions(corr.original_class)"
+                [selected]="{value: corr.action, label: corr.action === 'keep' ? 'Keep' : (corr.action === 'reclassify' ? 'Reclassify' : 'Remove (False Positive)')}"
+                (selectionChange)="updateSteelAction(corr, $event)">
+              </app-dropdown>
+              @if (corr.action === 'reclassify') {
+              <app-dropdown 
+                size="small"
+                label="Choose Correct class"
+                [data]="steelClassOptions(corr.original_class)"
+                [selected]="corr.corrected_class !== corr.original_class ? {value: corr.corrected_class, label: 'Class ' + corr.corrected_class} : null"
+                (selectionChange)="updateSteelClass(corr, $event)">
+              </app-dropdown>
+              }
+            </div>
+            }
+
+            <label class="field-label mt-md">Missed Defects</label>
+            <div class="missed-defects-row">
+              @for (cls of ['1','2','3','4']; track cls) {
+              <button class="missed-defect-chip"
+                [class.active]="missedDefects.includes(cls)"
+                (click)="missedDefects.includes(cls) ? removeMissedDefect(cls) : addMissedDefect(cls)">
+                Class {{ cls }}
+              </button>
+              }
+            </div>
+          </div>
+          }
+
+          <div class="correction-field">
+            <label class="field-label">Reason (Optional)</label>
+            <textarea class="correction-textarea" [(ngModel)]="correctionReason"
+              placeholder="Why is this prediction wrong?" rows="2"></textarea>
+          </div>
+
+          <button class="btn btn-primary w-full" (click)="submitSimCorrection()" [disabled]="isSubmittingCorrection">
+            @if (isSubmittingCorrection) {
+            <div class="btn-spinner"></div> Submitting...
+            } @else {
+            Submit Correction
+            }
+          </button>
+        </div>
+      </div>
+      }
     </div>
   }
 </div>
+

@@ -7,7 +7,7 @@ Ported from Code/DDA-ViT/sugar.py (lines 97-449).
 import networkx as nx
 
 
-# ── State Templates (from sugar.py lines 97-118) ──
+# - State Templates (from sugar.py lines 97-118) -
 STATE_TEMPLATES = {
     "unsaturated": {
         "supersaturation_ratio": (0.95, 1.00),
@@ -72,7 +72,7 @@ def build_sugar_kg() -> nx.DiGraph:
     """
     KG = nx.DiGraph()
 
-    # ── State nodes ──
+    # - State nodes -
     states = {
         "UNSATURATED": {
             "sigma_range": (0.95, 1.00),
@@ -92,7 +92,7 @@ def build_sugar_kg() -> nx.DiGraph:
         }
     }
 
-    # ── Condition nodes ──
+    # - Condition nodes -
     conditions = [
         "low_nucleation_risk",
         "medium_nucleation_risk",
@@ -101,7 +101,7 @@ def build_sugar_kg() -> nx.DiGraph:
         "unstable_growth"
     ]
 
-    # ── Action nodes ──
+    # - Action nodes -
     actions = [
         "hold_process",
         "increase_evaporation",
@@ -117,7 +117,7 @@ def build_sugar_kg() -> nx.DiGraph:
     for a in actions:
         KG.add_node(a, node_type="action")
 
-    # ── State transition edges ──
+    # - State transition edges -
     KG.add_edge("UNSATURATED", "METASTABLE",
                 edge_type="state_transition", trigger="increase_supersaturation")
     KG.add_edge("METASTABLE", "INTERMEDIATE",
@@ -129,7 +129,7 @@ def build_sugar_kg() -> nx.DiGraph:
     KG.add_edge("INTERMEDIATE", "METASTABLE",
                 edge_type="state_transition", trigger="growth_stabilization")
 
-    # ── State → Condition edges ──
+    # - State → Condition edges -
     KG.add_edge("UNSATURATED", "low_nucleation_risk", edge_type="implies_condition")
     KG.add_edge("METASTABLE", "low_nucleation_risk", edge_type="implies_condition")
     KG.add_edge("METASTABLE", "stable_growth", edge_type="implies_condition")
@@ -138,7 +138,7 @@ def build_sugar_kg() -> nx.DiGraph:
     KG.add_edge("LABILE", "high_nucleation_risk", edge_type="implies_condition")
     KG.add_edge("LABILE", "unstable_growth", edge_type="implies_condition")
 
-    # ── Condition → Action edges ──
+    # - Condition → Action edges -
     KG.add_edge("low_nucleation_risk", "hold_process", edge_type="triggers_action")
     KG.add_edge("stable_growth", "hold_process", edge_type="triggers_action")
     KG.add_edge("unstable_growth", "increase_evaporation", edge_type="triggers_action")

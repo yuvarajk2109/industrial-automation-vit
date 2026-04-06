@@ -29,7 +29,7 @@ def predict_steel(image_path: str) -> dict:
 
     start_time = time.time()
 
-    # ── Load Image ──
+    # - Load Image -
     img = cv2.imread(image_path)
     if img is None:
         raise ValueError(f"Failed to load image: {image_path}")
@@ -43,7 +43,7 @@ def predict_steel(image_path: str) -> dict:
     # Ensure height = 256 (standard for steel images)
     img = cv2.resize(img, (img.shape[1], 256))
 
-    # ── Sliding Window Inference ──
+    # - Sliding Window Inference -
     probs = sliding_window_inference(model, img, device)
 
     # Argmax to get class mask
@@ -56,7 +56,7 @@ def predict_steel(image_path: str) -> dict:
         interpolation=cv2.INTER_NEAREST
     ).astype(np.int32)
 
-    # ── Defect Summary ──
+    # - Defect Summary -
     unique, counts = np.unique(mask, return_counts=True)
     total_pixels = mask.size
 
@@ -90,13 +90,13 @@ def predict_steel(image_path: str) -> dict:
         v["area_pct"] for v in defect_summary.values() if v["detected"]
     )
 
-    # ── Generate Overlay Visualisation ──
+    # - Generate Overlay Visualisation -
     filename_prefix = os.path.splitext(os.path.basename(image_path))[0]
     overlay_filename, raw_mask_filename = generate_mask_overlay(
         original, mask, filename_prefix
     )
 
-    # ── Timing ──
+    # - Timing -
     inference_time_ms = round((time.time() - start_time) * 1000, 2)
 
     return {

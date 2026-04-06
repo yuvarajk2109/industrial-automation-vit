@@ -3,7 +3,7 @@
   margin: 0 auto;
 }
 
-/* ── Hero ── */
+/* - Hero - */
 .hero {
   display: flex;
   align-items: center;
@@ -92,7 +92,7 @@
 }
 
 
-/* ── Stats ── */
+/* - Stats - */
 .stats-section {
   margin-bottom: var(--space-md);
 }
@@ -169,7 +169,7 @@
 }
 
 
-/* ── Charts ── */
+/* - Charts - */
 .charts-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -201,7 +201,7 @@
 }
 
 
-/* ── Responsive ── */
+/* - Responsive - */
 @media (max-width: 900px) {
   .hero {
     flex-direction: column;

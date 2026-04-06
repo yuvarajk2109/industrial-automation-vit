@@ -46,7 +46,44 @@ def get_logs():
     skip = (page - 1) * limit
     total = logs_collection.count_documents(query)
 
-    cursor = logs_collection.find(query).sort("timestamp", -1).skip(skip).limit(limit)
+    pipeline = [
+        {"$match": query},
+        {"$sort": {"timestamp": -1}},
+        {"$skip": skip},
+        {"$limit": limit},
+        {
+            "$lookup": {
+                "from": "feedback_corrections",
+                "let": {"log_id_str": {"$toString": "$_id"}},
+                "pipeline": [
+                    {
+                        "$match": {
+                            "$expr": {
+                                "$and": [
+                                    {"$eq": ["$log_id", "$$log_id_str"]},
+                                    {"$eq": ["$status", "pending"]}
+                                ]
+                            }
+                        }
+                    },
+                    {"$limit": 1}
+                ],
+                "as": "_pending_feedback"
+            }
+        },
+        {
+            "$addFields": {
+                "has_pending_correction": {"$gt": [{"$size": "$_pending_feedback"}, 0]}
+            }
+        },
+        {
+            "$project": {
+                "_pending_feedback": 0
+            }
+        }
+    ]
+
+    cursor = logs_collection.aggregate(pipeline)
     logs = [_serialize_doc(doc) for doc in cursor]
 
     return jsonify({

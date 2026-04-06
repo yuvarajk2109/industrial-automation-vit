@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/logs/logs.component').then(m => m.LogsComponent)
   },
   {
+    path: 'finetune',
+    loadComponent: () => import('./pages/finetune/finetune.component').then(m => m.FinetuneComponent)
+  },
+  {
     path: 'about',
     loadComponent: () => import('./pages/about/about.component').then(m => m.AboutComponent)
   },

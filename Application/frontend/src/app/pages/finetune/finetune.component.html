@@ -1,0 +1,98 @@
+<div class="finetune-page">
+  <h1 class="section-title">Model Training</h1>
+
+  <!-- - Tab Navigation - -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'overview'" (click)="switchTab('overview')">
+      <i class="fa-solid fa-gauge"></i> Overview
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'corrections'" (click)="switchTab('corrections')">
+      <i class="fa-solid fa-pen-to-square"></i> Corrections
+      @if (feedbackStats?.pending) {
+      <span class="tab-badge">{{ feedbackStats.pending }}</span>
+      }
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'versions'" (click)="switchTab('versions')">
+      <i class="fa-solid fa-code-branch"></i> Model Versions
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="switchTab('history')">
+      <i class="fa-solid fa-clock-rotate-left"></i> Recent Jobs
+    </button>
+  </div>
+
+  <!-- - Alerts - -->
+  @if (error) {
+  <div class="alert alert-error">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    {{ error }}
+    <button class="alert-close" (click)="error = null">&times;</button>
+  </div>
+  }
+  @if (successMessage) {
+  <div class="alert alert-success">
+    <i class="fa-solid fa-circle-check"></i>
+    {{ successMessage }}
+    <button class="alert-close" (click)="successMessage = null">&times;</button>
+  </div>
+  }
+
+  <!-- ════════════════════════════════════════════ -->
+  <!--               OVERVIEW TAB                  -->
+  <!-- ════════════════════════════════════════════ -->
+  @if (activeTab === 'overview') {
+  <app-overview
+    [feedbackStats]="feedbackStats"
+    [feedbackLoading]="feedbackLoading"
+    [activeJob]="activeJob"
+    [selectedDomain]="selectedDomain"
+    [showAdvancedConfig]="showAdvancedConfig"
+    [finetuneConfig]="finetuneConfig"
+    [isStartingJob]="isStartingJob"
+    [canStartFineTune]="canStartFineTune"
+    (selectedDomainChange)="selectedDomain = $event"
+    (showAdvancedConfigChange)="showAdvancedConfig = $event"
+    (startFineTune)="startFineTune()">
+  </app-overview>
+  }
+
+  <!-- ════════════════════════════════════════════ -->
+  <!--            CORRECTIONS TAB                  -->
+  <!-- ════════════════════════════════════════════ -->
+  @if (activeTab === 'corrections') {
+  <app-corrections
+    [corrections]="corrections"
+    [correctionsLoading]="correctionsLoading"
+    [correctionFilter]="correctionFilter"
+    [correctionStatusFilter]="correctionStatusFilter"
+    [correctionPage]="correctionPage"
+    [correctionTotalPages]="correctionTotalPages"
+    [correctionLimit]="correctionLimit"
+    (correctionFilterChange)="correctionFilter = $event"
+    (correctionStatusFilterChange)="correctionStatusFilter = $event"
+    (filterChanged)="onCorrectionFilterChange()"
+    (pageChange)="goToCorrectionPage($event)"
+    (limitChange)="setCorrectionLimit($event)">
+  </app-corrections>
+  }
+
+  <!-- ════════════════════════════════════════════ -->
+  <!--           MODEL VERSIONS TAB                -->
+  <!-- ════════════════════════════════════════════ -->
+  @if (activeTab === 'versions') {
+  <app-versions
+    [modelVersions]="modelVersions"
+    [versionsLoading]="versionsLoading"
+    [isRollingBack]="isRollingBack"
+    (rollback)="rollbackToVersion($event.domain, $event.version)">
+  </app-versions>
+  }
+
+  <!-- ════════════════════════════════════════════ -->
+  <!--           RECENT JOBS TAB                   -->
+  <!-- ════════════════════════════════════════════ -->
+  @if (activeTab === 'history') {
+  <app-history
+    [jobHistory]="jobHistory">
+  </app-history>
+  }
+</div>

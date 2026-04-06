@@ -86,7 +86,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
     pipeline_start = time.time()
     step_times = {}
 
-    # ── Step 1: Inference ──
+    # - Step 1: Inference -
     t0 = time.time()
     if domain == "steel":
         prediction = predict_steel(image_path)
@@ -96,7 +96,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
         raise ValueError(f"Unknown domain: {domain}. Must be 'steel' or 'sugar'.")
     step_times["inference_ms"] = round((time.time() - t0) * 1000, 2)
 
-    # ── Step 2: Knowledge Graph ──
+    # - Step 2: Knowledge Graph -
     t0 = time.time()
     if domain == "steel":
         kg_result = evaluate_steel_kg(prediction["defect_summary"])
@@ -104,7 +104,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
         kg_result = evaluate_sugar_kg(prediction)
     step_times["kg_ms"] = round((time.time() - t0) * 1000, 2)
 
-    # ── Step 3: Gemini Chatbot (or Programmatic Summary) ──
+    # - Step 3: Gemini Chatbot (or Programmatic Summary) -
     t0 = time.time()
     if skip_gemini:
         gemini_response = _generate_programmatic_summary(domain, prediction, kg_result)
@@ -112,7 +112,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
         gemini_response = get_initial_response(prediction, kg_result)
     step_times["gemini_ms"] = round((time.time() - t0) * 1000, 2)
 
-    # ── Step 4: Log to MongoDB ──
+    # - Step 4: Log to MongoDB -
     t0 = time.time()
     device_name = str(get_device())
 
@@ -149,7 +149,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
 
     step_times["db_ms"] = round((time.time() - t0) * 1000, 2)
 
-    # ── Total time ──
+    # - Total time -
     total_ms = round((time.time() - pipeline_start) * 1000, 2)
 
     return {

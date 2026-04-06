@@ -16,85 +16,88 @@
   </div>
 
   <!-- Table -->
-  <div class="logs-table">
-    <div class="table-header">
-      <span class="col-time">Timestamp</span>
-      <span class="col-image">Image</span>
-      <span class="col-domain">Domain</span>
-      <span class="col-result">Result</span>
-      <span class="col-time-ms">Time</span>
-    </div>
-    @for (log of logs; track log._id?.$oid) {
-      <div class="table-row" [class.selected]="selectedLog === log" (click)="selectLog(log)">
-        <span class="col-time text-sm text-muted">{{ log.timestamp?.$date | date:'medium' }}</span>
-        <span class="col-image text-sm truncate">{{ log.image_filename }}</span>
-        <span class="col-domain"><app-status-badge [label]="log.domain" [variant]="log.domain === 'steel' ? 'steel' : 'sugar'"/></span>
-        <span class="col-result text-sm">
-          @if (log.domain === 'steel') {
-            {{ log.knowledge_graph_output?.decision || '–' }}
-          } @else {
-            {{ log.model_prediction?.predicted_class || '–' }}
-          }
-        </span>
-        <span class="col-time-ms text-xs text-mono text-muted">{{ log.processing_time_ms }}ms</span>
-      </div>
-    }
-    @if (logs.length === 0) {
-      <div class="empty-state">
-        <span class="text-muted">No logs found. Run an analysis to get started.</span>
-      </div>
-    }
-  </div>
+  <app-data-table 
+    [columns]="tableColumns" 
+    [data]="logs" 
+    [selectedItem]="selectedLog"
+    emptyMessage="No logs found. Run an analysis to get started."
+    (rowClick)="selectLog($event)">
+    <ng-template #rowTemplate let-log>
+      <span class="col-time text-sm text-muted">{{ log.timestamp?.$date | date:'medium' }}</span>
+      <span class="col-image text-sm truncate">{{ log.image_filename }}</span>
+      <span class="col-domain"><app-status-badge [label]="log.domain" [variant]="log.domain === 'steel' ? 'steel' : 'sugar'"/></span>
+      <span class="col-result text-sm">
+        @if (log.domain === 'steel') {
+          {{ log.knowledge_graph_output?.decision | formatResult }}
+        } @else {
+          {{ log.model_prediction?.predicted_class | formatResult }}
+        }
+      </span>
+      <span class="col-flag">
+        @if (isLogCorrected(log)) {
+        <i class="fa-solid fa-circle-check text-success" title="Correction submitted"></i>
+        }
+      </span>
+      <span class="col-time-ms text-xs text-mono text-muted">{{ log.processing_time_ms }}ms</span>
+    </ng-template>
+  </app-data-table>
 
   <!-- Pagination Bar -->
-  <div class="pagination-bar">
-    <div class="limit-selector">
-      <span class="text-sm text-muted">Items per page:</span>
-      <div class="limit-options">
-        @for (opt of limitOptions; track opt) {
-          <button class="limit-btn" [class.active]="limit === opt" (click)="setLimit(opt)">
-            {{ opt }}
-          </button>
-        }
-      </div>
-    </div>
-    
-    <div class="page-center">
-      <span class="text-sm text-muted">Page {{ page }} of {{ totalPages || 1 }}</span>
-      @if (totalPages > 1) {
-        <div class="page-jump">
-          <span class="text-sm text-muted">Jump:</span>
-          <input type="number" class="input-field" [(ngModel)]="jumpPage" [min]="1" [max]="totalPages" (keydown.enter)="goToJumpPage()">
-          <button class="btn btn-sm btn-primary" (click)="goToJumpPage()">Go</button>
-        </div>
-      }
-    </div>
-
-    <div class="pagination-controls">
-      <button class="btn btn-sm btn-secondary" (click)="goToPage(page - 1)" [disabled]="page <= 1">← Prev</button>
-      <button class="btn btn-sm btn-secondary" (click)="goToPage(page + 1)" [disabled]="page >= totalPages">Next →</button>
-    </div>
-  </div>
+  <app-pagination 
+    [page]="page" 
+    [totalPages]="totalPages" 
+    [limit]="limit" 
+    [limitOptions]="limitOptions"
+    (pageChange)="goToPage($event)"
+    (limitChange)="setLimit($event)">
+  </app-pagination>
 
   <!-- Detail Modal -->
-  @if (selectedLog) {
+  @if (selectedLog && !correctionMode) {
     <div class="modal-overlay" (click)="selectLog(null)">
       <div class="modal-content card" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h2 class="modal-title">Log Detail</h2>
+          <h2 class="modal-title">Log Details</h2>
           <button class="close-btn" (click)="selectLog(null)" aria-label="Close modal">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
         
-        <div class="detail-grid mt-md">
-          <div class="detail-item"><span class="text-xs text-muted">Image</span><span class="text-sm font-semibold">{{ selectedLog.image_filename }}</span></div>
-          <div class="detail-item">
-            <span class="text-xs text-muted">Domain</span>
-            <span class="text-sm"><app-status-badge [label]="selectedLog.domain" [variant]="selectedLog.domain === 'steel' ? 'steel' : 'sugar'"/></span>
+        <div class="split-view mt-md">
+          <div class="split-left">
+            @if (selectedLog.domain === 'steel' && selectedLog.model_prediction?.mask_overlay_path) {
+              <app-image-card 
+                [imagePath]="selectedLog.image_path || selectedLog.image_filename" 
+                [overlayFilename]="selectedLog.model_prediction.mask_overlay_path"
+                [domainLabel]="selectedLog.domain"
+                style="width: 100%;">
+              </app-image-card>
+            } @else {
+              <app-image-card 
+                [imagePath]="selectedLog.image_path || selectedLog.image_filename" 
+                [domainLabel]="selectedLog.domain"
+                style="width: 100%;">
+              </app-image-card>
+            }
           </div>
-          <div class="detail-item"><span class="text-xs text-muted">Session</span><span class="text-xs text-mono">{{ selectedLog.session_id }}</span></div>
-          <div class="detail-item"><span class="text-xs text-muted">Device</span><span class="text-sm">{{ selectedLog.metadata?.device || 'Unknown' }}</span></div>
+          <div class="split-right">
+            <div class="info-list">
+              <div class="info-row">
+                <span class="info-label text-xs text-muted">Filename</span>
+                <span class="info-value text-sm font-semibold truncate" [title]="selectedLog.image_filename">{{ selectedLog.image_filename }}</span>
+              </div>
+              <div class="info-divider"></div>
+              <div class="info-row">
+                <span class="info-label text-xs text-muted">Session ID</span>
+                <span class="info-value text-xs text-mono">{{ selectedLog.session_id }}</span>
+              </div>
+              <div class="info-divider"></div>
+              <div class="info-row">
+                <span class="info-label text-xs text-muted">Device</span>
+                <span class="info-value text-sm">{{ selectedLog.metadata?.device || 'Unknown' }}</span>
+              </div>
+            </div>
+          </div>
         </div>
         
         @if (selectedLog.gemini_initial_response) {
@@ -103,6 +106,114 @@
             <div class="gemini-text" [innerHTML]="selectedLog.gemini_initial_response | markdown"></div>
           </div>
         }
+
+        <!-- Correction Section -->
+        <div class="log-correction-section mt-lg">
+          @if (correctionSubmitted) {
+          <div class="correction-success-banner">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Correction submitted. <strong>{{ getPendingCount(selectedLog.domain) }}</strong> corrections pending for next fine-tune.</span>
+          </div>
+          } @else {
+          <button class="btn btn-primary w-full" (click)="toggleCorrection()" [disabled]="isSubmittingCorrection">
+            <i class="fa-solid fa-flag"></i>
+            Flag for Correction
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Correction Modal -->
+  @if (selectedLog && correctionMode) {
+    <div class="modal-overlay" (click)="toggleCorrection()">
+      <div class="modal-content card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Correct Prediction</h2>
+          <button class="close-btn" (click)="toggleCorrection()" aria-label="Close modal">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="detail-grid mt-md mb-lg" style="margin-bottom: 24px;">
+          <div class="detail-item"><span class="text-xs text-muted">Image</span><span class="text-sm font-semibold">{{ selectedLog.image_filename }}</span></div>
+          <div class="detail-item">
+            <span class="text-xs text-muted">Domain</span>
+            <span class="text-sm"><app-status-badge [label]="selectedLog.domain" [variant]="selectedLog.domain === 'steel' ? 'steel' : 'sugar'"/></span>
+          </div>
+        </div>
+
+        <div class="correction-panel">
+          <!-- Sugar -->
+          @if (selectedLog.domain === 'sugar') {
+          <div class="correction-field">
+            <div class="mb-md" style="margin-bottom: 12px; font-weight: 600;">
+              Predicted Class: <span class="text-primary">{{ selectedLog.model_prediction?.predicted_class | formatResult }}</span>
+            </div>
+            <label class="field-label">Correct Class</label>
+            <app-dropdown 
+              [data]="sugarOptions" 
+              label="Choose Corrected Class"
+              [selected]="selectedSugarOption"
+              (selectionChange)="updateSugarCorrection($event)">
+            </app-dropdown>
+          </div>
+          }
+
+          <!-- Steel -->
+          @if (selectedLog.domain === 'steel') {
+          <div class="correction-field">
+            <label class="field-label">Detected Defect Corrections</label>
+            @for (corr of steelCorrections; track corr.original_class) {
+            <div class="steel-correction-row">
+              <span class="steel-class-label">Class {{ corr.original_class }}</span>
+              <app-dropdown 
+                size="small"
+                [data]="steelActionOptions(corr.original_class)"
+                [selected]="{value: corr.action, label: corr.action === 'keep' ? 'Keep' : (corr.action === 'reclassify' ? 'Reclassify' : 'Remove (False Positive)')}"
+                (selectionChange)="updateSteelAction(corr, $event)">
+              </app-dropdown>
+              @if (corr.action === 'reclassify') {
+              <app-dropdown 
+                size="small"
+                label="Choose Correct class"
+                [data]="steelClassOptions(corr.original_class)"
+                [selected]="corr.corrected_class !== corr.original_class ? {value: corr.corrected_class, label: 'Class ' + corr.corrected_class} : null"
+                (selectionChange)="updateSteelClass(corr, $event)">
+              </app-dropdown>
+              }
+            </div>
+            }
+
+            <label class="field-label mt-md">Missed Defects</label>
+            <div class="missed-defects-row">
+              @for (cls of ['1','2','3','4']; track cls) {
+              <button class="missed-defect-chip"
+                [class.active]="missedDefects.includes(cls)"
+                (click)="missedDefects.includes(cls) ? removeMissedDefect(cls) : addMissedDefect(cls)">
+                Class {{ cls }}
+              </button>
+              }
+            </div>
+          </div>
+          }
+
+          <!-- Reason -->
+          <div class="correction-field">
+            <label class="field-label">Reason (Optional)</label>
+            <textarea class="correction-textarea" [(ngModel)]="correctionReason"
+              placeholder="Why is this prediction wrong?" rows="2"></textarea>
+          </div>
+
+          <button class="btn btn-primary w-full mt-md" (click)="submitLogCorrection()" [disabled]="isSubmittingCorrection">
+            @if (isSubmittingCorrection) {
+            <div class="btn-spinner"></div> Submitting...
+            } @else {
+            Submit Correction
+            }
+          </button>
+        </div>
       </div>
     </div>
   }

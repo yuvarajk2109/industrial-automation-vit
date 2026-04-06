@@ -36,7 +36,7 @@ def simulate():
     sugar_dir = data.get("sugar_dir", "").strip()
     limit = data.get("limit", DEFAULT_SIMULATION_LIMIT)
 
-    # ── Validation ──
+    # - Validation -
     if not steel_dir and not sugar_dir:
         return {"error": "At least one directory (steel_dir or sugar_dir) is required"}, 400
 
@@ -46,14 +46,13 @@ def simulate():
     if sugar_dir and not os.path.isdir(sugar_dir):
         return {"error": f"Sugar directory not found: {sugar_dir}"}, 404
 
-    # ── Stream SSE events ──
+    # - Stream SSE events -
     return Response(
         run_simulation_stream(steel_dir, sugar_dir, limit),
         mimetype="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",
-            "Access-Control-Allow-Origin": "http://localhost:4200"
+            "X-Accel-Buffering": "no"
         }
     )

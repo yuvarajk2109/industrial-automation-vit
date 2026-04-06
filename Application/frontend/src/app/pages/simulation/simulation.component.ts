@@ -1,15 +1,18 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { SimulationService } from '../../core/services/simulation.service';
 import { SimulationState, SimulationSummary, CompletedImage, SimulationEvent } from '../../core/models/simulation.model';
 import { PipelineVisualiserComponent } from '../../shared/components/pipeline-visualiser/pipeline-visualiser.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
+import { DropdownComponent } from '../../shared/components/dropdown/dropdown';
 import { ApiService } from '../../core/services/api.service';
+import { FormatResultPipe } from '../../shared/pipes/format-result.pipe';
 
 @Component({
   selector: 'app-simulation',
   standalone: true,
-  imports: [FormsModule, PipelineVisualiserComponent, StatusBadgeComponent],
+  imports: [FormsModule, RouterLink, PipelineVisualiserComponent, StatusBadgeComponent, DropdownComponent, FormatResultPipe],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.css'
 })
@@ -162,7 +165,7 @@ export class SimulationComponent {
   }
 
   formatEta(ms: number): string {
-    if (ms <= 0) return '–';
+    if (ms <= 0) return '-';
     const secs = Math.round(ms / 1000);
     if (secs < 60) return `${secs}s`;
     const mins = Math.floor(secs / 60);
@@ -186,5 +189,151 @@ export class SimulationComponent {
     }
   }
 
+  // - Correction / Feedback -
+  flaggedImage: CompletedImage | null = null;
+  correctedSugarClass = '';
+  steelCorrections: { original_class: string; corrected_class: string; action: string }[] = [];
+  missedDefects: string[] = [];
+  correctionReason = '';
+  isSubmittingCorrection = false;
+  correctionSubmittedIds = new Set<number>();
+  totalCorrectionsSubmitted = 0;
+
+  flagImage(img: CompletedImage): void {
+    if (this.flaggedImage === img) {
+      this.flaggedImage = null;
+      return;
+    }
+    this.flaggedImage = img;
+    this.correctionReason = '';
+    this.missedDefects = [];
+
+    // Dropdown prep
+    if (img.domain === 'sugar') {
+      this.correctedSugarClass = '';
+      this.selectedSugarOption = null;
+    } else {
+      // Build steel corrections from prediction
+      this.steelCorrections = [];
+      const defectSummary = img.prediction?.defect_summary || {};
+      for (const [key, val] of Object.entries(defectSummary)) {
+        if ((val as any).detected) {
+          const cls = key.replace('class_', '');
+          this.steelCorrections.push({
+            original_class: cls,
+            corrected_class: cls,
+            action: 'keep'
+          });
+        }
+      }
+    }
+  }
+
+  addMissedDefect(cls: string): void {
+    if (cls && !this.missedDefects.includes(cls)) {
+      this.missedDefects.push(cls);
+    }
+  }
+
+  removeMissedDefect(cls: string): void {
+    this.missedDefects = this.missedDefects.filter(d => d !== cls);
+  }
+
+  submitSimCorrection(): void {
+    if (!this.flaggedImage || !this.flaggedImage.log_id) return;
+
+    let correctedLabel: any;
+    const img = this.flaggedImage;
+
+    if (img.domain === 'sugar') {
+      if (this.correctedSugarClass === img.prediction?.predicted_class) return;
+      if (!this.correctedSugarClass) return; // Prevent empty submission
+      correctedLabel = { class: this.correctedSugarClass };
+    } else {
+      const corrections = this.steelCorrections
+        .filter(c => c.corrected_class !== c.original_class || c.action === 'remove')
+        .map(c => ({
+          original_class: c.original_class,
+          corrected_class: c.action === 'remove' ? 'none' : c.corrected_class,
+          action: c.action
+        }));
+      if (corrections.length === 0 && this.missedDefects.length === 0) return;
+      correctedLabel = {
+        type: 'region_override',
+        corrections,
+        missed_defects: this.missedDefects
+      };
+    }
+
+    this.isSubmittingCorrection = true;
+    this.api.submitFeedback({
+      log_id: img.log_id,
+      domain: img.domain,
+      corrected_label: correctedLabel,
+      reason: this.correctionReason
+    }).subscribe({
+      next: (res: any) => {
+        this.correctionSubmittedIds.add(img.index);
+        this.totalCorrectionsSubmitted = res.pending_count || (this.totalCorrectionsSubmitted + 1);
+        this.flaggedImage = null;
+        this.isSubmittingCorrection = false;
+      },
+      error: () => {
+        this.isSubmittingCorrection = false;
+      }
+    });
+  }
+
   Math = Math;
+
+  // Dropdown options
+  sugarOptions = [
+    { label: 'Unsaturated', value: 'unsaturated' },
+    { label: 'Metastable', value: 'metastable' },
+    { label: 'Intermediate', value: 'intermediate' },
+    { label: 'Labile', value: 'labile' }
+  ];
+
+  steelActionOptions(originalClass: string) {
+    return [
+      { label: `Keep as Class ${originalClass}`, value: 'keep' },
+      { label: 'Reclassify', value: 'reclassify' },
+      { label: 'Remove (False Positive)', value: 'remove' }
+    ];
+  }
+
+  steelClassOptions(originalClass: string) {
+    return ['1', '2', '3', '4']
+      .filter(c => c !== originalClass)
+      .map(c => ({ label: `Class ${c}`, value: c }));
+  }
+
+  selectedSugarOption: any = null;
+
+  updateSugarCorrection(option: any): void {
+    if (option) {
+      this.correctedSugarClass = option.value;
+      this.selectedSugarOption = option;
+    } else {
+      this.correctedSugarClass = '';
+      this.selectedSugarOption = null;
+    }
+  }
+
+  updateSteelAction(corr: any, option: any): void {
+    if (option) {
+      corr.action = option.value;
+      if (corr.action === 'remove') {
+        corr.corrected_class = 'none';
+      } else {
+        corr.corrected_class = corr.original_class;
+      }
+    }
+  }
+
+  updateSteelClass(corr: any, option: any): void {
+    if (option) {
+      corr.corrected_class = option.value;
+    }
+  }
 }

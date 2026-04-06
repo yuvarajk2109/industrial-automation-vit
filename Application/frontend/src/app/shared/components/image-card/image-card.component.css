@@ -32,7 +32,7 @@
   right: var(--space-sm);
   padding: 4px 10px;
   background: rgba(0, 0, 0, 0.7);
-  color: var(--clr-text-primary);
+  color: white;
   border-radius: var(--radius-sm);
   font-size: 0.7rem;
   font-weight: 500;
@@ -44,26 +44,11 @@
   background: rgba(76, 175, 80, 0.4);
 }
 
-.domain-tag {
+.domain-badge-container {
   position: absolute;
   top: var(--space-sm);
   left: var(--space-sm);
-  padding: 2px 8px;
-  border-radius: var(--radius-sm);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.domain-tag.steel {
-  background: rgba(96, 125, 139, 0.8);
-  color: white;
-}
-
-.domain-tag.sugar {
-  background: rgba(76, 175, 80, 0.8);
-  color: white;
+  z-index: 10;
 }
 
 .image-caption {

@@ -9,15 +9,17 @@ from flask_cors import CORS
 from config import OUTPUT_DIR
 
 app = Flask(__name__, static_folder="static")
-CORS(app, origins=["http://localhost:4200"])
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# ── Register Blueprints ──
+# - Register Blueprints -
 from routes.predict import predict_bp
 from routes.simulate import simulate_bp
 from routes.chat import chat_bp
 from routes.logs import logs_bp
 from routes.images import images_bp
 from routes.browse import browse_bp
+from routes.feedback import feedback_bp
+from routes.finetune import finetune_bp
 
 app.register_blueprint(predict_bp, url_prefix="/api")
 app.register_blueprint(simulate_bp, url_prefix="/api")
@@ -25,9 +27,11 @@ app.register_blueprint(chat_bp, url_prefix="/api")
 app.register_blueprint(logs_bp, url_prefix="/api")
 app.register_blueprint(images_bp, url_prefix="/api")
 app.register_blueprint(browse_bp, url_prefix="/api")
+app.register_blueprint(feedback_bp, url_prefix="/api")
+app.register_blueprint(finetune_bp, url_prefix="/api")
 
 
-# ── Health Check ──
+# - Health Check -
 @app.route("/api/health", methods=["GET"])
 def health_check():
     """Health check endpoint – returns system status."""
@@ -42,7 +46,7 @@ def health_check():
     }), 200
 
 
-# ── Error Handlers ──
+# - Error Handlers -
 @app.errorhandler(404)
 def not_found(e):
     return jsonify({"error": "Endpoint not found"}), 404

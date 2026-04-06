@@ -1,0 +1,60 @@
+<div class="corrections-section">
+  <div class="corrections-filters">
+    <app-dropdown 
+      variant="filter"
+      [data]="domainOptions" 
+      [selected]="{value: correctionFilter, label: correctionFilter === 'sugar' ? 'Sugar' : (correctionFilter === 'steel' ? 'Steel' : 'All Domains')}"
+      (selectionChange)="onDomainFilterChange($event)">
+    </app-dropdown>
+
+    <app-dropdown 
+      variant="filter"
+      [data]="statusOptions" 
+      [selected]="{value: correctionStatusFilter, label: correctionStatusFilter === 'pending' ? 'Pending' : (correctionStatusFilter === 'used' ? 'Used' : 'All Statuses')}"
+      (selectionChange)="onStatusFilterChange($event)">
+    </app-dropdown>
+  </div>
+
+  @if (correctionsLoading) {
+  <app-loading-spinner message="Loading corrections..."></app-loading-spinner>
+  } @else if (corrections.length === 0) {
+  <p class="empty-text">No corrections found. Analyse images and submit corrections when the model is wrong.</p>
+  } @else {
+  <div class="mt-lg">
+    <app-data-table [columns]="correctionColumns" [data]="corrections"
+      emptyMessage="No pending corrections available." [isRowClickable]="false" fontSize="0.75rem">
+      <ng-template #rowTemplate let-corr>
+        <span class="cell-time text-sm text-muted">{{ formatDate(corr.submitted_at?.$date || corr.submitted_at)
+          }}</span>
+        <span class="cell-image text-sm truncate">{{ corr.image_filename }}</span>
+        <span class="cell-domain">
+          <app-status-badge [label]="corr.domain" [variant]="corr.domain === 'steel' ? 'steel' : 'sugar'" />
+        </span>
+        <span class="cell-prediction">
+          @if (corr.domain === 'sugar') {
+          {{ corr.original_prediction?.predicted_class || '-' }}
+          } @else {
+          {{ corr.original_prediction?.dominant_defect || '-' }}
+          }
+        </span>
+        <span class="cell-corrected">
+          @if (corr.domain === 'sugar') {
+          {{ corr.corrected_label?.class || '-' }}
+          } @else {
+          Region Override
+          }
+        </span>
+        <span class="cell-status">
+          <app-status-badge [label]="corr.status" [variant]="corr.status === 'used' ? 'success' : 'warning'" />
+        </span>
+      </ng-template>
+    </app-data-table>
+  </div>
+
+  <!-- Pagination -->
+  <app-pagination [page]="correctionPage" [totalPages]="correctionTotalPages" [limit]="correctionLimit"
+    [limitOptions]="[10, 15, 20, 50]" (pageChange)="pageChange.emit($event)"
+    (limitChange)="limitChange.emit($event)">
+  </app-pagination>
+  }
+</div>

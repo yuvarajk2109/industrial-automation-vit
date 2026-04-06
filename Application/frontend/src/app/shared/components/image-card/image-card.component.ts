@@ -1,9 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
+import { StatusBadgeComponent } from '../status-badge/status-badge.component';
 
 @Component({
   selector: 'app-image-card',
   standalone: true,
+  imports: [StatusBadgeComponent],
   templateUrl: './image-card.component.html',
   styleUrl: './image-card.component.css'
 })
@@ -15,7 +17,7 @@ export class ImageCardComponent {
 
   showOverlay = false;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) { }
 
   getSourceUrl(): string {
     if (this.imagePath.startsWith('blob:')) {

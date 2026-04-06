@@ -13,10 +13,10 @@ from config import (
 )
 from models.dda_vit import DDAViT
 
-# ── Device ──
+# - Device -
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# ── Module-level singleton ──
+# - Module-level singleton -
 _model = None
 
 
@@ -28,46 +28,69 @@ def _freeze_model(model):
 
 def _load_model():
     """
-    Load steel + sugar base models, wrap them in DDAViT,
-    freeze backbones, and set to eval mode.
+    Load steel + sugar base models, gracefully handling whether the 
+    checkpoints on disk are raw baseline architectures or localized DDA-ViT 
+    component state dictionaries produced by domain-specific fine-tuning.
     """
     global _model
 
     print(f"[CaneNexus] Loading models on device: {device}")
-    print(f"[CaneNexus] Steel model path: {STEEL_MODEL_PATH}")
-    print(f"[CaneNexus] Sugar model path: {SUGAR_MODEL_PATH}")
+    
+    try:
+        steel_state = torch.load(str(STEEL_MODEL_PATH), map_location=device)
+    except Exception:
+        print("[CaneNexus] WARNING: Failed to load steel.pth")
+        steel_state = {}
+        
+    try:
+        sugar_state = torch.load(str(SUGAR_MODEL_PATH), map_location=device)
+    except Exception:
+        print("[CaneNexus] WARNING: Failed to load sugar.pth")
+        sugar_state = {}
 
-    # ── Steel Model (SegFormer UNet with mit_b4 encoder) ──
+    steel_is_dda = any("steel.encoder." in k for k in steel_state.keys())
+    sugar_is_dda = any("sugar.model." in k for k in sugar_state.keys())
+
+    # - Steel Model (SegFormer UNet with mit_b4 encoder) -
     steel_model = smp.Unet(
         encoder_name="mit_b4",
-        encoder_weights=None,       # trained weights loaded manually
+        encoder_weights=None,
         in_channels=3,
         classes=NUM_STEEL_CLASSES
     )
-    steel_model.load_state_dict(
-        torch.load(str(STEEL_MODEL_PATH), map_location=device)
-    )
-    steel_model.to(device)
-    steel_model.eval()
+    steel_mapped = {k.replace("steel.", ""): v for k, v in steel_state.items() if k.startswith("steel.")} if steel_is_dda else steel_state
+    steel_model.load_state_dict(steel_mapped, strict=False)
 
-    # ── Sugar Model (Swin Tiny via timm) ──
+    # - Sugar Model (Swin Tiny via timm) -
     sugar_model = timm.create_model(
         "swin_tiny_patch4_window7_224",
-        pretrained=False,           # avoid overwriting trained weights
+        pretrained=False,
         num_classes=NUM_SUGAR_CLASSES
     )
-    sugar_model.load_state_dict(
-        torch.load(str(SUGAR_MODEL_PATH), map_location=device)
-    )
-    sugar_model.to(device)
-    sugar_model.eval()
+    sugar_mapped = {k.replace("sugar.model.", ""): v for k, v in sugar_state.items() if k.startswith("sugar.model.")} if sugar_is_dda else sugar_state
+    sugar_model.load_state_dict(sugar_mapped, strict=False)
 
-    # ── Freeze both base models ──
+    # - Freeze both base models -
     _freeze_model(steel_model)
     _freeze_model(sugar_model)
 
-    # ── Wrap in DDA-ViT ──
+    # - Wrap in DDA-ViT -
     model = DDAViT(steel_model, sugar_model)
+    
+    # - Inject Domain-Specific Heads & Projections -
+    final_state = model.state_dict()
+    
+    if steel_is_dda:
+        for k, v in steel_state.items():
+            if k.startswith("proj_s.") or k.startswith("seg_head."):
+                final_state[k] = v
+                
+    if sugar_is_dda:
+        for k, v in sugar_state.items():
+            if k.startswith("proj_q.") or k.startswith("sugar_head.") or k.startswith("cross_attn."):
+                final_state[k] = v
+
+    model.load_state_dict(final_state, strict=True)
     model.to(device)
     model.eval()
 

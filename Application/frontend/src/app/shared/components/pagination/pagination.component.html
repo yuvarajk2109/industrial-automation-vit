@@ -1,0 +1,32 @@
+<div class="pagination-bar">
+  <div class="limit-selector">
+    <span class="text-sm text-muted">Items per page:</span>
+    <div class="limit-options">
+      @for (opt of limitOptions; track opt) {
+        <button class="limit-btn" [class.active]="limit === opt" (click)="setLimit(opt)">
+          {{ opt }}
+        </button>
+      }
+    </div>
+  </div>
+  
+  <div class="page-center">
+    <span class="text-sm text-muted">Page {{ page }} of {{ totalPages || 1 }}</span>
+    @if (totalPages > 1) {
+      <div class="page-jump">
+        <span class="text-sm text-muted">Jump:</span>
+        <input type="number" class="input-field" [(ngModel)]="jumpPage" [min]="1" [max]="totalPages" (keydown.enter)="goToJumpPage()">
+        <button class="btn btn-sm btn-primary" (click)="goToJumpPage()">Go</button>
+      </div>
+    }
+  </div>
+
+  <div class="pagination-controls">
+    <button class="btn btn-sm btn-secondary" (click)="goToPage(page - 1)" [disabled]="page <= 1">
+      <i class="fa-solid fa-chevron-left"></i> Prev
+    </button>
+    <button class="btn btn-sm btn-secondary" (click)="goToPage(page + 1)" [disabled]="page >= totalPages">
+      Next <i class="fa-solid fa-chevron-right"></i>
+    </button>
+  </div>
+</div>
