@@ -195,7 +195,7 @@
                 Predicted Class: <span class="text-primary">{{ sugarPrediction?.predicted_class | formatResult }}</span>
               </div>
               <label class="field-label">Correct Class</label>
-              <app-dropdown [data]="sugarOptions" label="Choose Corrected Class" [selected]="selectedSugarOption"
+              <app-dropdown [data]="filteredSugarOptions" label="Choose Corrected Class" [selected]="selectedSugarOption"
                 (selectionChange)="updateSugarCorrection($event)">
               </app-dropdown>
             </div>

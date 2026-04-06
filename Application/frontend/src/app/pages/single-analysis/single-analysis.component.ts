@@ -94,6 +94,11 @@ export class SingleAnalysisComponent {
     this.isAnalysing = true;
     this.result = null;
     this.error = null;
+    this.correctionSubmitted = false;
+    this.showCorrectionPanel = false;
+    this.correctedSugarClass = '';
+    this.selectedSugarOption = null;
+    this.correctionReason = '';
     this.chatService.clearChat();
 
     // Simulate pipeline steps visually
@@ -176,6 +181,11 @@ export class SingleAnalysisComponent {
     { label: 'Intermediate', value: 'intermediate' },
     { label: 'Labile', value: 'labile' }
   ];
+
+  get filteredSugarOptions() {
+    const predicted = this.sugarPrediction?.predicted_class;
+    return this.sugarOptions.filter(opt => opt.value !== predicted);
+  }
 
   steelActionOptions(originalClass: string) {
     return [
