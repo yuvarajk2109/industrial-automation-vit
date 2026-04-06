@@ -22,7 +22,17 @@ export class CorrectionsComponent {
   @Input() correctionStatusFilter: 'all' | 'pending' | 'used' = 'all';
   @Input() correctionPage = 1;
   @Input() correctionTotalPages = 1;
-  @Input() correctionLimit = 15;
+  @Input() correctionLimit = 20;
+  @Input() correctionTotal: number = 0;
+
+  getStartIndex(): number {
+    if (this.correctionTotal === 0) return 0;
+    return (this.correctionPage - 1) * this.correctionLimit + 1;
+  }
+
+  getEndIndex(): number {
+    return Math.min(this.correctionPage * this.correctionLimit, this.correctionTotal);
+  }
 
   @Output() correctionFilterChange = new EventEmitter<'all' | 'sugar' | 'steel'>();
   @Output() correctionStatusFilterChange = new EventEmitter<'all' | 'pending' | 'used'>();

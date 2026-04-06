@@ -45,7 +45,7 @@ export class FinetuneComponent implements OnInit, OnDestroy {
   correctionPage = 1;
   correctionTotal = 0;
   correctionTotalPages = 1;
-  correctionLimit = 15;
+  correctionLimit = 20;
 
   // - Fine-Tune Config -
   selectedDomain: 'sugar' | 'steel' = 'sugar';

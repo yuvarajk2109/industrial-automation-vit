@@ -1,14 +1,25 @@
 <div class="corrections-section">
-  <div class="corrections-filters">
-    <app-dropdown variant="filter" [data]="domainOptions"
-      [selected]="{value: correctionFilter, label: correctionFilter === 'sugar' ? 'Sugar' : (correctionFilter === 'steel' ? 'Steel' : 'All Domains')}"
-      (selectionChange)="onDomainFilterChange($event)">
-    </app-dropdown>
+  <div class="corrections-filters"
+    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div style="display: flex; gap: 12px;">
+      <app-dropdown variant="filter" [data]="domainOptions"
+        [selected]="{value: correctionFilter, label: correctionFilter === 'sugar' ? 'Sugar' : (correctionFilter === 'steel' ? 'Steel' : 'All Domains')}"
+        (selectionChange)="onDomainFilterChange($event)">
+      </app-dropdown>
 
-    <app-dropdown variant="filter" [data]="statusOptions"
-      [selected]="{value: correctionStatusFilter, label: correctionStatusFilter === 'pending' ? 'Pending' : (correctionStatusFilter === 'used' ? 'Used' : 'All Statuses')}"
-      (selectionChange)="onStatusFilterChange($event)">
-    </app-dropdown>
+      <app-dropdown variant="filter" [data]="statusOptions"
+        [selected]="{value: correctionStatusFilter, label: correctionStatusFilter === 'pending' ? 'Pending' : (correctionStatusFilter === 'used' ? 'Used' : 'All Statuses')}"
+        (selectionChange)="onStatusFilterChange($event)">
+      </app-dropdown>
+    </div>
+
+    <span class="filter-count text-sm text-muted">
+      @if (correctionTotal > 0) {
+      Showing {{ getStartIndex() }}-{{ getEndIndex() }} out of {{ correctionTotal }} corrections
+      } @else {
+      0 records
+      }
+    </span>
   </div>
 
   @if (correctionsLoading) {
@@ -49,7 +60,7 @@
 
   <!-- Pagination -->
   <app-pagination [page]="correctionPage" [totalPages]="correctionTotalPages" [limit]="correctionLimit"
-    [limitOptions]="[10, 15, 20, 50]" (pageChange)="pageChange.emit($event)" (limitChange)="limitChange.emit($event)">
+    [limitOptions]="[20, 30, 50]" (pageChange)="pageChange.emit($event)" (limitChange)="limitChange.emit($event)">
   </app-pagination>
   }
 </div>
