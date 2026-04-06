@@ -48,6 +48,7 @@ export interface SimulationSummary {
 export interface CompletedImage {
   index: number;
   filename: string;
+  image_path: string;
   domain: string;
   prediction: any;
   kg_result: any;

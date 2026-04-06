@@ -162,8 +162,7 @@
           </button>
         </div>
         <div class="cc-image-preview">
-          <app-image-card 
-            [imagePath]="img.image_path || img.filename" 
+          <app-image-card [imagePath]="img.image_path || img.filename"
             [overlayFilename]="img.domain === 'steel' ? img.prediction?.mask_overlay_path : null">
           </app-image-card>
         </div>
@@ -188,10 +187,16 @@
           </button>
         </div>
 
-        <div class="correction-modal-meta">
-          <app-status-badge [label]="flaggedImage.domain"
-            [variant]="flaggedImage.domain === 'steel' ? 'steel' : 'sugar'" />
-          <span class="text-sm">{{ flaggedImage.filename }}</span>
+        <div class="correction-modal-meta mb-md">
+          <span class="text-sm font-semibold truncate" [title]="flaggedImage.filename">{{ flaggedImage.filename
+            }}</span>
+        </div>
+
+        <div class="mb-md">
+          <app-image-card [imagePath]="flaggedImage.image_path || flaggedImage.filename"
+            [overlayFilename]="flaggedImage.domain === 'steel' ? flaggedImage.prediction?.mask_overlay_path : null"
+            [domainLabel]="flaggedImage.domain" style="width: 100%;">
+          </app-image-card>
         </div>
 
         <!-- Sugar Correction -->
