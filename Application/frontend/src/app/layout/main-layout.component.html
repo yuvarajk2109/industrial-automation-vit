@@ -30,6 +30,9 @@
         <span class="nav-icon" [innerHTML]="item.icon"></span>
         @if (!sidebarCollapsed) {
         <span class="nav-label">{{ item.label }}</span>
+        @if (item.path === '/finetune' && pendingCorrections > 0) {
+          <span class="nav-badge">{{ pendingCorrections }}</span>
+        }
         }
       </a>
       }

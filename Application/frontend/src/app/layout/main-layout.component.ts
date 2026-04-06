@@ -12,6 +12,7 @@ import { ApiService } from '../core/services/api.service';
 export class MainLayoutComponent implements OnInit, OnDestroy {
   sidebarCollapsed = false;
   backendOnline = false;
+  pendingCorrections = 0;
   private healthInterval: any;
 
   navItems = [
@@ -57,7 +58,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.checkHealth();
-    this.healthInterval = setInterval(() => this.checkHealth(), 15000);
+    this.loadPendingCorrections();
+    this.healthInterval = setInterval(() => {
+      this.checkHealth();
+      this.loadPendingCorrections();
+    }, 15000);
   }
 
   ngOnDestroy(): void {
@@ -72,6 +77,15 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     this.api.getHealth().subscribe({
       next: () => (this.backendOnline = true),
       error: () => (this.backendOnline = false)
+    });
+  }
+
+  private loadPendingCorrections(): void {
+    this.api.getFeedbackStats().subscribe({
+      next: (stats: any) => {
+        this.pendingCorrections = stats?.pending || 0;
+      },
+      error: () => {}
     });
   }
 }
