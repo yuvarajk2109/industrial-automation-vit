@@ -1,0 +1,28 @@
+<div class="pipeline" [class.vertical]="orientation === 'vertical'">
+  @for (step of steps; track step.label; let i = $index) {
+    <div class="pipeline-step" [class.completed]="i < currentStep" [class.active]="i === currentStep" [class.pending]="i > currentStep">
+      @if (i > 0) {
+        <div class="step-connector">
+          <div class="connector-fill" [style.width.%]="i <= currentStep ? 100 : 0"></div>
+        </div>
+      }
+      <div class="step-node">
+        @if (i < currentStep) {
+          <svg class="step-icon check" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+        } @else if (i === currentStep) {
+          <div class="step-spinner"></div>
+        } @else {
+          <span class="step-number">{{ i + 1 }}</span>
+        }
+      </div>
+      <div class="step-info">
+        <span class="step-label">{{ step.label }}</span>
+        @if (step.preview && i <= currentStep) {
+          <span class="step-preview">{{ step.preview }}</span>
+        }
+      </div>
+    </div>
+  }
+</div>

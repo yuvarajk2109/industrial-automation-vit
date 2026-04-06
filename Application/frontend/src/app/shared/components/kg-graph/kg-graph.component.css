@@ -1,0 +1,48 @@
+.kg-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: var(--space-sm);
+}
+
+.kg-svg {
+  width: 100%;
+  min-height: 200px;
+}
+
+.active-edge {
+  stroke: var(--clr-primary-400);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+  animation: dash-flow 1s linear infinite;
+}
+
+.inactive-edge {
+  stroke: rgba(76, 175, 80, 0.15);
+  stroke-width: 1;
+}
+
+.active-node {
+  fill: var(--clr-primary-700);
+  stroke: var(--clr-primary-400);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.4));
+}
+
+.inactive-node {
+  fill: var(--clr-bg-tertiary);
+  stroke: rgba(76, 175, 80, 0.15);
+  stroke-width: 1;
+}
+
+.active-label {
+  fill: var(--clr-primary-300);
+  font-size: 7px;
+  font-family: var(--font-primary);
+  font-weight: 500;
+}
+
+.inactive-label {
+  fill: var(--clr-text-muted);
+  font-size: 7px;
+  font-family: var(--font-primary);
+}

@@ -1,0 +1,26 @@
+.spinner-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-xl);
+}
+
+.spinner-wrapper.inline {
+  flex-direction: row;
+  padding: var(--space-sm);
+  gap: var(--space-sm);
+}
+
+.spinner {
+  border: 3px solid rgba(76, 175, 80, 0.15);
+  border-top-color: var(--clr-primary-400);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner-message {
+  font-size: 0.85rem;
+  color: var(--clr-text-muted);
+}

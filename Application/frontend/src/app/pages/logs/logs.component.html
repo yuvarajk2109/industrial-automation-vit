@@ -1,0 +1,109 @@
+<div class="logs-page">
+  <h1 class="section-title">Analysis Logs</h1>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <button class="filter-btn" [class.active]="!domainFilter" (click)="setFilter('')">All</button>
+    <button class="filter-btn" [class.active]="domainFilter === 'steel'" (click)="setFilter('steel')">Steel</button>
+    <button class="filter-btn" [class.active]="domainFilter === 'sugar'" (click)="setFilter('sugar')">Sugar</button>
+    <span class="filter-count text-sm text-muted">
+      @if (total > 0) {
+        Showing {{ getStartIndex() }}-{{ getEndIndex() }} out of {{ total }} records
+      } @else {
+        0 records
+      }
+    </span>
+  </div>
+
+  <!-- Table -->
+  <div class="logs-table">
+    <div class="table-header">
+      <span class="col-time">Timestamp</span>
+      <span class="col-image">Image</span>
+      <span class="col-domain">Domain</span>
+      <span class="col-result">Result</span>
+      <span class="col-time-ms">Time</span>
+    </div>
+    @for (log of logs; track log._id?.$oid) {
+      <div class="table-row" [class.selected]="selectedLog === log" (click)="selectLog(log)">
+        <span class="col-time text-sm text-muted">{{ log.timestamp?.$date | date:'medium' }}</span>
+        <span class="col-image text-sm truncate">{{ log.image_filename }}</span>
+        <span class="col-domain"><app-status-badge [label]="log.domain" [variant]="log.domain === 'steel' ? 'steel' : 'sugar'"/></span>
+        <span class="col-result text-sm">
+          @if (log.domain === 'steel') {
+            {{ log.knowledge_graph_output?.decision || '–' }}
+          } @else {
+            {{ log.model_prediction?.predicted_class || '–' }}
+          }
+        </span>
+        <span class="col-time-ms text-xs text-mono text-muted">{{ log.processing_time_ms }}ms</span>
+      </div>
+    }
+    @if (logs.length === 0) {
+      <div class="empty-state">
+        <span class="text-muted">No logs found. Run an analysis to get started.</span>
+      </div>
+    }
+  </div>
+
+  <!-- Pagination Bar -->
+  <div class="pagination-bar">
+    <div class="limit-selector">
+      <span class="text-sm text-muted">Items per page:</span>
+      <div class="limit-options">
+        @for (opt of limitOptions; track opt) {
+          <button class="limit-btn" [class.active]="limit === opt" (click)="setLimit(opt)">
+            {{ opt }}
+          </button>
+        }
+      </div>
+    </div>
+    
+    <div class="page-center">
+      <span class="text-sm text-muted">Page {{ page }} of {{ totalPages || 1 }}</span>
+      @if (totalPages > 1) {
+        <div class="page-jump">
+          <span class="text-sm text-muted">Jump:</span>
+          <input type="number" class="input-field" [(ngModel)]="jumpPage" [min]="1" [max]="totalPages" (keydown.enter)="goToJumpPage()">
+          <button class="btn btn-sm btn-primary" (click)="goToJumpPage()">Go</button>
+        </div>
+      }
+    </div>
+
+    <div class="pagination-controls">
+      <button class="btn btn-sm btn-secondary" (click)="goToPage(page - 1)" [disabled]="page <= 1">← Prev</button>
+      <button class="btn btn-sm btn-secondary" (click)="goToPage(page + 1)" [disabled]="page >= totalPages">Next →</button>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  @if (selectedLog) {
+    <div class="modal-overlay" (click)="selectLog(null)">
+      <div class="modal-content card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Log Detail</h2>
+          <button class="close-btn" (click)="selectLog(null)" aria-label="Close modal">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        
+        <div class="detail-grid mt-md">
+          <div class="detail-item"><span class="text-xs text-muted">Image</span><span class="text-sm font-semibold">{{ selectedLog.image_filename }}</span></div>
+          <div class="detail-item">
+            <span class="text-xs text-muted">Domain</span>
+            <span class="text-sm"><app-status-badge [label]="selectedLog.domain" [variant]="selectedLog.domain === 'steel' ? 'steel' : 'sugar'"/></span>
+          </div>
+          <div class="detail-item"><span class="text-xs text-muted">Session</span><span class="text-xs text-mono">{{ selectedLog.session_id }}</span></div>
+          <div class="detail-item"><span class="text-xs text-muted">Device</span><span class="text-sm">{{ selectedLog.metadata?.device || 'Unknown' }}</span></div>
+        </div>
+        
+        @if (selectedLog.gemini_initial_response) {
+          <div class="detail-gemini mt-lg">
+            <span class="text-xs text-muted mb-xs block" style="margin-bottom: 8px;">Gemini Response</span>
+            <div class="gemini-text" [innerHTML]="selectedLog.gemini_initial_response | markdown"></div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
