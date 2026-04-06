@@ -1,22 +1,19 @@
 <div class="image-card">
   <div class="image-container">
-    <img
-      [src]="showOverlay && overlayFilename ? getOverlayUrl() : getSourceUrl()"
-      [alt]="imagePath"
-      (error)="onImageError($event)"
-    />
+    <img [src]="showOverlay && overlayFilename ? getOverlayUrl() : getSourceUrl()" [alt]="imagePath"
+      (error)="onImageError($event)" />
     @if (overlayFilename) {
-      <button class="toggle-overlay" (click)="showOverlay = !showOverlay">
-        {{ showOverlay ? 'Original' : 'Overlay' }}
-      </button>
+    <button class="toggle-overlay" (click)="showOverlay = !showOverlay">
+      {{ showOverlay ? 'Original' : 'Overlay' }}
+    </button>
     }
     @if (domainLabel) {
-      <span class="domain-tag" [class.steel]="domainLabel === 'steel'" [class.sugar]="domainLabel === 'sugar'">
-        {{ domainLabel }}
-      </span>
+    <div class="domain-badge-container">
+      <app-status-badge [label]="domainLabel" [variant]="domainLabel === 'steel' ? 'steel' : 'sugar'" />
+    </div>
     }
   </div>
   @if (caption) {
-    <div class="image-caption">{{ caption }}</div>
+  <div class="image-caption">{{ caption }}</div>
   }
 </div>
