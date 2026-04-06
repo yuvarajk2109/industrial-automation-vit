@@ -28,9 +28,9 @@
       <span class="col-domain"><app-status-badge [label]="log.domain" [variant]="log.domain === 'steel' ? 'steel' : 'sugar'"/></span>
       <span class="col-result text-sm">
         @if (log.domain === 'steel') {
-          {{ log.knowledge_graph_output?.decision || '-' }}
+          {{ log.knowledge_graph_output?.decision | formatResult }}
         } @else {
-          {{ log.model_prediction?.predicted_class || '-' }}
+          {{ log.model_prediction?.predicted_class | formatResult }}
         }
       </span>
       <span class="col-flag">
@@ -57,20 +57,47 @@
     <div class="modal-overlay" (click)="selectLog(null)">
       <div class="modal-content card" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h2 class="modal-title">Log Detail</h2>
+          <h2 class="modal-title">Log Details</h2>
           <button class="close-btn" (click)="selectLog(null)" aria-label="Close modal">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
         
-        <div class="detail-grid mt-md">
-          <div class="detail-item"><span class="text-xs text-muted">Image</span><span class="text-sm font-semibold">{{ selectedLog.image_filename }}</span></div>
-          <div class="detail-item">
-            <span class="text-xs text-muted">Domain</span>
-            <span class="text-sm"><app-status-badge [label]="selectedLog.domain" [variant]="selectedLog.domain === 'steel' ? 'steel' : 'sugar'"/></span>
+        <div class="split-view mt-md">
+          <div class="split-left">
+            @if (selectedLog.domain === 'steel' && selectedLog.model_prediction?.mask_overlay_path) {
+              <app-image-card 
+                [imagePath]="selectedLog.image_path || selectedLog.image_filename" 
+                [overlayFilename]="selectedLog.model_prediction.mask_overlay_path"
+                [domainLabel]="selectedLog.domain"
+                style="width: 100%;">
+              </app-image-card>
+            } @else {
+              <app-image-card 
+                [imagePath]="selectedLog.image_path || selectedLog.image_filename" 
+                [domainLabel]="selectedLog.domain"
+                style="width: 100%;">
+              </app-image-card>
+            }
           </div>
-          <div class="detail-item"><span class="text-xs text-muted">Session</span><span class="text-xs text-mono">{{ selectedLog.session_id }}</span></div>
-          <div class="detail-item"><span class="text-xs text-muted">Device</span><span class="text-sm">{{ selectedLog.metadata?.device || 'Unknown' }}</span></div>
+          <div class="split-right">
+            <div class="info-list">
+              <div class="info-row">
+                <span class="info-label text-xs text-muted">Filename</span>
+                <span class="info-value text-sm font-semibold truncate" [title]="selectedLog.image_filename">{{ selectedLog.image_filename }}</span>
+              </div>
+              <div class="info-divider"></div>
+              <div class="info-row">
+                <span class="info-label text-xs text-muted">Session ID</span>
+                <span class="info-value text-xs text-mono">{{ selectedLog.session_id }}</span>
+              </div>
+              <div class="info-divider"></div>
+              <div class="info-row">
+                <span class="info-label text-xs text-muted">Device</span>
+                <span class="info-value text-sm">{{ selectedLog.metadata?.device || 'Unknown' }}</span>
+              </div>
+            </div>
+          </div>
         </div>
         
         @if (selectedLog.gemini_initial_response) {
@@ -122,7 +149,7 @@
           @if (selectedLog.domain === 'sugar') {
           <div class="correction-field">
             <div class="mb-md" style="margin-bottom: 12px; font-weight: 600;">
-              Predicted Class: <span class="text-primary">{{ selectedLog.model_prediction?.predicted_class }}</span>
+              Predicted Class: <span class="text-primary">{{ selectedLog.model_prediction?.predicted_class | formatResult }}</span>
             </div>
             <label class="field-label">Correct Class</label>
             <app-dropdown 

@@ -7,11 +7,13 @@ import { FormsModule } from '@angular/forms';
 import { PaginationComponent } from '../../shared/components/pagination/pagination.component';
 import { DataTableComponent, TableColumn } from '../../shared/components/data-table/data-table.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown';
+import { ImageCardComponent } from '../../shared/components/image-card/image-card.component';
+import { FormatResultPipe } from '../../shared/pipes/format-result.pipe';
 
 @Component({
   selector: 'app-logs',
   standalone: true,
-  imports: [StatusBadgeComponent, DatePipe, MarkdownPipe, FormsModule, PaginationComponent, DataTableComponent, DropdownComponent],
+  imports: [StatusBadgeComponent, DatePipe, MarkdownPipe, FormsModule, PaginationComponent, DataTableComponent, DropdownComponent, ImageCardComponent, FormatResultPipe],
   templateUrl: './logs.component.html',
   styleUrl: './logs.component.css'
 })
