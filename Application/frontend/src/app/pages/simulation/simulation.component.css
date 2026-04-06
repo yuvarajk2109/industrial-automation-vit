@@ -207,6 +207,37 @@
   color: var(--clr-text-secondary);
 }
 
+.cc-image-preview {
+  height: 120px;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Make image-card exactly fit our preview container */
+.cc-image-preview ::ng-deep .image-card {
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cc-image-preview ::ng-deep .image-container {
+  height: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.cc-image-preview ::ng-deep img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.cc-image-preview ::ng-deep .domain-badge-container {
+  display: none; /* Hide internal badge since cc-header already has it */
+}
+
 /* - Completed Header + Review CTA - */
 .completed-header {
   display: flex;

@@ -8,11 +8,12 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown';
 import { ApiService } from '../../core/services/api.service';
 import { FormatResultPipe } from '../../shared/pipes/format-result.pipe';
+import { ImageCardComponent } from '../../shared/components/image-card/image-card.component';
 
 @Component({
   selector: 'app-simulation',
   standalone: true,
-  imports: [FormsModule, RouterLink, PipelineVisualiserComponent, StatusBadgeComponent, DropdownComponent, FormatResultPipe],
+  imports: [FormsModule, RouterLink, PipelineVisualiserComponent, StatusBadgeComponent, DropdownComponent, FormatResultPipe, ImageCardComponent],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.css'
 })
@@ -145,6 +146,7 @@ export class SimulationComponent {
         this.state.completedImages.push({
           index: event.index || 0,
           filename: event.image || '',
+          image_path: event.image_path || '',
           domain: event.domain || '',
           prediction: this.currentPrediction,
           kg_result: this.currentKgResult,
@@ -293,6 +295,11 @@ export class SimulationComponent {
     { label: 'Intermediate', value: 'intermediate' },
     { label: 'Labile', value: 'labile' }
   ];
+
+  get filteredSugarOptions() {
+    const predicted = this.flaggedImage?.prediction?.predicted_class;
+    return this.sugarOptions.filter(opt => opt.value !== predicted);
+  }
 
   steelActionOptions(originalClass: string) {
     return [

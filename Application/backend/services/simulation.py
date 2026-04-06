@@ -196,6 +196,7 @@ def run_simulation_stream(
                 "index": index,
                 "total": total,
                 "image": filename,
+                "image_path": image_path,
                 "domain": domain,
                 "log_id": result["log_id"],
                 "total_ms": result["total_processing_ms"],
@@ -210,6 +211,7 @@ def run_simulation_stream(
                 "step": "image_error",
                 "index": index,
                 "image": filename,
+                "image_path": image_path,
                 "domain": domain,
                 "error": str(e)[:200]
             })
