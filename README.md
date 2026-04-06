@@ -43,6 +43,15 @@ The application must be configured and hosted from a local development environme
 *   Node.js (LTS version)
 *   MongoDB (Running locally or via an established remote connection string)
 
+### Pre-Execution Reminders
+Before running the application, please keep the following checklist in mind:
+1. **Google Gemini API Key**: You must generate your own API key from [Google AI Studio](https://aistudio.google.com/) and configure it in the backend for the conversational module to function correctly.
+2. **MongoDB Database**: Download and install [MongoDB Community Server](https://www.mongodb.com/docs/manual/administration/install-community/?operating-system=windows&windows-installation-method=zip).
+    * It is recommended to download the Windows `.zip` archive and extract it to your preferred location.
+    * **Important**: Whenever you start the application, remember to manually launch the database server by executing the `mongod.exe` file located within your extracted MongoDB `bin` directory.
+3. **Node.js Environment**: Install the latest LTS release of [Node.js](https://nodejs.org/en/download) (e.g., v24.14.1 LTS for Windows). Ensure `npm` and `chocolatey` (if opted) are selected during the installation.
+4. **Follow Execution Steps**: Once these dependencies are active, proceed closely with the Execution Steps detailed further below.
+
 ### Missing Folder Configuration
 Because of strict `.gitignore` rules that prevent pushing excessively large files to GitHub, you must manually recreate the following directories at the root of the project to ensure the application avoids path structure runtime errors:
 1.  `Datasets/`: Create this folder and insert your uncompressed industrial test sets (e.g., `Steel/` and `Sugar/` subfolders).
