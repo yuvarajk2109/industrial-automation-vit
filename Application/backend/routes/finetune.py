@@ -1,10 +1,10 @@
 """
 CaneNexus – Fine-Tune Route
-POST /api/finetune/start    — trigger a fine-tune job
-GET  /api/finetune/status   — current job status
-GET  /api/finetune/history  — all past jobs
-POST /api/finetune/rollback — revert to a previous model version
-GET  /api/finetune/versions — list model version checkpoints
+POST /api/finetune/start    - trigger a fine-tune job
+GET  /api/finetune/status   - current job status
+GET  /api/finetune/history  - all past jobs
+POST /api/finetune/rollback - revert to a previous model version
+GET  /api/finetune/versions - list model version checkpoints
 """
 
 from flask import Blueprint, request, jsonify
@@ -130,7 +130,7 @@ def model_versions():
     List all model versions, optionally filtered by domain.
 
     Query params:
-        domain — "sugar" | "steel" (optional)
+        domain - "sugar" | "steel" (optional)
 
     Returns:
         { "versions": [...], "active_versions": { "sugar": int, "steel": int } }

@@ -145,7 +145,7 @@ def finetune_sugar(model, corrections: list, config: dict, device,
         metrics_history.append(epoch_metrics)
 
         print(
-            f"[CaneNexus] Epoch {epoch + 1}/{epochs} — "
+            f"[CaneNexus] Epoch {epoch + 1}/{epochs} - "
             f"train_loss: {avg_train_loss:.6f}, "
             f"val_loss: {val_metrics['val_loss']:.6f}, "
             f"val_acc: {val_metrics['val_accuracy']:.4f}"

@@ -1,9 +1,9 @@
 """
 CaneNexus – Feedback Route
-POST /api/feedback          — Submit a single correction
-POST /api/feedback/batch    — Submit batch corrections from simulation review
-GET  /api/feedback          — List feedback entries (paginated, filtered)
-GET  /api/feedback/stats    — Feedback statistics
+POST /api/feedback          - Submit a single correction
+POST /api/feedback/batch    - Submit batch corrections from simulation review
+GET  /api/feedback          - List feedback entries (paginated, filtered)
+GET  /api/feedback/stats    - Feedback statistics
 """
 
 from flask import Blueprint, request, jsonify
@@ -197,10 +197,10 @@ def list_feedback():
     List feedback entries with optional filters.
 
     Query params:
-        domain  — "sugar" | "steel" (optional)
-        status  — "pending" | "used" | "discarded" (optional)
-        page    — page number (default 1)
-        limit   — items per page (default 20)
+        domain  - "sugar" | "steel" (optional)
+        status  - "pending" | "used" | "discarded" (optional)
+        page    - page number (default 1)
+        limit   - items per page (default 20)
     """
     domain = request.args.get("domain", "").strip().lower()
     status = request.args.get("status", "").strip().lower()

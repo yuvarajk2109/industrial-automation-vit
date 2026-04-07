@@ -307,7 +307,7 @@ plt.legend(
     fontsize=9
 )
 
-plt.title("Steel Defect Detection — Logical Knowledge Graph", fontsize=14)
+plt.title("Steel Defect Detection - Logical Knowledge Graph", fontsize=14)
 plt.axis("off")
 
 ## Save the graph visualization to Media (as Steel_Defect_Detection_KG.png)

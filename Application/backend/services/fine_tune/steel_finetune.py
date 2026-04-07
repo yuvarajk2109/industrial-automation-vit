@@ -36,7 +36,7 @@ def _build_corrected_mask(original_mask: np.ndarray, corrections: list,
         original_mask: The model's argmax mask (H, W), values 0-4.
         corrections: List of {"original_class", "corrected_class", "action"}.
         missed_defects: List of class strings that should have been detected
-                        (no spatial info — we cannot generate mask for these).
+                        (no spatial info - we cannot generate mask for these).
 
     Returns:
         Corrected mask (H, W) with swapped/removed classes.
@@ -232,7 +232,7 @@ def finetune_steel(model, corrections: list, config: dict, device,
         metrics_history.append(epoch_metrics)
 
         print(
-            f"[CaneNexus] Steel Epoch {epoch + 1}/{epochs} — "
+            f"[CaneNexus] Steel Epoch {epoch + 1}/{epochs} - "
             f"train_loss: {avg_train_loss:.6f}"
         )
 

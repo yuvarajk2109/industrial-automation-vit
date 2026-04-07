@@ -226,7 +226,7 @@ def rollback_model(domain: str, target_version: int) -> dict:
     # Register the archived version
     current_version = get_active_version(domain)
     if current_version > 0:
-        # The current active is being archived — its version stays in the registry
+        # The current active is being archived - its version stays in the registry
         # We MUST update its checkpoint_filename in the database to the archive file.
         model_versions_collection.update_one(
             {"domain": domain, "version": current_version},
@@ -281,7 +281,7 @@ def hot_swap_from_disk(domain: str):
                 if k.startswith("sugar_head.")
             })
         else:
-            # Full model state dict — reload everything
+            # Full model state dict - reload everything
             model.load_state_dict(state_dict, strict=False)
 
     elif domain == "steel":

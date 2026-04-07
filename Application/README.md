@@ -14,7 +14,7 @@ Before starting, ensure you have the following installed on your machine:
 ### Database Setup
 ```bash
 # Ensure MongoDB is running on localhost:27017
-# No manual setup needed — collections are created automatically on first write!
+# No manual setup needed - collections are created automatically on first write!
 ```
 
 ---
