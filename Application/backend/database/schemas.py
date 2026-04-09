@@ -1,5 +1,5 @@
 """
-CaneNexus – MongoDB Document Schema Definitions
+CaneNexus - MongoDB Document Schema Definitions
 Reference structures for the documents stored in each collection.
 These are not enforced by MongoDB but serve as documentation and
 validation reference for the application layer.

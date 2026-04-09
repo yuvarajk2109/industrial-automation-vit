@@ -1,7 +1,9 @@
 """
-CaneNexus – Gemini 2.5 Flash Integration
-Conversational action recommender that discusses ONLY model predictions
-and knowledge graph results. Extremely limited knowledge base.
+CaneNexus - Gemini Integration
+    - Conversational action recommender
+    - Discusses ONLY 
+        - model predictions
+        - knowledge graph results
 """
 
 import json
@@ -46,15 +48,16 @@ def get_initial_response(prediction_result: dict, kg_result: dict) -> str:
     """
     domain = prediction_result.get("domain", "unknown")
 
-    context = f"""ANALYSIS RESULTS FOR REVIEW:
-Domain: {domain.upper()}
+    context = f"""
+        ANALYSIS RESULTS FOR REVIEW:
+        Domain: {domain.upper()}
 
-MODEL PREDICTION:
-{json.dumps(prediction_result, indent=2, default=str)}
+        MODEL PREDICTION:
+        {json.dumps(prediction_result, indent=2, default=str)}
 
-KNOWLEDGE GRAPH OUTPUT:
-{json.dumps(kg_result, indent=2, default=str)}
-"""
+        KNOWLEDGE GRAPH OUTPUT:
+        {json.dumps(kg_result, indent=2, default=str)}
+    """
 
     try:
         response = client.models.generate_content(
