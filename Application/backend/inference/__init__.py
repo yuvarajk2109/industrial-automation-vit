@@ -1,1 +1,1 @@
-# CaneNexus – Inference package
+# Inference package
