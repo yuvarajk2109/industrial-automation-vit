@@ -1,7 +1,11 @@
 """
-CaneNexus – Image Utility Functions
-Loading, preprocessing, sliding window inference, and mask visualisation.
-Ported from Code/DDA-ViT/DDA-ViT.py.
+Image Utility Functions
+    - Loading
+    - Preprocessing
+    - Sliding window inference
+    - Mask visualisation.
+
+Refer to Code/DDA-ViT/DDA-ViT.py
 """
 
 import os
@@ -15,8 +19,12 @@ from config import OUTPUT_DIR
 
 def load_image(path: str, size: int):
     """
-    Load an image, resize to a square of `size`, and return
-    the original, the normalised tensor, and the (new_h, new_w).
+    Load an image
+    Resize to a square of 'size'
+    Return
+        - the original
+        - the normalised tensor
+        - the (new_h, new_w) (scaled to a square)
     """
     img = cv2.imread(path)
 
@@ -43,18 +51,18 @@ def load_image(path: str, size: int):
 
 def sliding_window_inference(model, image, device, patch_size=256, stride=256):
     """
-    Run steel segmentation using a sliding window across the image width.
-    Image height is assumed to already be `patch_size` (256).
+    Runs steel segmentation using a sliding window across image width
+    Image height is patch_size = 256
 
     Args:
-        model: DDAViT model instance
-        image: float32 numpy array (H, W, 3) normalised to [0, 1]
-        device: torch device
-        patch_size: patch width/height (256)
-        stride: step size (256)
+        - model: latest DDAViT model instance
+        - image: float32 numpy array (H, W, 3) normalised to [0, 1]
+        - device: torch device --> CUDA
+        - patch_size: patch width/height (256)
+        - stride: step size (256)
 
     Returns:
-        full_mask: (4, H, W) probability mask
+        - full_mask: (4, H, W) probability mask
     """
     model.eval()
 
@@ -82,23 +90,23 @@ def sliding_window_inference(model, image, device, patch_size=256, stride=256):
 
 def generate_mask_overlay(original_img, mask, filename_prefix: str):
     """
-    Generate and save a colour-coded mask overlay on the original image.
+    Generates and save a colour-coded mask overlay on original image
 
     Args:
-        original_img: RGB numpy array (H, W, 3) uint8
-        mask: argmax mask (H, W) with class indices 0-3
-        filename_prefix: prefix for saved filenames
+        - original_img: RGB numpy array (H, W, 3) uint8
+        - mask: argmax mask (H, W) with class indices 0-3
+        - filename_prefix: prefix for saved filenames
 
     Returns:
-        (overlay_path, raw_mask_path) – paths to saved files
+        - (overlay_path, raw_mask_path) - paths to saved files
     """
     # Colour map for defect classes
     colours = {
-        0: [0, 0, 0],         # No defect / background – transparent
-        1: [255, 0, 0],       # Class 1 – Red
-        2: [0, 255, 0],       # Class 2 – Green
-        3: [0, 0, 255],       # Class 3 – Blue
-        4: [255, 255, 0],     # Class 4 – Yellow (unused if 0-indexed)
+        0: [0, 0, 0],         # No defect / background - transparent
+        1: [255, 0, 0],       # Class 1 - Red
+        2: [0, 255, 0],       # Class 2 - Green
+        3: [0, 0, 255],       # Class 3 - Blue
+        4: [255, 255, 0],     # Class 4 - Yellow (unused if 0-indexed)
     }
 
     # Create colour mask

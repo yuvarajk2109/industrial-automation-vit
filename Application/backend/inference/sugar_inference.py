@@ -1,7 +1,9 @@
 """
-CaneNexus – Sugar Quality Inspection Inference
-Runs the DDA-ViT model on a sugar crystallisation image and returns structured results.
-Ported from Code/DDA-ViT/DDA-ViT.py predict_sugar().
+Sugar Quality Inspection Inference
+    - Runs DDA-ViT on sugar crystallisation image
+    - Returns structured results
+
+Refer to Code/DDA-ViT/DDA-ViT.py --> predict_sugar()
 """
 
 import os
@@ -16,24 +18,27 @@ from inference.image_utils import load_image
 
 def predict_sugar(image_path: str) -> dict:
     """
-    Run sugar crystallisation quality classification on a single image.
+    Run sugar crystallisation quality classification on a single image
 
     Args:
-        image_path: Absolute path to the sugar crystallisation image.
+        - image_path: Absolute path to the sugar crystallisation image
 
     Returns:
-        Structured result dict with predicted class, confidence, and probabilities.
+        - Structured result dict with 
+            - predicted class
+            - confidence + probabilities
+            - time
     """
     model = get_model()
     device = get_device()
 
     start_time = time.time()
 
-    # - Load & Preprocess -
+    # Load & Preprocess
     _, img_tensor, _ = load_image(image_path, size=SUGAR_IMAGE_SIZE)
     img_tensor = img_tensor.to(device)
 
-    # - Inference -
+    # Inference
     model.eval()
     with torch.no_grad():
         output = model(x_sugar=img_tensor)
@@ -48,7 +53,7 @@ def predict_sugar(image_path: str) -> dict:
     for i, cls_name in enumerate(SUGAR_CLASSES):
         all_probabilities[cls_name] = round(float(probs[i]), 6)
 
-    # - Timing -
+    # Time
     inference_time_ms = round((time.time() - start_time) * 1000, 2)
 
     return {
