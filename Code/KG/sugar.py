@@ -24,6 +24,7 @@ os.makedirs(MEDIA_DIR, exist_ok=True)
 # ---------------------------------------------------------------
 plt.rcParams.update({'font.family': 'sans-serif', 'font.sans-serif': 'Times New Roman'})
 plt.rcParams.update({'font.size': 14})
+node_size = 8000
 
 # ---------------------------------------------------------------
 # State Templates (domain knowledge)
@@ -443,13 +444,13 @@ for n in KG.nodes():
     t = KG.nodes[n]["node_type"]
     if t == "state":
         node_colors.append("#9ecae1")
-        node_sizes.append(3400)
+        node_sizes.append(node_size)
     elif t == "condition":
         node_colors.append("#fdae6b")
-        node_sizes.append(3000)
+        node_sizes.append(node_size)
     else:
         node_colors.append("#fc9272")
-        node_sizes.append(3200)
+        node_sizes.append(node_size)
 
 nx.draw_networkx_nodes(
     KG,
@@ -491,12 +492,12 @@ nx.draw_networkx_edge_labels(
     rotate=False
 )
 
-plt.title(
-    "Unified Sugar Crystallization Knowledge Graph\n"
-    "(Vision State → Inferred Condition → Control Action)",
-    fontsize=14,
-    pad=25
-)
+# plt.title(
+#     "Unified Sugar Crystallization Knowledge Graph\n"
+#     "(Vision State → Inferred Condition → Control Action)",
+#     fontsize=14,
+#     pad=25
+# )
 
 legend_elements = [
     Patch(facecolor="#9ecae1", edgecolor="black",

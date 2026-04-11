@@ -21,6 +21,7 @@ os.makedirs(MEDIA_DIR, exist_ok=True)
 # ---------------------------------------------------------------
 plt.rcParams.update({'font.family': 'sans-serif', 'font.sans-serif': 'Times New Roman'})
 plt.rcParams.update({'font.size': 14})
+node_size = 6000
 
 # ---------------------------------------------------------------
 # Build the Knowledge Graph
@@ -172,7 +173,7 @@ for layer, nodes in nodes_by_layer.items():
         pos,
         nodelist=nodes,
         node_color=layer_colors[layer],
-        node_size=3000,
+        node_size=node_size,
         edgecolors="black",
         linewidths=1.0,
         label=f"Layer {layer}"
@@ -222,7 +223,7 @@ plt.legend(
     fontsize=9
 )
 
-plt.title("Steel Defect Detection - Logical Knowledge Graph", fontsize=14)
+# plt.title("Steel Defect Detection - Logical Knowledge Graph", fontsize=20)
 plt.axis("off")
 
 ## Save the graph visualization to Media
