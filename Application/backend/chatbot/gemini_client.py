@@ -1,5 +1,5 @@
 """
-CaneNexus - Gemini Integration
+Gemini Integration
     - Conversational action recommender
     - Discusses ONLY 
         - model predictions
