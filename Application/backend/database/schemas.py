@@ -1,12 +1,11 @@
 """
-CaneNexus - MongoDB Document Schema Definitions
-Reference structures for the documents stored in each collection.
-These are not enforced by MongoDB but serve as documentation and
-validation reference for the application layer.
+MongoDB Document Schema Definitions
+    - Reference structures for the documents stored in each collection
+    - Not enforced by MongoDB
+    - Simply documentation and validation reference for application layer
 """
 
 from datetime import datetime
-
 
 def create_log_document(
     session_id: str,

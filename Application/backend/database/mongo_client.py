@@ -1,6 +1,6 @@
 """
-CaneNexus - MongoDB Connection Singleton
-Provides a shared database handle and collection references.
+MongoDB Connection Singleton
+    - Provides a shared database handle and collection references
 """
 
 from pymongo import MongoClient
