@@ -1,1 +1,1 @@
-# CaneNexus – Chatbot package
+# Chatbot package
