@@ -1,26 +1,37 @@
 """
-CaneNexus – Steel Defect Detection Knowledge Graph
-5-layer directed graph: Input Evidence → Spatial Attributes → Interpretation → Quality → Decision.
-Ported from Code/DDA-ViT/steel.py (lines 131-221).
+Steel Defect Detection Knowledge Graph
+    - 5-layer directed graph
+        - Input Evidence
+        - Spatial Attributes
+        - Interpretation
+        - Quality Assessment
+        - Decision & Action
+ 
+Refer to Code/KG/steel.py
 """
 
 import networkx as nx
 
+# Thresholds for defect classification
+AREA_THRESHOLD_MINOR = 1.0      # T1: below this = isolated minor
+AREA_THRESHOLD_SEVERE = 5.0     # T2: above this = localised severe
+DENSITY_THRESHOLD = 3           # T4: number of detected classes to be "widespread"
+
 
 def build_steel_kg() -> nx.DiGraph:
     """
-    Build the Steel Defect Detection Logical Knowledge Graph.
+    Build the Steel Defect Detection Logical Knowledge Graph
 
     Layers:
-        1. Input Evidence        – Defect classes detected
-        2. Spatial Attributes    – Area, length, density, distribution
-        3. Interpretation        – Isolated, localised, widespread, critical
-        4. Quality Assessment    – Acceptable, marginal, unacceptable
-        5. Decision & Action     – Accept, downgrade, reject, manual inspection
+        1. Input Evidence        - Defect classes detected
+        2. Spatial Attributes    - Area, length, density, distribution
+        3. Interpretation        - Isolated, localised, widespread, critical
+        4. Quality Assessment    - Acceptable, marginal, unacceptable
+        5. Decision & Action     - Accept, downgrade, reject, manual inspection
     """
     G = nx.DiGraph()
 
-    # - Layer 1: Input Evidence -
+    # Layer 1: Input Evidence
     layer_input = [
         "Defect_Class_1_Detected",
         "Defect_Class_2_Detected",
@@ -28,7 +39,7 @@ def build_steel_kg() -> nx.DiGraph:
         "Defect_Class_4_Detected"
     ]
 
-    # - Layer 2: Spatial / Severity Attributes -
+    # Layer 2: Spatial / Severity Attributes
     layer_attributes = [
         "Defect_Area",
         "Defect_Length",
@@ -36,7 +47,7 @@ def build_steel_kg() -> nx.DiGraph:
         "Defect_Distribution"
     ]
 
-    # - Layer 3: Defect Interpretation -
+    # Layer 3: Defect Interpretation
     layer_interpretation = [
         "Isolated_Minor_Defect",
         "Localized_Severe_Defect",
@@ -44,14 +55,14 @@ def build_steel_kg() -> nx.DiGraph:
         "Critical_Structural_Defect"
     ]
 
-    # - Layer 4: Quality Assessment -
+    # Layer 4: Quality Assessment
     layer_quality = [
         "Acceptable_Quality",
         "Marginal_Quality",
         "Unacceptable_Quality"
     ]
 
-    # - Layer 5: Decision & Action -
+    # Layer 5: Decision & Action
     layer_decision = [
         "Accept_Strip",
         "Downgrade_Strip",
@@ -59,7 +70,7 @@ def build_steel_kg() -> nx.DiGraph:
         "Manual_Inspection_Required"
     ]
 
-    # - Add nodes with layer metadata -
+    # Add nodes with layer metadata
     for node in layer_input:
         G.add_node(node, layer=1)
     for node in layer_attributes:
@@ -71,7 +82,7 @@ def build_steel_kg() -> nx.DiGraph:
     for node in layer_decision:
         G.add_node(node, layer=5)
 
-    # - Edges: Evidence → Attributes -
+    # Edges: Evidence --> Attributes
     edges_evidence_to_attr = [
         ("Defect_Class_1_Detected", "Defect_Area", "if present"),
         ("Defect_Class_2_Detected", "Defect_Area", "if present"),
@@ -83,7 +94,7 @@ def build_steel_kg() -> nx.DiGraph:
         ("Defect_Class_4_Detected", "Defect_Distribution", ""),
     ]
 
-    # - Edges: Attributes → Interpretation -
+    # Edges: Attributes --> Interpretation
     edges_attr_to_interp = [
         ("Defect_Area", "Isolated_Minor_Defect", "area < T1"),
         ("Defect_Area", "Localized_Severe_Defect", "area >= T2"),
@@ -92,7 +103,7 @@ def build_steel_kg() -> nx.DiGraph:
         ("Defect_Distribution", "Widespread_Defect_Pattern", "distributed"),
     ]
 
-    # - Edges: Interpretation → Quality -
+    # Edges: Interpretation --> Quality
     edges_interp_to_quality = [
         ("Isolated_Minor_Defect", "Acceptable_Quality", ""),
         ("Localized_Severe_Defect", "Marginal_Quality", ""),
@@ -100,7 +111,7 @@ def build_steel_kg() -> nx.DiGraph:
         ("Critical_Structural_Defect", "Unacceptable_Quality", ""),
     ]
 
-    # - Edges: Quality → Decision -
+    # Edges: Quality --> Decision
     edges_quality_to_decision = [
         ("Acceptable_Quality", "Accept_Strip", ""),
         ("Marginal_Quality", "Downgrade_Strip", ""),
@@ -126,31 +137,27 @@ def build_steel_kg() -> nx.DiGraph:
 
     return G
 
-
-# - Thresholds for defect classification -
-AREA_THRESHOLD_MINOR = 1.0     # T1: below this = isolated minor
-AREA_THRESHOLD_SEVERE = 5.0    # T2: above this = localised severe
-DENSITY_THRESHOLD = 3           # T4: number of detected classes to be "widespread"
-
-
 def evaluate_steel_kg(defect_summary: dict) -> dict:
     """
-    Given a defect summary from steel inference, traverse the KG
-    and determine the quality assessment and final decision.
+    Given a defect summary from steel inference
+        - traverse the KG
+        - determine the quality assessment and final decision
 
     Args:
-        defect_summary: dict with class_1..class_4 each having
-                        {"detected": bool, "area_pct": float}
+        - defect_summary
+            - dict with class_1..class_4, each having
+                - "detected": bool
+                - "area_pct": float
 
     Returns:
-        Structured KG evaluation result.
+        - Structured KG evaluation result
     """
     G = build_steel_kg()
 
     activated_nodes = []
     traversal_path = []
 
-    # - Layer 1: Activate detected defect classes -
+    # Layer 1: Activate detected defect classes
     detected_classes = []
     total_defect_area = 0.0
 
@@ -162,7 +169,7 @@ def evaluate_steel_kg(defect_summary: dict) -> dict:
             detected_classes.append(class_num)
             total_defect_area += info["area_pct"]
 
-    # - No defects detected -
+    # No defects detected
     if not detected_classes:
         return {
             "activated_nodes": [],
@@ -175,18 +182,18 @@ def evaluate_steel_kg(defect_summary: dict) -> dict:
             "details": "No defects were detected in the steel strip."
         }
 
-    # - Layer 2: Determine spatial attributes -
+    # Layer 2: Determine spatial attributes
     activated_nodes.append("Defect_Area")
     activated_nodes.append("Defect_Distribution")
 
     if len(detected_classes) >= DENSITY_THRESHOLD:
         activated_nodes.append("Defect_Density")
 
-    # Check for elongated defects (class 4 heuristic)
+    # Check for elongated defects
     if "4" in detected_classes:
         activated_nodes.append("Defect_Length")
 
-    # - Layer 3: Determine interpretation -
+    # Layer 3: Determine interpretation
     defect_interpretation = "Isolated_Minor_Defect"  # Default
 
     if total_defect_area >= AREA_THRESHOLD_SEVERE:
@@ -204,7 +211,7 @@ def evaluate_steel_kg(defect_summary: dict) -> dict:
         defect_interpretation = "Critical_Structural_Defect"
         activated_nodes.append("Critical_Structural_Defect")
 
-    # - Layer 4: Quality assessment -
+    # Layer 4: Quality assessment
     quality_map = {
         "Isolated_Minor_Defect": "Acceptable_Quality",
         "Localized_Severe_Defect": "Marginal_Quality",
@@ -214,12 +221,13 @@ def evaluate_steel_kg(defect_summary: dict) -> dict:
     quality_assessment = quality_map.get(defect_interpretation, "Marginal_Quality")
     activated_nodes.append(quality_assessment)
 
-    # - Layer 5: Decision -
+    # Layer 5: Decision
     decision_map = {
         "Acceptable_Quality": "Accept_Strip",
         "Marginal_Quality": "Downgrade_Strip",
         "Unacceptable_Quality": "Reject_Strip",
     }
+
     decision = decision_map.get(quality_assessment, "Manual_Inspection_Required")
     activated_nodes.append(decision)
 
@@ -227,7 +235,7 @@ def evaluate_steel_kg(defect_summary: dict) -> dict:
     if requires_manual:
         activated_nodes.append("Manual_Inspection_Required")
 
-    # - Build traversal path -
+    # Build traversal path
     for node in activated_nodes:
         for successor in G.successors(node):
             if successor in activated_nodes:
@@ -238,7 +246,7 @@ def evaluate_steel_kg(defect_summary: dict) -> dict:
                     "condition": edge_data.get("condition", "")
                 })
 
-    # - Build details string -
+    # Build details string
     details_parts = [
         f"Detected defect classes: {', '.join(detected_classes)}",
         f"Total defect area: {total_defect_area:.2f}%",
@@ -247,7 +255,7 @@ def evaluate_steel_kg(defect_summary: dict) -> dict:
         f"Decision: {decision.replace('_', ' ')}"
     ]
     if requires_manual:
-        details_parts.append("[WARNING] Manual inspection required – safety-critical defect detected")
+        details_parts.append("[WARNING] Manual inspection required - safety-critical defect detected")
 
     return {
         "activated_nodes": list(set(activated_nodes)),
