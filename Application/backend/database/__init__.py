@@ -1,1 +1,1 @@
-# CaneNexus – Database package
+# Database package
