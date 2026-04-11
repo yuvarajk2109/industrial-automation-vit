@@ -1,1 +1,1 @@
-# CaneNexus – Knowledge Graph package
+# Knowledge Graph package
