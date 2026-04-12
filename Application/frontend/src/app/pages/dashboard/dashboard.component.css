@@ -3,13 +3,11 @@
   margin: 0 auto;
 }
 
-/* - Hero - */
 .hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--space-lg) 0;
-  /* gap: var(--space-1xl); */
 }
 
 .hero-content {
@@ -48,7 +46,6 @@
   gap: var(--space-md);
 }
 
-/* Visual Ring Animation */
 .hero-visual {
   position: relative;
   width: 200px;
@@ -91,8 +88,6 @@
   box-shadow: var(--shadow-glow-lg);
 }
 
-
-/* - Stats - */
 .stats-section {
   margin-bottom: var(--space-md);
 }
@@ -168,8 +163,6 @@
   color: var(--clr-text-muted);
 }
 
-
-/* - Charts - */
 .charts-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -200,8 +193,6 @@
   width: 100%;
 }
 
-
-/* - Responsive - */
 @media (max-width: 900px) {
   .hero {
     flex-direction: column;
