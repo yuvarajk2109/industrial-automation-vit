@@ -83,8 +83,10 @@
         grid-template-columns: 1fr;
         gap: var(--space-lg);
     }
-    
-    .limit-selector, .page-center, .pagination-controls {
+
+    .limit-selector,
+    .page-center,
+    .pagination-controls {
         justify-self: center;
     }
 }

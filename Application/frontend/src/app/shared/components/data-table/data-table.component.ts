@@ -22,15 +22,15 @@ export class DataTableComponent {
   @Input() height: string = '550px';
   @Input() trackByProperty: string = '_id';
   @Input() fontSize: string = '0.85rem';
-  
+
   @Output() rowClick = new EventEmitter<any>();
-  
+
   @ContentChild('rowTemplate') rowTemplate!: TemplateRef<any>;
-  
+
   get gridColumns() {
     return this.columns.map(c => c.width).join(' ');
   }
-  
+
   trackByFn(index: number, item: any) {
     if (!item) return index;
     if (this.trackByProperty && item[this.trackByProperty]) {
@@ -39,7 +39,7 @@ export class DataTableComponent {
     }
     return index;
   }
-  
+
   onRowClick(item: any) {
     if (this.isRowClickable) {
       this.rowClick.emit(item);

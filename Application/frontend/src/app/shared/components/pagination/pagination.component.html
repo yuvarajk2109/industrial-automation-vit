@@ -3,21 +3,22 @@
     <span class="text-sm text-muted">Items per page:</span>
     <div class="limit-options">
       @for (opt of limitOptions; track opt) {
-        <button class="limit-btn" [class.active]="limit === opt" (click)="setLimit(opt)">
-          {{ opt }}
-        </button>
+      <button class="limit-btn" [class.active]="limit === opt" (click)="setLimit(opt)">
+        {{ opt }}
+      </button>
       }
     </div>
   </div>
-  
+
   <div class="page-center">
     <span class="text-sm text-muted">Page {{ page }} of {{ totalPages || 1 }}</span>
     @if (totalPages > 1) {
-      <div class="page-jump">
-        <span class="text-sm text-muted">Jump:</span>
-        <input type="number" class="input-field" [(ngModel)]="jumpPage" [min]="1" [max]="totalPages" (keydown.enter)="goToJumpPage()">
-        <button class="btn btn-sm btn-primary" (click)="goToJumpPage()">Go</button>
-      </div>
+    <div class="page-jump">
+      <span class="text-sm text-muted">Jump:</span>
+      <input type="number" class="input-field" [(ngModel)]="jumpPage" [min]="1" [max]="totalPages"
+        (keydown.enter)="goToJumpPage()">
+      <button class="btn btn-sm btn-primary" (click)="goToJumpPage()">Go</button>
+    </div>
     }
   </div>
 

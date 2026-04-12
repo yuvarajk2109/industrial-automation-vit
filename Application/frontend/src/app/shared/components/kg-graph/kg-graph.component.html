@@ -1,24 +1,17 @@
 <div class="kg-container">
   <svg [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight" class="kg-svg">
-    <!-- Edges -->
     @for (edge of edges; track edge.from + edge.to) {
-      <line
-        [attr.x1]="getNode(edge.from)?.x"
-        [attr.y1]="getNode(edge.from)?.y"
-        [attr.x2]="getNode(edge.to)?.x"
-        [attr.y2]="getNode(edge.to)?.y"
-        [class.active-edge]="edge.isActive"
-        [class.inactive-edge]="!edge.isActive"
-      />
+    <line [attr.x1]="getNode(edge.from)?.x" [attr.y1]="getNode(edge.from)?.y" [attr.x2]="getNode(edge.to)?.x"
+      [attr.y2]="getNode(edge.to)?.y" [class.active-edge]="edge.isActive" [class.inactive-edge]="!edge.isActive" />
     }
-    <!-- Nodes -->
+
     @for (node of nodes; track node.id) {
-      <g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
-        <circle r="16" [class.active-node]="node.isActive" [class.inactive-node]="!node.isActive"/>
-        <text dy="30" text-anchor="middle" [class.active-label]="node.isActive" [class.inactive-label]="!node.isActive">
-          {{ node.label }}
-        </text>
-      </g>
+    <g [attr.transform]="'translate(' + node.x + ',' + node.y + ')'">
+      <circle r="16" [class.active-node]="node.isActive" [class.inactive-node]="!node.isActive" />
+      <text dy="30" text-anchor="middle" [class.active-label]="node.isActive" [class.inactive-label]="!node.isActive">
+        {{ node.label }}
+      </text>
+    </g>
     }
   </svg>
 </div>

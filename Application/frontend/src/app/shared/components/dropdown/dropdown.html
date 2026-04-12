@@ -1,5 +1,4 @@
 <div class="dropdown-wrapper" [class.filter-variant]="variant === 'filter'" [class.size-small]="size === 'small'">
-    <!-- Trigger -->
     <div class="trigger-row">
         <button type="button" class="dropdown-trigger" [class.input-field]="variant === 'input'"
             [class.filter-btn]="variant === 'filter'" [class.active-filter]="variant === 'filter' && hasSelection"
@@ -21,7 +20,6 @@
         }
     </div>
 
-    <!-- Dropdown Panel (portaled to body) -->
     <div #panel class="dropdown-panel" [class.open-upwards]="openUpwards" [style.position]="'fixed'"
         [style.top.px]="panelTop" [style.bottom.px]="panelBottom" [style.left.px]="panelLeft"
         [style.min-width.px]="panelWidth" [style.display]="isOpen ? 'block' : 'none'">

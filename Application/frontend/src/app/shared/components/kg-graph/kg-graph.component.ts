@@ -72,7 +72,6 @@ export class KgGraphComponent implements OnChanges {
       });
     });
 
-    // Build edges from traversal path
     for (const tp of this.traversalPath) {
       this.edges.push({
         from: tp.from,
@@ -92,17 +91,14 @@ export class KgGraphComponent implements OnChanges {
     this.nodes = [];
     this.edges = [];
 
-    // States column
     stateNodes.forEach((id, i) => {
       this.nodes.push({ id, x: 100, y: 50 + i * 60, label: id.toLowerCase(), isActive: this.activatedNodes.includes(id) });
     });
 
-    // Conditions column
     condNodes.forEach((id, i) => {
       this.nodes.push({ id, x: 300, y: 30 + i * 55, label: id.replace(/_/g, ' '), isActive: this.activatedNodes.includes(id) });
     });
 
-    // Actions column
     actionNodes.forEach((id, i) => {
       this.nodes.push({ id, x: 500, y: 50 + i * 65, label: id.replace(/_/g, ' '), isActive: this.activatedNodes.includes(id) });
     });

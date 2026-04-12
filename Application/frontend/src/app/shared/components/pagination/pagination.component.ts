@@ -14,10 +14,10 @@ export class PaginationComponent implements OnChanges {
   @Input() totalPages: number = 1;
   @Input() limit: number = 20;
   @Input() limitOptions: number[] = [20, 30, 50];
-  
+
   @Output() pageChange = new EventEmitter<number>();
   @Output() limitChange = new EventEmitter<number>();
-  
+
   jumpPage: number = 1;
 
   ngOnChanges() {

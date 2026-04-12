@@ -1,25 +1,22 @@
 <div class="data-table-container" [style.height]="height">
   <div class="table-header" [style.grid-template-columns]="gridColumns">
     @for (col of columns; track col.label) {
-      <span class="col-header">{{ col.label }}</span>
+    <span class="col-header">{{ col.label }}</span>
     }
   </div>
-  
+
   <div class="table-body" [style.font-size]="fontSize">
     @for (item of data; track trackByFn($index, item)) {
-      <div class="table-row" 
-           [class.selected]="selectedItem === item"
-           [class.clickable]="isRowClickable"
-           [style.grid-template-columns]="gridColumns"
-           (click)="onRowClick(item)">
-        <ng-container *ngTemplateOutlet="rowTemplate; context: { $implicit: item }"></ng-container>
-      </div>
+    <div class="table-row" [class.selected]="selectedItem === item" [class.clickable]="isRowClickable"
+      [style.grid-template-columns]="gridColumns" (click)="onRowClick(item)">
+      <ng-container *ngTemplateOutlet="rowTemplate; context: { $implicit: item }"></ng-container>
+    </div>
     }
-    
+
     @if (!data || data.length === 0) {
-      <div class="empty-state">
-        <span class="text-muted">{{ emptyMessage }}</span>
-      </div>
+    <div class="empty-state">
+      <span class="text-muted">{{ emptyMessage }}</span>
+    </div>
     }
   </div>
 </div>
