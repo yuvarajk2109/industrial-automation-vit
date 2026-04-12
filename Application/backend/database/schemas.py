@@ -18,7 +18,10 @@ def create_log_document(
     processing_time_ms: float,
     device: str
 ) -> dict:
-    """Create a structured log document for MongoDB insertion."""
+    """
+    - Creates structured log document
+    - Logs are inserted into MongoDB
+    """
     return {
         "session_id": session_id,
         "timestamp": datetime.utcnow(),
@@ -45,7 +48,9 @@ def create_simulation_document(
     total_steel_images: int,
     total_sugar_images: int
 ) -> dict:
-    """Create a structured simulation session document."""
+    """
+    - Creates structured simulation session document
+    """
     return {
         "session_id": session_id,
         "started_at": datetime.utcnow(),
@@ -78,7 +83,10 @@ def create_chat_document(
     session_id: str,
     initial_message: str
 ) -> dict:
-    """Create a chat conversation document linked to an analysis log."""
+    """
+    - Creates chat conversation document
+    - Linked to an analysis log
+    """
     return {
         "log_id": log_id,
         "session_id": session_id,
@@ -105,19 +113,25 @@ def create_feedback_document(
     source: str = "single_analysis"
 ) -> dict:
     """
-    Create a feedback/correction document.
+    - Creates feedback/correction document
 
     Args:
-        log_id: References the original analysis log entry.
-        image_path: Absolute path to the image file.
-        image_filename: Filename only.
-        domain: "sugar" or "steel".
-        original_prediction: Full prediction dict from the model.
-        corrected_label: Domain-specific correction.
-            Sugar: {"class": "metastable"}
-            Steel: {"type": "region_override", "corrections": [...], "missed_defects": [...]}
-        reason: Optional operator comment.
-        source: "single_analysis" or "simulation_review".
+        - log_id: References the original analysis log entry
+        - image_path: Absolute path to the image file
+        - image_filename: Filename only
+        - domain: sugar or steel
+        - original_prediction: Full prediction dict from the model
+        - corrected_label: Domain-specific correction
+            - Sugar:    {
+                            "class": "metastable"
+                        }
+            - Steel:    {
+                            "type": "region_override", 
+                            "corrections": [...], 
+                            "missed_defects": [...]
+                        }
+        - reason: Optional operator comment
+        - source: single_analysis or simulation_review
     """
     return {
         "log_id": log_id,
@@ -141,11 +155,13 @@ def create_finetune_job_document(
     corrections_count: int,
     correction_ids: list
 ) -> dict:
-    """Create a fine-tune job tracking document."""
+    """
+    Creates fine-tune job tracking document
+    """
     return {
         "job_id": job_id,
         "domain": domain,
-        "status": "queued",         # queued | running | completed | failed
+        "status": "queued",         # can be queued or running or completed or failed
         "config": config,
         "corrections_count": corrections_count,
         "correction_ids": correction_ids,
@@ -169,10 +185,10 @@ def create_model_version_document(
     is_active: bool = False
 ) -> dict:
     """
-    Create a model version registry document.
+    Creates a model version registry document
 
-    The active model is always at the standard path (steel.pth / sugar.pth).
-    Archived versions are named steel_old_NNN.pth / sugar_old_NNN.pth.
+    - Active model is always steel.pth or sugar.pth
+    - Archived versions are named steel_old_NNN.pth or sugar_old_NNN.pth
     """
     return {
         "version": version,
@@ -185,4 +201,3 @@ def create_model_version_document(
         "is_active": is_active,
         "created_at": datetime.utcnow()
     }
-

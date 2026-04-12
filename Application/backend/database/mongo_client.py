@@ -21,8 +21,11 @@ model_versions_collection = db["model_versions"]    # Model checkpoint version r
 
 def check_connection():
     """
-    Verify that MongoDB is reachable.
-    Returns True if connected, False otherwise.
+    - Verifies whether MongoDB is reachable
+    
+    Returns:
+        - True, if connected
+        - False otherwise
     """
     try:
         client.admin.command("ping")
