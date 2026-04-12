@@ -37,14 +37,15 @@ Your responses must:
 
 def get_initial_response(prediction_result: dict, kg_result: dict) -> str:
     """
-    Generate the first chatbot message summarising the analysis.
+    - Generates the first chatbot message
+    - Summarises the analysis
 
     Args:
-        prediction_result: Output from steel_inference or sugar_inference
-        kg_result: Output from steel_kg or sugar_kg evaluation
+        - prediction_result: Output from steel_inference or sugar_inference
+        - kg_result: Output from steel_kg or sugar_kg evaluation
 
     Returns:
-        Gemini's initial assessment as a string.
+        - Gemini's initial assessment as a string.
     """
     domain = prediction_result.get("domain", "unknown")
 
@@ -88,16 +89,16 @@ def chat_response(
     kg_result: dict
 ) -> str:
     """
-    Continue a conversation about the analysis results.
+    - Continues a conversation about analysis results
 
     Args:
-        history: List of previous messages [{"role": "user"/"model", "parts": ["..."]}]
-        user_message: The new user message
-        prediction_result: Original prediction for context
-        kg_result: Original KG result for context
+        - history: List of previous messages [{"role": "user"/"model", "parts": ["..."]}]
+        - user_message: The new user message
+        - prediction_result: Original prediction for context
+        - kg_result: Original KG result for context
 
     Returns:
-        Gemini's response as a string.
+        - Gemini's response as a string
     """
     # Build context reminder
     context_reminder = (
