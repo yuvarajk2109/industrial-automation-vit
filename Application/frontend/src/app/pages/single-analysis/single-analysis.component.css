@@ -3,7 +3,6 @@
   margin: 0 auto;
 }
 
-/* - Upload - */
 .upload-section {
   margin-bottom: var(--space-lg);
 }
@@ -146,12 +145,10 @@
   margin-bottom: var(--space-lg);
 }
 
-/* - Pipeline - */
 .pipeline-section {
   margin-bottom: var(--space-lg);
 }
 
-/* - Results - */
 .results-section {
   animation: slide-up 400ms ease-out;
 }
@@ -162,11 +159,10 @@
   gap: var(--space-lg);
 }
 
-.results-grid > * {
+.results-grid>* {
   min-height: 0;
 }
 
-/* Prediction Details */
 .prediction-details {
   display: flex;
   flex-direction: column;
@@ -259,7 +255,6 @@
   margin-bottom: var(--space-md);
 }
 
-/* - Chatbot - */
 .chatbot-card {
   display: flex;
   flex-direction: column;
@@ -326,28 +321,28 @@
 }
 
 ::ng-deep .chat-bubble ul {
-    padding-left: 1.5rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  list-style-type: disc;
 }
 
 ::ng-deep .chat-bubble li {
-    display: list-item;
-    margin-bottom: 0.25rem;
+  display: list-item;
+  margin-bottom: 0.25rem;
 }
 
-::ng-deep .chat-bubble h2, 
-::ng-deep .chat-bubble h3, 
+::ng-deep .chat-bubble h2,
+::ng-deep .chat-bubble h3,
 ::ng-deep .chat-bubble h4 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-top: 0.75rem;
-    margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 ::ng-deep .chat-bubble strong {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .chat-typing {
@@ -384,12 +379,9 @@
   flex: 1;
 }
 
-
-
-/* - Fullscreen Chat - */
 .analysis-page.chat-expanded .upload-section,
 .analysis-page.chat-expanded .pipeline-section,
-.analysis-page.chat-expanded .results-grid > *:not(.chatbot-card) {
+.analysis-page.chat-expanded .results-grid>*:not(.chatbot-card) {
   display: none !important;
 }
 
@@ -420,7 +412,6 @@
   max-height: none;
 }
 
-/* - Correction Panel - */
 .correction-section {
   border-top: var(--border-subtle);
   padding-top: var(--space-md);
@@ -540,7 +531,6 @@
   margin-top: var(--space-sm);
 }
 
-/* Steel-specific correction rows */
 .steel-correction-row {
   display: flex;
   align-items: center;
@@ -557,7 +547,6 @@
   min-width: 60px;
 }
 
-/* Missed defect chips */
 .missed-defects-row {
   display: flex;
   gap: var(--space-sm);
@@ -591,7 +580,6 @@
   color: var(--clr-accent-400);
 }
 
-/* Correction success badge */
 .correction-success {
   display: flex;
   align-items: center;

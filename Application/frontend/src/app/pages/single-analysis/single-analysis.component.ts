@@ -174,7 +174,6 @@ export class SingleAnalysisComponent {
   pendingCorrectionCount = 0;
   isSubmittingCorrection = false;
 
-  // Dropdown options
   sugarOptions = [
     { label: 'Unsaturated', value: 'unsaturated' },
     { label: 'Metastable', value: 'metastable' },
@@ -230,7 +229,6 @@ export class SingleAnalysisComponent {
     }
   }
 
-  /** Initialise steel corrections from the current defect summary */
   initSteelCorrections(): void {
     if (!this.steelPrediction) return;
     this.steelCorrections = [];
@@ -247,11 +245,9 @@ export class SingleAnalysisComponent {
     this.missedDefects = [];
   }
 
-  /** Toggle the correction panel open/closed */
   toggleCorrectionPanel(): void {
     this.showCorrectionPanel = !this.showCorrectionPanel;
     if (this.showCorrectionPanel) {
-      // Pre-populate
       if (this.result?.domain === 'sugar') {
         this.correctedSugarClass = '';
         this.selectedSugarOption = null;
@@ -261,14 +257,12 @@ export class SingleAnalysisComponent {
     }
   }
 
-  /** Add a missed defect class */
   addMissedDefect(cls: string): void {
     if (cls && !this.missedDefects.includes(cls)) {
       this.missedDefects.push(cls);
     }
   }
 
-  /** Remove a missed defect class */
   removeMissedDefect(cls: string): void {
     this.missedDefects = this.missedDefects.filter(d => d !== cls);
   }
@@ -279,16 +273,14 @@ export class SingleAnalysisComponent {
     let correctedLabel: any;
 
     if (this.result.domain === 'sugar') {
-      // Validate that the correction is actually different
       if (this.correctedSugarClass === this.sugarPrediction?.predicted_class) {
-        return; // No change - don't submit
+        return;
       }
       if (!this.correctedSugarClass) {
-        return; // Empty submission not allowed
+        return;
       }
       correctedLabel = { class: this.correctedSugarClass };
     } else {
-      // Build steel correction payload
       const corrections = this.steelCorrections
         .filter(c => c.corrected_class !== c.original_class || c.action === 'remove')
         .map(c => ({
@@ -297,7 +289,6 @@ export class SingleAnalysisComponent {
           action: c.action
         }));
 
-      // If no corrections and no missed defects, nothing to submit
       if (corrections.length === 0 && this.missedDefects.length === 0) return;
 
       correctedLabel = {

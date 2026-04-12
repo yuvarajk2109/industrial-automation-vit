@@ -6,7 +6,6 @@
     }
   </h1>
 
-  <!-- Upload Section -->
   <div class="upload-section card">
     <div class="upload-grid">
       <div class="upload-controls">
@@ -77,7 +76,6 @@
     </div>
   </div>
 
-  <!-- Error -->
   @if (error) {
   <div class="error-banner">
     <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
@@ -89,7 +87,6 @@
   </div>
   }
 
-  <!-- Pipeline Visualiser -->
   @if (currentStep >= 0) {
   <div class="pipeline-section card">
     <h2 class="section-title">Pipeline Progress</h2>
@@ -97,12 +94,9 @@
   </div>
   }
 
-  <!-- Results -->
   @if (result) {
   <div class="results-section">
     <div class="results-grid">
-      <!-- Grid Items directly -->
-      <!-- Prediction Card -->
       <div class="card">
         <h2 class="section-title">Model Prediction</h2>
         <app-status-badge [label]="result.domain" [variant]="result.domain === 'steel' ? 'steel' : 'sugar'" />
@@ -166,7 +160,6 @@
           <span class="text-xs text-muted">Total: {{ result.total_processing_ms }}ms</span>
         </div>
 
-        <!-- - Correction Panel - -->
         @if (!correctionSubmitted) {
         <div class="correction-section mt-md">
           <button class="correction-toggle-btn" (click)="toggleCorrectionPanel()" [disabled]="isSubmittingCorrection">
@@ -188,20 +181,18 @@
               <span>Select the correct classification if the model's prediction is wrong</span>
             </div>
 
-            <!-- Sugar Correction: simple dropdown -->
             @if (result.domain === 'sugar') {
             <div class="correction-field">
               <div class="mb-md" style="margin-bottom: 12px; font-weight: 600;">
                 Predicted Class: <span class="text-primary">{{ sugarPrediction?.predicted_class | formatResult }}</span>
               </div>
               <label class="field-label">Correct Class</label>
-              <app-dropdown [data]="filteredSugarOptions" label="Choose Corrected Class" [selected]="selectedSugarOption"
-                (selectionChange)="updateSugarCorrection($event)">
+              <app-dropdown [data]="filteredSugarOptions" label="Choose Corrected Class"
+                [selected]="selectedSugarOption" (selectionChange)="updateSugarCorrection($event)">
               </app-dropdown>
             </div>
             }
 
-            <!-- Steel Correction: per-class overrides -->
             @if (result.domain === 'steel') {
             <div class="correction-field">
               <label class="field-label">Detected Defect Corrections</label>
@@ -221,7 +212,6 @@
               </div>
               }
 
-              <!-- Missed defects -->
               <label class="field-label mt-md">Missed Defects (Model Failed to Detect)</label>
               <div class="missed-defects-row">
                 @for (cls of ['1','2','3','4']; track cls) {
@@ -241,7 +231,6 @@
             </div>
             }
 
-            <!-- Reason (both domains) -->
             <div class="correction-field">
               <label class="field-label">Reason (Optional)</label>
               <textarea class="correction-textarea" [(ngModel)]="correctionReason"
@@ -285,14 +274,12 @@
         [caption]="'Classification: ' + (sugarPrediction.predicted_class | formatResult)" />
       }
 
-      <!-- Knowledge Graph Card -->
       <div class="card">
         <h2 class="section-title">Knowledge Graph</h2>
         <p class="kg-details">{{ kgDetails }}</p>
         <app-kg-graph [activatedNodes]="kgActivatedNodes" [traversalPath]="kgTraversalPath" [domain]="result.domain" />
       </div>
 
-      <!-- Chatbot -->
       <div class="chatbot-card card">
         <div class="chat-header">
           <span class="chat-dot"></span>
