@@ -7,4 +7,4 @@ import { MainLayoutComponent } from './layout/main-layout.component';
   imports: [MainLayoutComponent],
   template: `<app-main-layout />`
 })
-export class App {}
+export class App { }
