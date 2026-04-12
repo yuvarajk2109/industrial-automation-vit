@@ -35,9 +35,6 @@
     margin-left: auto;
 }
 
-/* Table and pagination styles have been extracted to app-data-table and app-pagination components */
-
-/* Modal Styles */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -64,7 +61,7 @@
     position: relative;
     padding: var(--space-xl);
     border-radius: var(--radius-lg);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     animation: slide-up 300ms ease-out;
 }
 
@@ -187,8 +184,8 @@
     margin-bottom: 0.25rem;
 }
 
-::ng-deep .gemini-text h2, 
-::ng-deep .gemini-text h3, 
+::ng-deep .gemini-text h2,
+::ng-deep .gemini-text h3,
 ::ng-deep .gemini-text h4 {
     font-size: 1rem;
     font-weight: 700;
@@ -298,7 +295,6 @@
     box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.15);
 }
 
-/* Steel correction rows */
 .steel-correction-row {
     display: flex;
     align-items: center;
@@ -309,11 +305,11 @@
 }
 
 .field-label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--clr-text-muted);
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--clr-text-muted);
 }
 
 .steel-class-label {
@@ -323,7 +319,6 @@
     min-width: 55px;
 }
 
-/* Missed defect chips */
 .missed-defects-row {
     display: flex;
     gap: var(--space-sm);
@@ -357,7 +352,6 @@
     color: var(--clr-accent-400);
 }
 
-/* Success banner */
 .correction-success-banner {
     display: flex;
     align-items: center;
@@ -386,5 +380,7 @@
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }

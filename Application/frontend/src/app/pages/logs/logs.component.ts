@@ -33,11 +33,10 @@ export class LogsComponent implements OnInit {
     { label: 'Image', width: '1fr' },
     { label: 'Domain', width: '80px' },
     { label: 'Result', width: '150px' },
-    { label: '', width: '30px' }, 
+    { label: '', width: '30px' },
     { label: 'Time', width: '70px' }
   ];
 
-  // - Correction State -
   correctionMode = false;
   correctedSugarClass = '';
   steelCorrections: { original_class: string; corrected_class: string; action: string }[] = [];
@@ -49,7 +48,7 @@ export class LogsComponent implements OnInit {
   correctedLogIds = new Set<string>();
   feedbackStats: any = null;
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) { }
 
   ngOnInit(): void {
     this.loadLogs();
@@ -61,7 +60,7 @@ export class LogsComponent implements OnInit {
       next: (res) => {
         this.feedbackStats = res;
       },
-      error: () => {}
+      error: () => { }
     });
   }
 
@@ -77,7 +76,7 @@ export class LogsComponent implements OnInit {
         this.totalPages = data.total_pages || 1;
         this.jumpPage = this.page;
       },
-      error: () => {}
+      error: () => { }
     });
   }
 
@@ -131,8 +130,6 @@ export class LogsComponent implements OnInit {
   isLogCorrected(log: any): boolean {
     return this.correctedLogIds.has(this.getLogId(log)) || !!log.has_pending_correction;
   }
-
-  // - Correction Methods -
 
   toggleCorrection(): void {
     this.correctionMode = !this.correctionMode;
@@ -219,7 +216,7 @@ export class LogsComponent implements OnInit {
       }
     });
   }
-  // Dropdown options
+
   sugarOptions = [
     { label: 'Unsaturated', value: 'unsaturated' },
     { label: 'Metastable', value: 'metastable' },
@@ -274,4 +271,3 @@ export class LogsComponent implements OnInit {
     return this.feedbackStats?.per_domain?.[domain]?.pending || 0;
   }
 }
-
