@@ -17,7 +17,7 @@ export class MarkdownPipe implements PipeTransform {
 
     // Bold: **text**
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    
+
     // Italic: *text* (must run after bold)
     html = html.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
 
@@ -34,7 +34,7 @@ export class MarkdownPipe implements PipeTransform {
     // First, temporarily remove newlines that are next to block elements we just created
     html = html.replace(/<\/h[234]>\n+/g, '</h$1>');
     html = html.replace(/<\/ul>\n+/g, '</ul>');
-    
+
     html = html.replace(/\n\n/g, '<br><br>');
     html = html.replace(/\n(?!(<ul|<li|<h))/g, '<br>');
 
