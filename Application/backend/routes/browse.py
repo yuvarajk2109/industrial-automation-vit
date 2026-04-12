@@ -1,8 +1,9 @@
 """
-CaneNexus – Browse Route
-GET /api/browse
-Uses native OS file picker to grab the absolute path of a file or directory.
-This bypasses standard web browser sandbox restrictions for localhost tool usage.
+Browse Route
+
+    - GET /api/browse
+    - Uses native OS file picker to grab the absolute path of a file or directory
+    - Bypasses standard web browser restrictions for localhost tool usage
 """
 
 import threading
@@ -31,11 +32,13 @@ def ask_dialog(mode, result):
 
 @browse_bp.route("/browse", methods=["GET"])
 def browse():
-    """Trigger the local OS UI file/folder picker."""
+    """
+    Triggers the local OS UI file/folder picker
+    """
     mode = request.args.get("type", "directory")
     res = {}
     
-    # Run in a separate thread so Flask WSGI doesn't completely block or crash Tkinter
+    # Running in a separate thread so Flask WSGI doesn't block or crash Tkinter
     t = threading.Thread(target=ask_dialog, args=(mode, res))
     t.start()
     t.join()

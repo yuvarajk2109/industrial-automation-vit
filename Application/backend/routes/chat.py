@@ -1,6 +1,7 @@
 """
-CaneNexus – Chat Route
-POST /api/chat – Gemini chatbot conversation endpoint.
+Chat Route
+    - POST /api/chat
+    - Gemini chatbot conversation endpoint
 """
 
 from datetime import datetime
@@ -16,16 +17,19 @@ chat_bp = Blueprint("chat", __name__)
 @chat_bp.route("/chat", methods=["POST"])
 def chat():
     """
-    Send a chat message in the context of a specific analysis.
+    - Sends a chat message in the context of a specific analysis
 
-    Accepts JSON body:
+    - Accepts JSON body:
         {
             "log_id": "MongoDB ObjectId string",
             "message": "User's question"
         }
 
-    Returns:
-        {"response": "Gemini's reply", "history": [...]}
+    - Returns:
+        {
+            "response": "Gemini's reply", 
+            "history": [...]
+        }
     """
     data = request.get_json()
 
@@ -38,7 +42,7 @@ def chat():
     if not log_id or not message:
         return jsonify({"error": "Both log_id and message are required"}), 400
 
-    # ── Retrieve analysis context from logs ──
+    # Retrieve analysis context from logs
     try:
         log_doc = logs_collection.find_one({"_id": ObjectId(log_id)})
     except Exception:
@@ -50,7 +54,7 @@ def chat():
     prediction = log_doc.get("model_prediction", {})
     kg_result = log_doc.get("knowledge_graph_output", {})
 
-    # ── Retrieve or create chat document ──
+    # Retrieve or create chat document
     chat_doc = chats_collection.find_one({"log_id": log_id})
 
     if not chat_doc:
@@ -61,7 +65,7 @@ def chat():
         }
         chats_collection.insert_one(chat_doc)
 
-    # ── Build history for Gemini ──
+    # Build history for Gemini
     history = []
     for msg in chat_doc.get("messages", []):
         history.append({
@@ -69,7 +73,7 @@ def chat():
             "content": msg["content"]
         })
 
-    # ── Get Gemini response ──
+    # Get Gemini response
     try:
         response_text = chat_response(
             history=history,
@@ -80,7 +84,7 @@ def chat():
     except Exception as e:
         return jsonify({"error": f"Gemini chat failed: {str(e)}"}), 500
 
-    # ── Save messages to chat document ──
+    # Save messages to chat document
     now = datetime.utcnow()
     new_messages = [
         {"role": "user", "content": message, "timestamp": now},
@@ -92,7 +96,7 @@ def chat():
         {"$push": {"messages": {"$each": new_messages}}}
     )
 
-    # ── Return response ──
+    # Return response
     updated_history = history + [
         {"role": "user", "content": message},
         {"role": "model", "content": response_text}

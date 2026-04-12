@@ -1,6 +1,6 @@
 """
-CaneNexus – Predict Route
-POST /api/predict – Single image analysis endpoint.
+Predict Route
+    - POST /api/predict - Runs full analysis pipeline on a single image
 """
 
 import os
@@ -14,16 +14,19 @@ predict_bp = Blueprint("predict", __name__)
 @predict_bp.route("/predict", methods=["POST"])
 def predict():
     """
-    Run the full analysis pipeline on a single image.
+    - Runs the full analysis pipeline on a single image
 
-    Accepts JSON body:
+    - Accepts JSON body:
         {
             "image_path": "/absolute/path/to/image.jpg",
             "domain": "steel" | "sugar"
         }
 
-    Returns:
-        Full pipeline result including prediction, KG output, and Gemini response.
+    - Returns:
+        - Full pipeline result including 
+            - prediction
+            - KG output
+            - Gemini response
     """
     # If client is sending a multi-part form (drag/drop upload)
     if "image" in request.files:
@@ -33,7 +36,7 @@ def predict():
         if not file or not file.filename:
             return jsonify({"error": "No file selected"}), 400
             
-        # Temp save for inference loop
+        # Temporarily save for inference loop
         from config import OUTPUT_DIR
         upload_dir = OUTPUT_DIR / "uploads"
         upload_dir.mkdir(parents=True, exist_ok=True)
@@ -47,7 +50,7 @@ def predict():
         image_path = data.get("image_path", "").strip()
         domain = data.get("domain", "").strip().lower()
 
-    # - Validation -
+    # Validation
     if not image_path:
         return jsonify({"error": "image_path is required"}), 400
 
@@ -57,7 +60,7 @@ def predict():
     if not os.path.isfile(image_path):
         return jsonify({"error": f"Image file not found: {image_path}"}), 404
 
-    # - Run Pipeline -
+    # Run Pipeline
     try:
         result = run_pipeline(image_path, domain)
         return jsonify(result), 200

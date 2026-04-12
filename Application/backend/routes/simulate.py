@@ -1,6 +1,6 @@
 """
-CaneNexus – Simulate Route
-POST /api/simulate – Virtual simulation with SSE streaming.
+Simulate Route
+    - POST /api/simulate - Virtual simulation with SSE streaming.
 """
 
 import os
@@ -15,17 +15,17 @@ simulate_bp = Blueprint("simulate", __name__)
 @simulate_bp.route("/simulate", methods=["POST"])
 def simulate():
     """
-    Start a virtual simulation that processes images from two directories.
+    - Starts a virtual simulation that processes images from two directories
 
-    Accepts JSON body:
+    - Accepts JSON body:
         {
             "steel_dir": "/path/to/steel/images",
             "sugar_dir": "/path/to/sugar/images",
-            "limit": 50  (optional, default from config)
+            "limit": 50  (optional value, as 50 is the default from config)
         }
 
-    Returns:
-        SSE event stream with real-time pipeline updates.
+    - Returns:
+        - SSE event stream with real-time pipeline updates
     """
     data = request.get_json()
 
@@ -36,7 +36,7 @@ def simulate():
     sugar_dir = data.get("sugar_dir", "").strip()
     limit = data.get("limit", DEFAULT_SIMULATION_LIMIT)
 
-    # - Validation -
+    # Validation
     if not steel_dir and not sugar_dir:
         return {"error": "At least one directory (steel_dir or sugar_dir) is required"}, 400
 
@@ -46,7 +46,7 @@ def simulate():
     if sugar_dir and not os.path.isdir(sugar_dir):
         return {"error": f"Sugar directory not found: {sugar_dir}"}, 404
 
-    # - Stream SSE events -
+    # Stream SSE events
     return Response(
         run_simulation_stream(steel_dir, sugar_dir, limit),
         mimetype="text/event-stream",

@@ -1,9 +1,9 @@
 """
-CaneNexus – Feedback Route
-POST /api/feedback          - Submit a single correction
-POST /api/feedback/batch    - Submit batch corrections from simulation review
-GET  /api/feedback          - List feedback entries (paginated, filtered)
-GET  /api/feedback/stats    - Feedback statistics
+Feedback Routes
+    - POST /api/feedback          - Submits a single correction
+    - POST /api/feedback/batch    - Submits batch corrections from simulation review
+    - GET  /api/feedback          - Lists feedback entries (paginated, filtered)
+    - GET  /api/feedback/stats    - Feedback statistics
 """
 
 from flask import Blueprint, request, jsonify
@@ -20,9 +20,9 @@ feedback_bp = Blueprint("feedback", __name__)
 @feedback_bp.route("/feedback", methods=["POST"])
 def submit_feedback():
     """
-    Submit a single correction for a misclassified image.
+    - Submits a single correction for a misclassified image
 
-    JSON body:
+    - JSON body:
         {
             "log_id": "MongoDB ObjectId string",
             "domain": "sugar" | "steel",
@@ -30,7 +30,7 @@ def submit_feedback():
             "reason": "(optional) text"
         }
 
-    Returns:
+    - Returns:
         { "feedback_id": "...", "pending_count": int }
     """
     data = request.get_json()
@@ -42,7 +42,7 @@ def submit_feedback():
     corrected_label = data.get("corrected_label")
     reason = data.get("reason", "").strip()
 
-    # - Validation -
+    # Validation
     if not log_id:
         return jsonify({"error": "log_id is required"}), 400
     if domain not in ("sugar", "steel"):
@@ -66,7 +66,7 @@ def submit_feedback():
                 "error": "Steel corrected_label must have type 'region_override'"
             }), 400
 
-    # - Fetch original log to get image info -
+    # Fetch original log to get image info
     try:
         log_doc = logs_collection.find_one({"_id": ObjectId(log_id)})
     except Exception:
@@ -75,7 +75,7 @@ def submit_feedback():
     if not log_doc:
         return jsonify({"error": f"Log entry not found: {log_id}"}), 404
 
-    # - Create and insert feedback -
+    # Create and insert feedback
     feedback_doc = create_feedback_document(
         log_id=log_id,
         image_path=log_doc.get("image_path", ""),
@@ -108,9 +108,9 @@ def submit_feedback():
 @feedback_bp.route("/feedback/batch", methods=["POST"])
 def submit_batch_feedback():
     """
-    Submit batch corrections from simulation review.
+    - Submits batch corrections from simulation review
 
-    JSON body:
+    - JSON body:
         {
             "session_id": "uuid-of-simulation",
             "corrections": [
@@ -124,7 +124,7 @@ def submit_batch_feedback():
             ]
         }
 
-    Returns:
+    - Returns:
         { "submitted_count": int, "pending_count": { "sugar": int, "steel": int } }
     """
     data = request.get_json()
@@ -194,13 +194,13 @@ def submit_batch_feedback():
 @feedback_bp.route("/feedback", methods=["GET"])
 def list_feedback():
     """
-    List feedback entries with optional filters.
+    - Lists feedback entries with optional filters
 
-    Query params:
-        domain  - "sugar" | "steel" (optional)
-        status  - "pending" | "used" | "discarded" (optional)
-        page    - page number (default 1)
-        limit   - items per page (default 20)
+    - Query params:
+        - domain  - "sugar" | "steel" (optional)
+        - status  - "pending" | "used" | "discarded" (optional)
+        - page    - page number (default 1)
+        - limit   - items per page (default 20)
     """
     domain = request.args.get("domain", "").strip().lower()
     status = request.args.get("status", "").strip().lower()
@@ -239,9 +239,9 @@ def list_feedback():
 @feedback_bp.route("/feedback/stats", methods=["GET"])
 def feedback_stats():
     """
-    Get feedback statistics.
+    - Gets feedback statistics
 
-    Returns:
+    - Returns:
         {
             "total": int,
             "pending": int,

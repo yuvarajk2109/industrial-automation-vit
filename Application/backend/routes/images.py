@@ -1,7 +1,7 @@
 """
-CaneNexus – Images Route
-GET /api/images/<filename> – Serve generated output images (overlays, masks).
-GET /api/source-image – Serve original source images by path.
+Images Routes
+    - GET /api/images/<filename> - Serves generated output images (overlays, masks)
+    - GET /api/source-image - Serves original source images by path
 """
 
 import os
@@ -11,10 +11,11 @@ from config import OUTPUT_DIR
 
 images_bp = Blueprint("images", __name__)
 
-
 @images_bp.route("/images/<filename>", methods=["GET"])
 def serve_output_image(filename):
-    """Serve a generated image from the static/outputs directory."""
+    """
+    - Serves a generated image from the static/outputs directory
+    """
     file_path = os.path.join(str(OUTPUT_DIR), filename)
 
     if not os.path.isfile(file_path):
@@ -26,11 +27,11 @@ def serve_output_image(filename):
 @images_bp.route("/source-image", methods=["GET"])
 def serve_source_image():
     """
-    Serve an original source image by its absolute path.
-    Used by the frontend to display input images.
+    - Serves an original source image by its absolute path
+    - Used by the frontend to display input images
 
-    Query params:
-        path – Absolute path to the source image
+    - Query params:
+        - path - Absolute path to the source image
     """
     image_path = request.args.get("path", "").strip()
 

@@ -1,10 +1,10 @@
 """
-CaneNexus – Fine-Tune Route
-POST /api/finetune/start    - trigger a fine-tune job
-GET  /api/finetune/status   - current job status
-GET  /api/finetune/history  - all past jobs
-POST /api/finetune/rollback - revert to a previous model version
-GET  /api/finetune/versions - list model version checkpoints
+Fine-Tune Routes
+    - POST /api/finetune/start    - triggers a fine-tune job
+    - GET  /api/finetune/status   - current job status
+    - GET  /api/finetune/history  - all past jobs
+    - POST /api/finetune/rollback - reverts to a previous model version
+    - GET  /api/finetune/versions - lists model version checkpoints
 """
 
 from flask import Blueprint, request, jsonify
@@ -22,9 +22,9 @@ finetune_bp = Blueprint("finetune", __name__)
 @finetune_bp.route("/finetune/start", methods=["POST"])
 def start_finetune():
     """
-    Trigger a fine-tune job for a specific domain.
+    - Triggers a fine-tune job for a specific domain
 
-    JSON body:
+    - JSON body:
         {
             "domain": "sugar" | "steel",
             "config": {                     // optional overrides
@@ -37,7 +37,7 @@ def start_finetune():
             }
         }
 
-    Returns:
+    - Returns:
         { "job_id": "...", "status": "running", "message": "..." }
     """
     data = request.get_json()
@@ -62,10 +62,12 @@ def start_finetune():
 @finetune_bp.route("/finetune/status", methods=["GET"])
 def finetune_status():
     """
-    Get the current/most-recent fine-tune job status.
+    Gets the current/most-recent fine-tune job status
 
-    Returns:
-        Job status dict or {"status": "idle"} if no job.
+    - Returns:
+        - Job status 
+            - dict                  if job 
+            - {"status": "idle"}    if no job
     """
     job = get_current_job()
     if job:
@@ -77,10 +79,10 @@ def finetune_status():
 @finetune_bp.route("/finetune/history", methods=["GET"])
 def finetune_history():
     """
-    Get all past fine-tune jobs.
+    - Gets all past fine-tune jobs
 
-    Returns:
-        List of job documents.
+    - Returns:
+        List of job documents
     """
     jobs = get_job_history()
     return jsonify({"jobs": jobs}), 200
@@ -127,13 +129,19 @@ def finetune_rollback():
 @finetune_bp.route("/finetune/versions", methods=["GET"])
 def model_versions():
     """
-    List all model versions, optionally filtered by domain.
+    - Lists all model versions, optionally filtered by domain
 
-    Query params:
-        domain - "sugar" | "steel" (optional)
+    - Query params:
+        - domain - "sugar" | "steel" (optional)
 
-    Returns:
-        { "versions": [...], "active_versions": { "sugar": int, "steel": int } }
+    - Returns:
+        { 
+            "versions": [...], 
+            "active_versions": { 
+                "sugar": int, 
+                "steel": int 
+            } 
+        }
     """
     domain = request.args.get("domain", "").strip().lower()
     domain_filter = domain if domain in ("sugar", "steel") else None
