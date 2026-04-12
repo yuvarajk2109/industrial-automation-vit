@@ -1,8 +1,7 @@
 """
-CaneNexus – DDA-ViT Model Definitions
-Dual Domain Adaptive Vision Transformer
+DDA-ViT - Dual Domain Adaptive Vision Transformer
 
-Ported from Code/DDA-ViT/DDA-ViT.py (inference-only, no training code).
+Refer to Code/DDA-ViT/DDA-ViT.ipynb
 """
 
 import torch
@@ -11,7 +10,10 @@ import torch.nn.functional as F
 
 
 class SteelBackbone(nn.Module):
-    """Steel Backbone: SegFormer encoder from segmentation_models_pytorch."""
+    """
+    - Steel Backbone
+    - SegFormer encoder
+    """
 
     def __init__(self, model):
         super().__init__()
@@ -23,7 +25,10 @@ class SteelBackbone(nn.Module):
 
 
 class SugarBackbone(nn.Module):
-    """Sugar Backbone: Swin Transformer backbone via timm."""
+    """
+    - Sugar Backbone
+    - Swin Transformer
+    """
 
     def __init__(self, model):
         super().__init__()
@@ -35,7 +40,9 @@ class SugarBackbone(nn.Module):
 
 
 class FeatureProjector(nn.Module):
-    """Projects features into a shared embedding space."""
+    """
+    - Projects features into a shared embedding space
+    """
 
     def __init__(self, in_channels, embed_dim):
         super().__init__()
@@ -48,7 +55,10 @@ class FeatureProjector(nn.Module):
 
 
 class CrossDomainAttention(nn.Module):
-    """Cross-Domain Feature Alignment via Multi-Head Attention."""
+    """
+    - Cross-Domain Feature Alignment
+    - Done via Multi-Head Attention
+    """
 
     def __init__(self, dim, num_heads=8):
         super().__init__()
@@ -61,14 +71,14 @@ class CrossDomainAttention(nn.Module):
 
 class DDAViT(nn.Module):
     """
-    Dual Domain Adaptive Vision Transformer.
+    - Dual Domain Adaptive Vision Transformer
 
-    Wraps both steel (SegFormer/UNet) and sugar (Swin Transformer) backbones
-    with a cross-domain attention module that allows features from one domain
-    to enhance the other.
+        - Wraps both steel and sugar backbones
+        - Cross-domain attention module
 
-    During inference, pass EITHER x_steel OR x_sugar (not both simultaneously
-    for a single image).
+    - During inference
+        - pass EITHER x_steel OR x_sugar
+        - NOT both simultaneously for a single image
     """
 
     def __init__(self, steel_model, sugar_model, embed_dim=256,

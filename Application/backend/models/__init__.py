@@ -1,1 +1,1 @@
-# CaneNexus – Models package
+# Models package
