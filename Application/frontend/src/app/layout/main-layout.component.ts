@@ -54,7 +54,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     }
   ];
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) { }
 
   ngOnInit(): void {
     this.checkHealth();
@@ -85,7 +85,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       next: (stats: any) => {
         this.pendingCorrections = stats?.pending || 0;
       },
-      error: () => {}
+      error: () => { }
     });
   }
 }

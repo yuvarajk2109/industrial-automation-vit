@@ -7,12 +7,8 @@ export class SimulationService {
   private readonly baseUrl = 'http://localhost:5000/api';
   private abortController: AbortController | null = null;
 
-  constructor(private ngZone: NgZone) {}
+  constructor(private ngZone: NgZone) { }
 
-  /**
-   * Start a simulation and return an observable stream of SSE events.
-   * Uses POST to initiate, then switches to EventSource for streaming.
-   */
   startSimulation(config: SimulationConfig): Observable<SimulationEvent> {
     return new Observable(observer => {
       this.abortController = new AbortController();
@@ -60,7 +56,6 @@ export class SimulationService {
                       return;
                     }
                   } catch (e) {
-                    // Skip malformed JSON lines
                   }
                 }
               }
@@ -78,7 +73,6 @@ export class SimulationService {
         });
 
       return () => {
-        // Cleanup on unsubscribe
         this.stopSimulation();
       };
     });

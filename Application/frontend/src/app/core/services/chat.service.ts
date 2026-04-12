@@ -4,16 +4,14 @@ import { ChatMessage } from '../models/chat.model';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
-  /** Reactive state */
   messages = signal<ChatMessage[]>([]);
   isLoading = signal(false);
   currentLogId = signal<string | null>(null);
 
   hasMessages = computed(() => this.messages().length > 0);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService) { }
 
-  /** Initialize chat with the Gemini initial response from the pipeline */
   initializeChat(logId: string, initialResponse: string): void {
     this.currentLogId.set(logId);
     this.messages.set([
@@ -21,12 +19,10 @@ export class ChatService {
     ]);
   }
 
-  /** Send a user message and get Gemini's response */
   sendMessage(message: string): void {
     const logId = this.currentLogId();
     if (!logId || !message.trim()) return;
 
-    // Add user message immediately
     this.messages.update(msgs => [
       ...msgs,
       { role: 'user', content: message.trim() }
@@ -55,7 +51,6 @@ export class ChatService {
     });
   }
 
-  /** Clear chat state */
   clearChat(): void {
     this.messages.set([]);
     this.currentLogId.set(null);
