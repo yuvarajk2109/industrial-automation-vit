@@ -1,6 +1,6 @@
 """
-CaneNexus – Gemini Client Tests
-Tests chatbot integration with mocked Gemini API.
+Gemini Client Tests
+    - Tests chatbot integration with mocked Gemini API
 """
 
 import sys
@@ -12,7 +12,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 
 class TestGetInitialResponse:
-    """Tests for get_initial_response()."""
+    """
+    - Tests for get_initial_response()
+    """
 
     @patch("chatbot.gemini_client.genai")
     def test_returns_string_on_success(self, mock_genai):
@@ -109,7 +111,9 @@ class TestGetInitialResponse:
 
 
 class TestChatResponse:
-    """Tests for chat_response()."""
+    """
+    - Tests for chat_response()
+    """
 
     @patch("chatbot.gemini_client.genai")
     def test_returns_string_on_success(self, mock_genai):
@@ -212,7 +216,9 @@ class TestChatResponse:
 
 
 class TestSystemPrompt:
-    """Tests for the SYSTEM_PROMPT constant."""
+    """
+    - Tests for the SYSTEM_PROMPT constant
+    """
 
     def test_system_prompt_exists(self):
         from chatbot.gemini_client import SYSTEM_PROMPT

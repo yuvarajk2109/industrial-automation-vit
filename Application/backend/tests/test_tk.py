@@ -1,3 +1,8 @@
+"""
+Tkinter Test
+    - Tests Tkinter file dialog
+"""
+
 import threading
 import tkinter as tk
 from tkinter import filedialog

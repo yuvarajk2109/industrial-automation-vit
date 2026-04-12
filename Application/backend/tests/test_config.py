@@ -1,6 +1,8 @@
 """
-CaneNexus – Config Tests
-Validates configuration constants and paths.
+Config Tests
+    - Validates 
+        - configuration constants
+        - paths
 """
 
 import sys
@@ -19,7 +21,9 @@ from config import (
 
 
 class TestModelConfig:
-    """Tests for model-related configuration."""
+    """
+    - Tests for model-related configuration
+    """
 
     def test_steel_classes_count(self):
         assert len(STEEL_CLASSES) == NUM_STEEL_CLASSES == 4
@@ -42,7 +46,9 @@ class TestModelConfig:
 
 
 class TestDatabaseConfig:
-    """Tests for MongoDB configuration."""
+    """
+    - Tests for MongoDB configuration
+    """
 
     def test_mongo_uri_format(self):
         assert MONGO_URI.startswith("mongodb://")
@@ -52,7 +58,9 @@ class TestDatabaseConfig:
 
 
 class TestPathConfig:
-    """Tests for path configuration."""
+    """
+    - Tests for path configuration
+    """
 
     def test_base_dir_exists(self):
         assert BASE_DIR.exists()
@@ -71,7 +79,9 @@ class TestPathConfig:
 
 
 class TestSimulationConfig:
-    """Tests for simulation configuration."""
+    """
+    - Tests for simulation configuration
+    """
 
     def test_default_limit_is_reasonable(self):
         assert 1 <= DEFAULT_SIMULATION_LIMIT <= 500

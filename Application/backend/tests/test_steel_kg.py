@@ -1,6 +1,6 @@
 """
-CaneNexus - Steel Knowledge Graph Tests
-Validates KG traversal logic for all defect scenarios.
+Steel Knowledge Graph Tests
+    - Validates KG traversal logic for all defect scenarios
 """
 
 import sys
@@ -11,7 +11,9 @@ from knowledge_graph.steel_kg import build_steel_kg, evaluate_steel_kg
 
 
 class TestBuildSteelKG:
-    """Tests for KG construction."""
+    """
+    - Tests for KG construction
+    """
 
     def test_kg_has_correct_node_count(self):
         G = build_steel_kg()
@@ -45,7 +47,11 @@ class TestBuildSteelKG:
 
 
 class TestEvaluateSteelKG:
-    """Tests for KG evaluation / traversal logic."""
+    """
+    - Tests for 
+        - KG evaluation
+        - traversal logic
+    """
 
     def test_no_defects_yields_accept(self, steel_prediction_no_defects):
         result = evaluate_steel_kg(steel_prediction_no_defects["defect_summary"])

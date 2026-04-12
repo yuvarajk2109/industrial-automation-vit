@@ -1,6 +1,9 @@
 """
-CaneNexus – API Endpoint Tests
-Tests Flask routes with mocked model, MongoDB, and Gemini dependencies.
+API Endpoint Tests
+    - Tests Flask routes with
+        - mocked model
+        - MongoDB
+        - Gemini dependencies
 """
 
 import sys
@@ -16,7 +19,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 @pytest.fixture
 def app_client():
-    """Create a Flask test client with all heavy deps mocked."""
+    """
+    - Creates a Flask test client
+    - All heavy dependencies mocked
+    """
     with patch("database.mongo_client.MongoClient") as mock_mongo, \
          patch("database.mongo_client.check_connection", return_value=True), \
          patch("models.loader._model", new=MagicMock()), \
@@ -32,7 +38,9 @@ def app_client():
 
 
 class TestHealthEndpoint:
-    """Tests for GET /api/health."""
+    """
+    - Tests for GET /api/health
+    """
 
     def test_health_returns_200(self, app_client):
         with patch("models.loader.get_device", return_value="cpu"), \
@@ -67,7 +75,9 @@ class TestHealthEndpoint:
 
 
 class TestPredictEndpoint:
-    """Tests for POST /api/predict."""
+    """
+    - Tests for POST /api/predict
+    """
 
     def test_predict_rejects_missing_body(self, app_client):
         resp = app_client.post("/api/predict", content_type="application/json")
@@ -132,7 +142,9 @@ class TestPredictEndpoint:
 
 
 class TestLogsEndpoint:
-    """Tests for GET /api/logs."""
+    """
+    - Tests for GET /api/logs
+    """
 
     @patch("routes.logs.logs_collection")
     def test_logs_returns_paginated_structure(self, mock_logs, app_client):
@@ -175,7 +187,9 @@ class TestLogsEndpoint:
 
 
 class TestChatEndpoint:
-    """Tests for POST /api/chat."""
+    """
+    - Tests for POST /api/chat
+    """
 
     def test_chat_rejects_missing_body(self, app_client):
         resp = app_client.post("/api/chat", content_type="application/json")
@@ -231,7 +245,9 @@ class TestChatEndpoint:
 
 
 class TestSimulateEndpoint:
-    """Tests for POST /api/simulate."""
+    """
+    - Tests for POST /api/simulate
+    """
 
     def test_simulate_rejects_missing_dirs(self, app_client):
         resp = app_client.post(
@@ -254,7 +270,9 @@ class TestSimulateEndpoint:
 
 
 class TestErrorHandlers:
-    """Tests for global error handlers."""
+    """
+    - Tests for global error handlers
+    """
 
     def test_404_on_unknown_route(self, app_client):
         resp = app_client.get("/api/unknown_endpoint")

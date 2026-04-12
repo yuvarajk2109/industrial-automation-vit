@@ -1,6 +1,6 @@
 """
-CaneNexus – Schema Tests
-Validates MongoDB document factory functions produce correct structures.
+Schema Tests
+    - Validates MongoDB documents
 """
 
 import sys
@@ -16,7 +16,9 @@ from database.schemas import (
 
 
 class TestLogDocument:
-    """Tests for create_log_document()."""
+    """
+    - Tests for create_log_document()
+    """
 
     def test_returns_dict(self):
         doc = create_log_document(
@@ -89,7 +91,9 @@ class TestLogDocument:
 
 
 class TestSimulationDocument:
-    """Tests for create_simulation_document()."""
+    """
+    - Tests for create_simulation_document()
+    """
 
     def test_returns_dict(self):
         doc = create_simulation_document(
@@ -153,7 +157,9 @@ class TestSimulationDocument:
 
 
 class TestChatDocument:
-    """Tests for create_chat_document()."""
+    """
+    - Tests for create_chat_document()
+    """
 
     def test_returns_dict(self):
         doc = create_chat_document(

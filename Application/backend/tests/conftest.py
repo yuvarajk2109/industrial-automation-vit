@@ -1,6 +1,10 @@
 """
-CaneNexus – Shared Test Fixtures
-Provides mocked model, MongoDB, and Gemini for isolated unit testing.
+Shared Test Fixtures
+    - Provides
+        - mocked model
+        - MongoDB
+        - Gemini 
+    for isolated unit testing
 """
 
 import sys
@@ -9,15 +13,13 @@ import pytest
 from unittest.mock import MagicMock, patch
 import numpy as np
 
-# Add backend to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
-
-# ── Sample prediction data ──
 
 @pytest.fixture
 def steel_prediction_no_defects():
-    """Steel prediction with no defects detected."""
+    """
+    - Steel prediction with no defects detected
+    """
     return {
         "image_path": "E:/test/steel_001.jpg",
         "image_filename": "steel_001.jpg",
@@ -38,7 +40,9 @@ def steel_prediction_no_defects():
 
 @pytest.fixture
 def steel_prediction_minor_defect():
-    """Steel prediction with a single minor defect (class 1, area < 1%)."""
+    """
+    - Steel prediction with a single minor defect
+    """
     return {
         "image_path": "E:/test/steel_002.jpg",
         "image_filename": "steel_002.jpg",
@@ -59,7 +63,9 @@ def steel_prediction_minor_defect():
 
 @pytest.fixture
 def steel_prediction_severe_defect():
-    """Steel prediction with large defect area (>= 5%)."""
+    """
+    - Steel prediction with large defect area
+    """
     return {
         "image_path": "E:/test/steel_003.jpg",
         "image_filename": "steel_003.jpg",
@@ -80,7 +86,10 @@ def steel_prediction_severe_defect():
 
 @pytest.fixture
 def steel_prediction_critical_defect():
-    """Steel prediction with class 4 (elongated) + high area – triggers manual inspection."""
+    """
+    - Steel prediction with class 4 (elongated) + high area
+    - Triggers manual inspection
+    """
     return {
         "image_path": "E:/test/steel_004.jpg",
         "image_filename": "steel_004.jpg",
@@ -101,7 +110,10 @@ def steel_prediction_critical_defect():
 
 @pytest.fixture
 def steel_prediction_widespread():
-    """Steel prediction with 3+ classes detected – triggers widespread pattern."""
+    """
+    - Steel prediction with 3+ classes detected
+    - Triggers widespread pattern
+    """
     return {
         "image_path": "E:/test/steel_005.jpg",
         "image_filename": "steel_005.jpg",
@@ -122,7 +134,10 @@ def steel_prediction_widespread():
 
 @pytest.fixture
 def sugar_prediction_metastable():
-    """Sugar prediction – metastable class."""
+    """
+    - Sugar prediction
+    - Metastable class
+    """
     return {
         "image_path": "E:/test/sugar_001.jpg",
         "image_filename": "sugar_001.jpg",
@@ -141,7 +156,10 @@ def sugar_prediction_metastable():
 
 @pytest.fixture
 def sugar_prediction_labile():
-    """Sugar prediction – labile class (dangerous)."""
+    """
+    - Sugar prediction
+    - Labile class
+    """
     return {
         "image_path": "E:/test/sugar_002.jpg",
         "image_filename": "sugar_002.jpg",
@@ -160,7 +178,10 @@ def sugar_prediction_labile():
 
 @pytest.fixture
 def sugar_prediction_unsaturated():
-    """Sugar prediction – unsaturated class."""
+    """
+    - Sugar prediction
+    - Unsaturated class
+    """
     return {
         "image_path": "E:/test/sugar_003.jpg",
         "image_filename": "sugar_003.jpg",
@@ -179,7 +200,10 @@ def sugar_prediction_unsaturated():
 
 @pytest.fixture
 def sugar_prediction_intermediate():
-    """Sugar prediction – intermediate class."""
+    """
+    Sugar prediction
+    Intermediate class
+    """
     return {
         "image_path": "E:/test/sugar_004.jpg",
         "image_filename": "sugar_004.jpg",
@@ -198,8 +222,10 @@ def sugar_prediction_intermediate():
 
 @pytest.fixture
 def mock_flask_app():
-    """Create a Flask test client with mocked heavy dependencies."""
-    # Mock model loading before importing app
+    """
+    - Creates a Flask test client
+    - Mocks heavy dependencies
+    """
     with patch("models.loader.get_model") as mock_model, \
          patch("models.loader.get_device", return_value="cpu"), \
          patch("database.mongo_client.check_connection", return_value=True):

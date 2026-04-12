@@ -1,6 +1,6 @@
 """
-CaneNexus – Sugar Knowledge Graph Tests
-Validates KG traversal logic for all crystallisation states.
+Sugar Knowledge Graph Tests
+    - Validates KG traversal logic for all crystallisation states
 """
 
 import sys
@@ -14,7 +14,9 @@ from knowledge_graph.sugar_kg import (
 
 
 class TestBuildSugarKG:
-    """Tests for sugar KG construction."""
+    """
+    - Tests for sugar KG construction
+    """
 
     def test_kg_has_state_nodes(self):
         KG = build_sugar_kg()
@@ -61,7 +63,9 @@ class TestBuildSugarKG:
 
 
 class TestBuildInferredState:
-    """Tests for state inference from ViT output."""
+    """
+    - Tests for state inference from ViT output
+    """
 
     def test_metastable_inferred_state(self):
         state = build_inferred_state({
@@ -106,7 +110,9 @@ class TestBuildInferredState:
 
 
 class TestEvaluateSugarKG:
-    """Tests for full sugar KG evaluation."""
+    """
+    - Tests for full sugar KG evaluation
+    """
 
     def test_metastable_recommends_hold(self, sugar_prediction_metastable):
         result = evaluate_sugar_kg(sugar_prediction_metastable)
@@ -189,7 +195,9 @@ class TestEvaluateSugarKG:
 
 
 class TestStateTemplates:
-    """Tests for STATE_TEMPLATES integrity."""
+    """
+    - Tests for STATE_TEMPLATES integrity
+    """
 
     def test_all_four_states_defined(self):
         expected = ["unsaturated", "metastable", "intermediate", "labile"]
