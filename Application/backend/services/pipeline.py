@@ -1,6 +1,10 @@
 """
-CaneNexus – Pipeline Orchestrator
-End-to-end pipeline: Inference → Knowledge Graph → Gemini → MongoDB Log.
+Pipeline Orchestrator
+    - End-to-end pipeline
+        - Inference
+        - Knowledge Graph
+        - Gemini
+        - MongoDB Log
 """
 
 import time
@@ -17,7 +21,9 @@ from models.loader import get_device
 
 
 def _generate_programmatic_summary(domain: str, prediction: dict, kg_result: dict) -> str:
-    """Generate a markdown summary programmatically directly from the inference and KG results."""
+    """
+    - Generates markdown summary programmatically from inference and KG results
+    """
     md = "Virtual Simulation Result (Auto-Generated)\n\n"
     
     if domain == "steel":
@@ -62,23 +68,23 @@ def _generate_programmatic_summary(domain: str, prediction: dict, kg_result: dic
 
 def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemini: bool = False) -> dict:
     """
-    Run the full analysis pipeline for a single image.
+    - Runs full analysis pipeline for a single image
 
-    Steps:
-        1. Run DDA-ViT inference (steel segmentation or sugar classification)
-        2. Evaluate the appropriate Knowledge Graph
-        3. Generate Gemini initial response
-        4. Log everything to MongoDB
-        5. Return complete result
+    - Steps:
+        1. Runs DDA-ViT inference
+        2. Evaluates Knowledge Graph
+        3. Generates LLM initial response
+        4. Logs to MongoDB
+        5. Returns complete result
 
-    Args:
-        image_path: Absolute path to the image file
-        domain: "steel" or "sugar"
-        session_id: Optional session ID (for simulation grouping)
-        skip_gemini: Whether to skip querying the Gemini model
+    - Args:
+        - image_path: Absolute path to the image file
+        - domain: "steel" or "sugar"
+        - session_id: Optional session ID (for simulation grouping)
+        - skip_gemini: Whether to skip querying the LLM
 
-    Returns:
-        Complete pipeline result dict.
+    - Returns:
+        - Complete pipeline result dict
     """
     if session_id is None:
         session_id = str(uuid.uuid4())
@@ -86,7 +92,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
     pipeline_start = time.time()
     step_times = {}
 
-    # - Step 1: Inference -
+    # Inference
     t0 = time.time()
     if domain == "steel":
         prediction = predict_steel(image_path)
@@ -96,7 +102,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
         raise ValueError(f"Unknown domain: {domain}. Must be 'steel' or 'sugar'.")
     step_times["inference_ms"] = round((time.time() - t0) * 1000, 2)
 
-    # - Step 2: Knowledge Graph -
+    # Knowledge Graph
     t0 = time.time()
     if domain == "steel":
         kg_result = evaluate_steel_kg(prediction["defect_summary"])
@@ -104,7 +110,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
         kg_result = evaluate_sugar_kg(prediction)
     step_times["kg_ms"] = round((time.time() - t0) * 1000, 2)
 
-    # - Step 3: Gemini Chatbot (or Programmatic Summary) -
+    # Expert Response Module
     t0 = time.time()
     if skip_gemini:
         gemini_response = _generate_programmatic_summary(domain, prediction, kg_result)
@@ -112,7 +118,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
         gemini_response = get_initial_response(prediction, kg_result)
     step_times["gemini_ms"] = round((time.time() - t0) * 1000, 2)
 
-    # - Step 4: Log to MongoDB -
+    # Log to MongoDB
     t0 = time.time()
     device_name = str(get_device())
 
@@ -149,7 +155,7 @@ def run_pipeline(image_path: str, domain: str, session_id: str = None, skip_gemi
 
     step_times["db_ms"] = round((time.time() - t0) * 1000, 2)
 
-    # - Total time -
+    # Total time
     total_ms = round((time.time() - pipeline_start) * 1000, 2)
 
     return {

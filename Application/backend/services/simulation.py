@@ -1,12 +1,12 @@
 """
-CaneNexus – Virtual Simulation Service
-Batch processing of image directories with SSE event streaming.
+Virtual Simulation Service
+    - Batch processing of image directories
+    - SSE event streaming
 """
 
 import os
 import json
 import uuid
-import time
 from datetime import datetime
 from pathlib import Path
 
@@ -18,15 +18,15 @@ from database.schemas import create_simulation_document
 
 def _scan_images(directory: str, limit: int = None) -> list:
     """
-    Scan a directory for image files.
-    For sugar, also recurse into subdirectories (class folders).
+    - Scans a directory for image files.
+    - For sugar, also recurses into subdirectories, i.e., the class folders
 
-    Args:
-        directory: Path to image directory
-        limit: Max number of images to return (None = all)
+    - Args:
+        - directory: Path to image directory
+        - limit: Max number of images to return (None = all)
 
-    Returns:
-        Sorted list of absolute image file paths.
+    - Returns:
+        - Sorted list of absolute image file paths
     """
     images = []
     
@@ -54,18 +54,20 @@ def run_simulation_stream(
     limit_per_domain: int = DEFAULT_SIMULATION_LIMIT
 ):
     """
-    Generator that yields SSE-formatted events for each pipeline step.
+    - Generator that yields SSE-formatted events for each pipeline step
 
-    Each yield is a string in SSE format: "data: {json}\n\n"
+    - Each yield is a string in SSE format: 
+        - "data: {
+                json
+            }\n\n"
 
-    Args:
-        steel_dir: Path to steel test images directory
-        sugar_dir: Path to sugar test images directory
-        limit_per_domain: Max images per domain (0 = all)
+    - Args:
+        - steel_dir: Path to steel test images directory
+        - sugar_dir: Path to sugar test images directory
+        - limit_per_domain: Max images per domain (0 = all)
     """
     session_id = str(uuid.uuid4())
 
-    # - Scan directories -
     limit = limit_per_domain if limit_per_domain > 0 else None
     steel_images = _scan_images(steel_dir, limit)
     sugar_images = _scan_images(sugar_dir, limit)
@@ -74,7 +76,6 @@ def run_simulation_stream(
     total_sugar = len(sugar_images)
     total = total_steel + total_sugar
 
-    # - Create simulation document -
     sim_doc = create_simulation_document(
         session_id=session_id,
         steel_directory=steel_dir,
@@ -88,7 +89,6 @@ def run_simulation_stream(
     except Exception as e:
         print(f"[CaneNexus] Simulation doc insert failed: {e}")
 
-    # - Yield simulation start event -
     yield _sse_event({
         "step": "simulation_start",
         "session_id": session_id,
@@ -98,14 +98,12 @@ def run_simulation_stream(
         "limit_per_domain": limit_per_domain
     })
 
-    # - Build processing queue -
     queue = []
     for path in steel_images:
         queue.append((path, "steel"))
     for path in sugar_images:
         queue.append((path, "sugar"))
 
-    # - Counters for summary -
     summary = {
         "steel": {"accept": 0, "downgrade": 0, "reject": 0, "manual_inspection": 0},
         "sugar": {"unsaturated": 0, "metastable": 0, "intermediate": 0, "labile": 0}
@@ -113,12 +111,10 @@ def run_simulation_stream(
     processed = 0
     total_inference_time = 0
 
-    # - Process each image -
     for i, (image_path, domain) in enumerate(queue):
         filename = os.path.basename(image_path)
         index = i + 1
 
-        # Step: Start processing this image
         yield _sse_event({
             "step": "image_start",
             "index": index,
@@ -129,7 +125,6 @@ def run_simulation_stream(
         })
 
         try:
-            # Step: Run inference
             yield _sse_event({
                 "step": "inference_start",
                 "index": index,
@@ -137,12 +132,10 @@ def run_simulation_stream(
                 "domain": domain
             })
 
-            # Run the full pipeline optionally overriding gemini execution
             result = run_pipeline(image_path, domain, session_id, skip_gemini=True)
 
             total_inference_time += result.get("total_processing_ms", 0)
 
-            # Step: Inference complete
             yield _sse_event({
                 "step": "inference_complete",
                 "index": index,
@@ -152,7 +145,6 @@ def run_simulation_stream(
                 "time_ms": result["step_times"].get("inference_ms", 0)
             })
 
-            # Step: KG complete
             yield _sse_event({
                 "step": "kg_complete",
                 "index": index,
@@ -162,7 +154,6 @@ def run_simulation_stream(
                 "time_ms": result["step_times"].get("kg_ms", 0)
             })
 
-            # Step: Gemini complete
             yield _sse_event({
                 "step": "gemini_complete",
                 "index": index,
@@ -172,7 +163,6 @@ def run_simulation_stream(
                 "time_ms": result["step_times"].get("gemini_ms", 0)
             })
 
-            # Step: Logged
             yield _sse_event({
                 "step": "logged",
                 "index": index,
@@ -181,16 +171,13 @@ def run_simulation_stream(
                 "log_id": result["log_id"]
             })
 
-            # Update summary counters
             _update_summary(summary, domain, result)
             processed += 1
 
-            # Calculate ETA
             avg_time = total_inference_time / processed if processed > 0 else 0
             remaining = total - processed
             eta_ms = avg_time * remaining
 
-            # Step: Image complete
             yield _sse_event({
                 "step": "image_complete",
                 "index": index,
@@ -217,7 +204,6 @@ def run_simulation_stream(
             })
             processed += 1
 
-    # - Update simulation document -
     try:
         simulations_collection.update_one(
             {"session_id": session_id},
@@ -231,7 +217,6 @@ def run_simulation_stream(
     except Exception as e:
         print(f"[CaneNexus] Simulation update failed: {e}")
 
-    # - Final event -
     yield _sse_event({
         "step": "simulation_complete",
         "session_id": session_id,
@@ -242,7 +227,9 @@ def run_simulation_stream(
 
 
 def _update_summary(summary: dict, domain: str, result: dict):
-    """Update the running summary counters based on pipeline result."""
+    """
+    - Updates running summary counters based on pipeline result
+    """
     if domain == "steel":
         kg = result.get("knowledge_graph", {})
         decision = kg.get("decision", "").lower()
@@ -261,7 +248,8 @@ def _update_summary(summary: dict, domain: str, result: dict):
         if cls in summary["sugar"]:
             summary["sugar"][cls] += 1
 
-
 def _sse_event(data: dict) -> str:
-    """Format a dict as an SSE data line."""
+    """
+    - Formats a dict as an SSE data line
+    """
     return f"data: {json.dumps(data, default=str)}\n\n"

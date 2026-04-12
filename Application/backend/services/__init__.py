@@ -1,1 +1,1 @@
-# CaneNexus – Services package
+# Services package
