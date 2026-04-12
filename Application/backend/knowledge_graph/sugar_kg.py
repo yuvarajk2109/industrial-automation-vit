@@ -42,7 +42,7 @@ def infer_supersaturation_range(crystal_state: str, confidence: float) -> tuple:
 
 def build_inferred_state(vit_output: dict) -> dict:
     """
-    Build inferred process state from ViT classification output
+    - Builds inferred process state from ViT classification output
 
     Args:
         - vit_output
@@ -68,9 +68,9 @@ def build_inferred_state(vit_output: dict) -> dict:
 
 def build_sugar_kg() -> nx.DiGraph:
     """
-    Build the Unified Sugar Crystallisation Knowledge Graph
+    - Builds Unified Sugar Crystallisation Knowledge Graph
 
-    Structure:
+    - Structure:
         - States        (observed)
         - Conditions    (derived)
         - Actions       (control)
@@ -143,7 +143,7 @@ def build_sugar_kg() -> nx.DiGraph:
 
 def _infer_actions(graph: nx.DiGraph, active_state: str) -> list:
     """
-    Traverse KG from state node to find all triggered actions.
+    - Traverses KG from state node to find all triggered actions
     """
     actions = set()
 
@@ -158,7 +158,7 @@ def _infer_actions(graph: nx.DiGraph, active_state: str) -> list:
 
 def _score_transitions(graph: nx.DiGraph, active_state: str) -> dict:
     """
-    Score possible state transitions based
+    - Scores possible state transitions based on
         - risk
         - controllability
     """
@@ -179,9 +179,9 @@ def _score_transitions(graph: nx.DiGraph, active_state: str) -> dict:
 
 def evaluate_sugar_kg(prediction: dict) -> dict:
     """
-    Given a sugar classification prediction
-        - traverse the KG
-        - determine 
+    - Given a sugar classification prediction
+        - traverses the KG
+        - determines
             - recommended actions
             - state info
 
