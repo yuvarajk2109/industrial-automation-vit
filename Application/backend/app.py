@@ -1,6 +1,8 @@
 """
-CaneNexus – Flask Application Entry Point
-Registers all blueprints, CORS, and pre-loads the model on startup.
+CaneNexus Flask Application Entry Point
+    - Registers all blueprints
+    - CORS
+    - Pre-loads the model on startup
 """
 
 from flask import Flask, jsonify
@@ -11,7 +13,7 @@ from config import OUTPUT_DIR
 app = Flask(__name__, static_folder="static")
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# - Register Blueprints -
+# Register Blueprints
 from routes.predict import predict_bp
 from routes.simulate import simulate_bp
 from routes.chat import chat_bp
@@ -30,11 +32,12 @@ app.register_blueprint(browse_bp, url_prefix="/api")
 app.register_blueprint(feedback_bp, url_prefix="/api")
 app.register_blueprint(finetune_bp, url_prefix="/api")
 
-
-# - Health Check -
 @app.route("/api/health", methods=["GET"])
 def health_check():
-    """Health check endpoint – returns system status."""
+    """
+    - Health check endpoint
+    - Returns system status
+    """
     from models.loader import get_device
     from database.mongo_client import check_connection
 
@@ -46,16 +49,13 @@ def health_check():
     }), 200
 
 
-# - Error Handlers -
 @app.errorhandler(404)
 def not_found(e):
     return jsonify({"error": "Endpoint not found"}), 404
 
-
 @app.errorhandler(500)
 def internal_error(e):
     return jsonify({"error": "Internal server error", "details": str(e)}), 500
-
 
 if __name__ == "__main__":
     # Ensure output directory exists
