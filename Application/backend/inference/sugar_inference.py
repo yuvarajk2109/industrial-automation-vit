@@ -18,7 +18,7 @@ from inference.image_utils import load_image
 
 def predict_sugar(image_path: str) -> dict:
     """
-    Run sugar crystallisation quality classification on a single image
+    - Runs sugar crystallisation quality classification on a single image
 
     Args:
         - image_path: Absolute path to the sugar crystallisation image

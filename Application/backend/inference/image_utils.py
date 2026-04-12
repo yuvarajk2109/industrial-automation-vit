@@ -19,9 +19,10 @@ from config import OUTPUT_DIR
 
 def load_image(path: str, size: int):
     """
-    Load an image
-    Resize to a square of 'size'
-    Return
+    - Loads an image
+    - Resizes to a square of 'size'
+    
+    Returns
         - the original
         - the normalised tensor
         - the (new_h, new_w) (scaled to a square)
@@ -51,8 +52,8 @@ def load_image(path: str, size: int):
 
 def sliding_window_inference(model, image, device, patch_size=256, stride=256):
     """
-    Runs steel segmentation using a sliding window across image width
-    Image height is patch_size = 256
+    - Runs steel segmentation using a sliding window across image width
+    - Image height is patch_size = 256
 
     Args:
         - model: latest DDAViT model instance

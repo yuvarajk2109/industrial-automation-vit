@@ -18,7 +18,7 @@ from inference.image_utils import sliding_window_inference, generate_mask_overla
 
 def predict_steel(image_path: str) -> dict:
     """
-    Run steel defect segmentation on a single image.
+    Runs steel defect segmentation on a single image
 
     Args:
         - image_path: Absolute path to the steel strip image
