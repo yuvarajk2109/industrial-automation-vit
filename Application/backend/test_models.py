@@ -1,3 +1,8 @@
+"""
+Model Listing
+    - Lists all available models
+"""
+
 import os
 from google import genai
 
