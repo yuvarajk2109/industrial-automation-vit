@@ -58,7 +58,6 @@
     </app-data-table>
   </div>
 
-  <!-- Pagination -->
   <app-pagination [page]="correctionPage" [totalPages]="correctionTotalPages" [limit]="correctionLimit"
     [limitOptions]="[20, 30, 50]" (pageChange)="pageChange.emit($event)" (limitChange)="limitChange.emit($event)">
   </app-pagination>

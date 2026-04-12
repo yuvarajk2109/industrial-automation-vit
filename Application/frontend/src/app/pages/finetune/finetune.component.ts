@@ -20,24 +20,19 @@ import { HistoryComponent } from './components/history/history.component';
   styleUrl: './finetune.component.css'
 })
 export class FinetuneComponent implements OnInit, OnDestroy {
-  // - Feedback Stats -
   feedbackStats: any = null;
   feedbackLoading = true;
 
-  // - Active Job -
   activeJob: any = null;
   jobPollingInterval: any;
 
-  // - Job History -
   jobHistory: any[] = [];
   historyLoading = true;
 
-  // - Model Versions -
   modelVersions: any[] = [];
   activeVersions: any = { sugar: 0, steel: 0 };
   versionsLoading = true;
 
-  // - Correction List -
   corrections: any[] = [];
   correctionsLoading = false;
   correctionFilter: 'all' | 'sugar' | 'steel' = 'all';
@@ -47,7 +42,6 @@ export class FinetuneComponent implements OnInit, OnDestroy {
   correctionTotalPages = 1;
   correctionLimit = 20;
 
-  // - Fine-Tune Config -
   selectedDomain: 'sugar' | 'steel' = 'sugar';
   showAdvancedConfig = false;
   finetuneConfig = {
@@ -59,7 +53,6 @@ export class FinetuneComponent implements OnInit, OnDestroy {
     early_stopping_patience: 3
   };
 
-  // - UI State -
   error: string | null = null;
   successMessage: string | null = null;
   isStartingJob = false;
@@ -101,7 +94,6 @@ export class FinetuneComponent implements OnInit, OnDestroy {
     this.loadJobHistory();
     this.loadModelVersions();
 
-    // Poll job status every 3 seconds
     this.jobPollingInterval = setInterval(() => {
       if (this.activeJob?.status === 'running') {
         this.loadJobStatus();
@@ -114,8 +106,6 @@ export class FinetuneComponent implements OnInit, OnDestroy {
       clearInterval(this.jobPollingInterval);
     }
   }
-
-  // - Data Loading -
 
   loadFeedbackStats(): void {
     this.feedbackLoading = true;
@@ -134,7 +124,6 @@ export class FinetuneComponent implements OnInit, OnDestroy {
     this.api.getFineTuneStatus().subscribe({
       next: (job) => {
         this.activeJob = job.status !== 'idle' ? job : null;
-        // If job just completed, refresh everything
         if (job.status === 'completed' || job.status === 'failed') {
           this.loadFeedbackStats();
           this.loadJobHistory();
@@ -189,8 +178,6 @@ export class FinetuneComponent implements OnInit, OnDestroy {
       }
     });
   }
-
-  // - Actions -
 
   startFineTune(): void {
     this.error = null;
@@ -264,8 +251,6 @@ export class FinetuneComponent implements OnInit, OnDestroy {
       this.loadCorrections();
     }
   }
-
-  // - Helpers -
 
   get canStartFineTune(): boolean {
     if (this.isStartingJob) return false;

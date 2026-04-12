@@ -22,8 +22,8 @@
           @if (v.is_active) {
           <app-status-badge label="Active Model" variant="success" />
           } @else {
-          <button class="btn btn-secondary btn-sm rollback-btn" (click)="rollback.emit({domain: v.domain, version: v.version})"
-            [disabled]="isRollingBack">
+          <button class="btn btn-secondary btn-sm rollback-btn"
+            (click)="rollback.emit({domain: v.domain, version: v.version})" [disabled]="isRollingBack">
             @if (isRollingBack) {
             <div class="btn-spinner"></div>
             } @else {
@@ -34,10 +34,8 @@
         </span>
       </ng-template>
     </app-data-table>
-    <!-- Pagination -->
-    <app-pagination [page]="page" [totalPages]="totalPages" [limit]="limit"
-      [limitOptions]="[5, 10, 15, 20]" (pageChange)="onPageChange($event)"
-      (limitChange)="onLimitChange($event)">
+    <app-pagination [page]="page" [totalPages]="totalPages" [limit]="limit" [limitOptions]="[5, 10, 15, 20]"
+      (pageChange)="onPageChange($event)" (limitChange)="onLimitChange($event)">
     </app-pagination>
   </div>
   }

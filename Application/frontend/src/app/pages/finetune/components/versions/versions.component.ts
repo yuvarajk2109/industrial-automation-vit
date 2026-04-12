@@ -17,7 +17,7 @@ export class VersionsComponent {
   @Input() versionsLoading = false;
   @Input() isRollingBack = false;
 
-  @Output() rollback = new EventEmitter<{domain: string, version: number}>();
+  @Output() rollback = new EventEmitter<{ domain: string, version: number }>();
 
   versionColumns: TableColumn[] = [
     { label: 'Created', width: '180px' },

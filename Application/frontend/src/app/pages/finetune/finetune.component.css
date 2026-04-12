@@ -3,7 +3,6 @@
   margin: 0 auto;
 }
 
-/* - Tab Bar - */
 .tab-bar {
   display: flex;
   gap: var(--space-xs);
@@ -53,7 +52,6 @@
   font-weight: 700;
 }
 
-/* - Alerts - */
 .alert {
   display: flex;
   align-items: center;

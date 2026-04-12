@@ -13,7 +13,7 @@ import { DataTableComponent, TableColumn } from '../../../../shared/components/d
 })
 export class HistoryComponent {
   @Input() jobHistory: any[] = [];
-  
+
   historyColumns: TableColumn[] = [
     { label: 'Date', width: '180px' },
     { label: 'Job ID', width: '1fR' },

@@ -24,10 +24,8 @@
         </span>
       </ng-template>
     </app-data-table>
-    <!-- Pagination -->
-    <app-pagination [page]="page" [totalPages]="totalPages" [limit]="limit"
-      [limitOptions]="[5, 10, 15, 20]" (pageChange)="onPageChange($event)"
-      (limitChange)="onLimitChange($event)">
+    <app-pagination [page]="page" [totalPages]="totalPages" [limit]="limit" [limitOptions]="[5, 10, 15, 20]"
+      (pageChange)="onPageChange($event)" (limitChange)="onLimitChange($event)">
     </app-pagination>
   </div>
 </div>

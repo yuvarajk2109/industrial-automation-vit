@@ -1,7 +1,6 @@
 <div class="finetune-page">
   <h1 class="section-title">Model Training</h1>
 
-  <!-- - Tab Navigation - -->
   <div class="tab-bar">
     <button class="tab-btn" [class.active]="activeTab === 'overview'" (click)="switchTab('overview')">
       <i class="fa-solid fa-gauge"></i> Overview
@@ -20,7 +19,6 @@
     </button>
   </div>
 
-  <!-- - Alerts - -->
   @if (error) {
   <div class="alert alert-error">
     <i class="fa-solid fa-circle-exclamation"></i>
@@ -36,64 +34,33 @@
   </div>
   }
 
-  <!-- ════════════════════════════════════════════ -->
-  <!--               OVERVIEW TAB                  -->
-  <!-- ════════════════════════════════════════════ -->
   @if (activeTab === 'overview') {
-  <app-overview
-    [feedbackStats]="feedbackStats"
-    [feedbackLoading]="feedbackLoading"
-    [activeJob]="activeJob"
-    [selectedDomain]="selectedDomain"
-    [showAdvancedConfig]="showAdvancedConfig"
-    [finetuneConfig]="finetuneConfig"
-    [isStartingJob]="isStartingJob"
-    [canStartFineTune]="canStartFineTune"
-    (selectedDomainChange)="selectedDomain = $event"
-    (showAdvancedConfigChange)="showAdvancedConfig = $event"
+  <app-overview [feedbackStats]="feedbackStats" [feedbackLoading]="feedbackLoading" [activeJob]="activeJob"
+    [selectedDomain]="selectedDomain" [showAdvancedConfig]="showAdvancedConfig" [finetuneConfig]="finetuneConfig"
+    [isStartingJob]="isStartingJob" [canStartFineTune]="canStartFineTune"
+    (selectedDomainChange)="selectedDomain = $event" (showAdvancedConfigChange)="showAdvancedConfig = $event"
     (startFineTune)="startFineTune()">
   </app-overview>
   }
 
-  <!-- ════════════════════════════════════════════ -->
-  <!--            CORRECTIONS TAB                  -->
-  <!-- ════════════════════════════════════════════ -->
   @if (activeTab === 'corrections') {
-  <app-corrections
-    [corrections]="corrections"
-    [correctionsLoading]="correctionsLoading"
-    [correctionFilter]="correctionFilter"
-    [correctionStatusFilter]="correctionStatusFilter"
-    [correctionPage]="correctionPage"
-    [correctionTotalPages]="correctionTotalPages"
-    [correctionLimit]="correctionLimit"
-    [correctionTotal]="correctionTotal"
-    (correctionFilterChange)="correctionFilter = $event"
-    (correctionStatusFilterChange)="correctionStatusFilter = $event"
-    (filterChanged)="onCorrectionFilterChange()"
-    (pageChange)="goToCorrectionPage($event)"
-    (limitChange)="setCorrectionLimit($event)">
+  <app-corrections [corrections]="corrections" [correctionsLoading]="correctionsLoading"
+    [correctionFilter]="correctionFilter" [correctionStatusFilter]="correctionStatusFilter"
+    [correctionPage]="correctionPage" [correctionTotalPages]="correctionTotalPages" [correctionLimit]="correctionLimit"
+    [correctionTotal]="correctionTotal" (correctionFilterChange)="correctionFilter = $event"
+    (correctionStatusFilterChange)="correctionStatusFilter = $event" (filterChanged)="onCorrectionFilterChange()"
+    (pageChange)="goToCorrectionPage($event)" (limitChange)="setCorrectionLimit($event)">
   </app-corrections>
   }
 
-  <!-- ════════════════════════════════════════════ -->
-  <!--           MODEL VERSIONS TAB                -->
-  <!-- ════════════════════════════════════════════ -->
   @if (activeTab === 'versions') {
-  <app-versions
-    [modelVersions]="modelVersions"
-    [versionsLoading]="versionsLoading"
-    [isRollingBack]="isRollingBack"
+  <app-versions [modelVersions]="modelVersions" [versionsLoading]="versionsLoading" [isRollingBack]="isRollingBack"
     (rollback)="rollbackToVersion($event.domain, $event.version)">
   </app-versions>
   }
 
-  <!-- ════════════════════════════════════════════ -->
-  <!--           RECENT JOBS TAB                   -->
-  <!-- ════════════════════════════════════════════ -->
   @if (activeTab === 'history') {
-  <app-history
-    [jobHistory]="jobHistory">
+  <app-history [jobHistory]="jobHistory">
   </app-history>
   }
 </div>
