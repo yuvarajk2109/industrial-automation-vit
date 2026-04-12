@@ -21,7 +21,7 @@ export class SimulationComponent {
   steelDir = '';
   sugarDir = '';
   limit = 50;
-  limitOptions = [10, 25, 50, 100, 0]; // 0 = All
+  limitOptions = [10, 25, 50, 100, 0]; // 0 --> All
 
   state: SimulationState = this.getInitialState();
   pipelineStep = -1;
@@ -36,7 +36,7 @@ export class SimulationComponent {
     { label: 'Logged to DB' }
   ];
 
-  constructor(private simService: SimulationService, private api: ApiService) {}
+  constructor(private simService: SimulationService, private api: ApiService) { }
 
   browseFolder(type: 'steel' | 'sugar'): void {
     this.api.browse('directory').subscribe({
@@ -191,7 +191,6 @@ export class SimulationComponent {
     }
   }
 
-  // - Correction / Feedback -
   flaggedImage: CompletedImage | null = null;
   correctedSugarClass = '';
   steelCorrections: { original_class: string; corrected_class: string; action: string }[] = [];
@@ -210,12 +209,10 @@ export class SimulationComponent {
     this.correctionReason = '';
     this.missedDefects = [];
 
-    // Dropdown prep
     if (img.domain === 'sugar') {
       this.correctedSugarClass = '';
       this.selectedSugarOption = null;
     } else {
-      // Build steel corrections from prediction
       this.steelCorrections = [];
       const defectSummary = img.prediction?.defect_summary || {};
       for (const [key, val] of Object.entries(defectSummary)) {
@@ -288,7 +285,6 @@ export class SimulationComponent {
 
   Math = Math;
 
-  // Dropdown options
   sugarOptions = [
     { label: 'Unsaturated', value: 'unsaturated' },
     { label: 'Metastable', value: 'metastable' },

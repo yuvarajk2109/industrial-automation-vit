@@ -1,7 +1,6 @@
 <div class="simulation-page">
   <h1 class="section-title">Virtual Simulation</h1>
 
-  <!-- Config Panel -->
   <div class="config-panel card">
     <div class="config-grid">
       <div class="config-field">
@@ -53,11 +52,9 @@
     </div>
   </div>
 
-  <!-- Live Pipeline -->
   @if (state.isRunning || state.processed > 0) {
   <div class="live-section">
     <div class="live-grid">
-      <!-- Current Image -->
       <div class="current-panel card">
         <div class="current-header">
           <span class="text-sm text-muted">Processing</span>
@@ -68,12 +65,10 @@
         <div class="current-index text-xs text-muted">Image {{ state.currentIndex }} of {{ state.total }}</div>
       </div>
 
-      <!-- Pipeline -->
       <div class="pipeline-panel card">
         <app-pipeline-visualiser [currentStep]="pipelineStep" [steps]="pipelineSteps" orientation="vertical" />
       </div>
 
-      <!-- Latest Result -->
       <div class="result-panel card">
         <span class="text-sm text-muted">Latest Result</span>
         @if (currentPrediction) {
@@ -99,7 +94,6 @@
       </div>
     </div>
 
-    <!-- Progress -->
     <div class="progress-section card">
       <div class="progress-header">
         <span class="font-semibold">{{ state.processed }} / {{ state.total }} images</span>
@@ -109,7 +103,6 @@
         <div class="progress-bar-fill" [style.width.%]="state.progress * 100"></div>
       </div>
 
-      <!-- Summary Counters -->
       <div class="counters-grid mt-md">
         <div class="counter-group">
           <span class="counter-title badge badge-steel">Steel</span>
@@ -134,7 +127,6 @@
       </div>
     </div>
 
-    <!-- Completed Grid -->
     @if (state.completedImages.length > 0) {
     <div class="completed-header">
       <h2 class="section-title">Completed</h2>
@@ -150,7 +142,6 @@
       <div class="completed-card card-glass" [class.flagged]="correctionSubmittedIds.has(img.index)">
         <div class="cc-header">
           <app-status-badge [label]="img.domain" [variant]="img.domain === 'steel' ? 'steel' : 'sugar'" />
-          <!-- Flag button -->
           <button class="flag-btn" [class.submitted]="correctionSubmittedIds.has(img.index)" (click)="flagImage(img)"
             [disabled]="correctionSubmittedIds.has(img.index)"
             [title]="correctionSubmittedIds.has(img.index) ? 'Correction submitted' : 'Flag for correction'">
@@ -176,7 +167,6 @@
     </div>
     }
 
-    <!-- Correction Modal -->
     @if (flaggedImage) {
     <div class="correction-modal-overlay" (click)="flaggedImage = null">
       <div class="correction-modal card" (click)="$event.stopPropagation()">
@@ -199,7 +189,6 @@
           </app-image-card>
         </div>
 
-        <!-- Sugar Correction -->
         @if (flaggedImage.domain === 'sugar') {
         <div class="correction-field">
           <div class="mb-md" style="margin-bottom: 12px; font-weight: 600;">
@@ -213,7 +202,6 @@
         </div>
         }
 
-        <!-- Steel Correction -->
         @if (flaggedImage.domain === 'steel') {
         <div class="correction-field">
           <label class="field-label">Detected Defect Corrections</label>
